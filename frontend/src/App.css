@@ -1,38 +1,208 @@
-.App {
-  text-align: center;
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+@import url("https://fonts.googleapis.com/css?family=Denk+One:400");
+
+
+body {
+  position: relative;
+  background-color: #FEFFDC;
+  width:100%;
+  height:100%;
+  top:0px;
+  left:0px;
+  z-index:1;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+.title {
+  position: relative;
+  width: 696px;
+  height: 114px;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #001A5E;
+  border-radius: 14px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  color:#FEFFDC;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 64px;
+  line-height: 100px;
+  
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  letter-spacing: 0.1em;
 }
 
-.App-link {
-  color: #61dafb;
+.logo {
+  padding-left: 50px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.tab{
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.arc {
+  position: absolute;
+  width: 581px;
+  height: 59px;
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+}
+
+.tab_title {
+  color:#FEFFDC;
+  position: absolute;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 32px;
+  line-height: 160px;
+
+  display: flex;
+  justify-content: center;
+  letter-spacing: 0.1em;
+  z-index: 4;
+}
+
+.main_pane {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 109px;
+  margin-left: auto;
+  margin-right: auto;
+
+  width: 806px;
+  height: 670px;
+
+ 
+  background: linear-gradient(180deg,#20CEF2, rgba(32, 206, 242, 0.27) 70%);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 14px;
+}
+
+.field1 {
+  position: absolute;
+  display: flex;
+  justify-content: left;
+  margin-top: 100px;
+  width: 405px;
+  height: 56px;
+  background-color: #001A5E;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+  border-radius: 14px;
+  color: #FEFFDC;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 50px;
+  z-index: 85;
+}
+
+.field2 {
+  position: absolute;
+  display: flex;
+  justify-content: left;
+  margin-top: 200px;
+  width: 405px;
+  height: 56px;
+  background-color: #001A5E;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+  border-radius: 14px;
+  color: #FEFFDC;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  text-align: left;
+  line-height: 50px;
+  z-index: 85;
+}
+
+.button1 {
+  position: absolute;
+  width: 163px;
+  height: 72px;
+
+  margin-top: 300px;
+
+  background: #001A5E;
+  border-radius: 14px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+  color:#FEFFDC;
+  position: absolute;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 70px;
+
+  display: flex;
+  justify-content: center;
+  z-index: 4;
+}
+
+.button2 {
+  position: absolute;
+  width: 163px;
+  height: 72px;
+
+  margin-top: 380px;
+
+  background: #001A5E;
+  border-radius: 14px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+
+  color:#FEFFDC;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 35px;
+
+  display: flex;
+  text-align: center;
+  z-index: 4;
+}
+
+.link1 {
+  color:#001A5E;
+  position: absolute;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 975px;
+  text-decoration: underline;
+
+  display: flex;
+  justify-content: center;
+  z-index: 4;
+}
+
+.link2 {
+  color:#001A5E;
+  position: absolute;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 1100px;
+  text-decoration: underline;
+
+  display: flex;
+  justify-content: center;
+  z-index: 4;
 }
