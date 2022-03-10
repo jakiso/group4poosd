@@ -2,7 +2,7 @@
 
 @import url("https://fonts.googleapis.com/css?family=Denk+One:400");
 
-
+/* body color will not change on any page*/
 body {
   position: relative;
   background-color: #FEFFDC;
@@ -13,6 +13,7 @@ body {
   z-index:1;
 }
 
+/* title position will not change on any page*/
 .title {
   position: relative;
   width: 696px;
@@ -36,16 +37,19 @@ body {
   letter-spacing: 0.1em;
 }
 
+/* logo png on title will not change on any page*/
 .logo {
   padding-left: 50px;
 }
 
+/* this Account tab will not change on any page*/
 .tab{
   position: relative;
   display: flex;
   justify-content: center;
 }
 
+/* arc png will not change on any page*/
 .arc {
   position: absolute;
   width: 581px;
@@ -56,25 +60,8 @@ body {
   z-index: 2;
 }
 
-.tab_title {
-  color:#FEFFDC;
-  position: absolute;
-  font-family: Denk One;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 32px;
-  line-height: 160px;
-
-  display: flex;
-  justify-content: center;
-  letter-spacing: 0.1em;
-  z-index: 4;
-}
-
+/* main pane will not change on any page*/
 .main_pane {
-  position: relative;
-  display: flex;
-  justify-content: center;
   margin-top: 109px;
   margin-left: auto;
   margin-right: auto;
@@ -82,127 +69,22 @@ body {
   width: 806px;
   height: 670px;
 
+  display: 'grid';
+  justify-items:'center';
  
   background: linear-gradient(180deg,#20CEF2, rgba(32, 206, 242, 0.27) 70%);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 14px;
 }
 
-.field1 {
-  position: absolute;
-  display: flex;
-  justify-content: left;
-  margin-top: 100px;
-  width: 405px;
-  height: 56px;
-  background-color: #001A5E;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-
-  border-radius: 14px;
-  color: #FEFFDC;
-  font-family: Denk One;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 50px;
-  z-index: 85;
-}
-
-.field2 {
-  position: absolute;
-  display: flex;
-  justify-content: left;
-  margin-top: 200px;
-  width: 405px;
-  height: 56px;
-  background-color: #001A5E;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-
-  border-radius: 14px;
-  color: #FEFFDC;
-  font-family: Denk One;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  text-align: left;
-  line-height: 50px;
-  z-index: 85;
-}
-
-.button1 {
-  position: absolute;
-  width: 163px;
-  height: 72px;
-
-  margin-top: 300px;
-
-  background: #001A5E;
-  border-radius: 14px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-
-  color:#FEFFDC;
-  position: absolute;
-  font-family: Denk One;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 70px;
-
-  display: flex;
+.fields{
+  padding-top: 100px;
+  display: grid;
   justify-content: center;
-  z-index: 4;
 }
 
-.button2 {
-  position: absolute;
-  width: 163px;
-  height: 72px;
-
-  margin-top: 380px;
-
-  background: #001A5E;
-  border-radius: 14px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-
-
-  color:#FEFFDC;
-  font-family: Denk One;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 35px;
-
-  display: flex;
-  text-align: center;
-  z-index: 4;
-}
-
-.link1 {
-  color:#001A5E;
-  position: absolute;
-  font-family: Denk One;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 975px;
-  text-decoration: underline;
-
-  display: flex;
+.buttons{
+  padding-top: 20px;
+  display: grid;
   justify-content: center;
-  z-index: 4;
-}
-
-.link2 {
-  color:#001A5E;
-  position: absolute;
-  font-family: Denk One;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 1100px;
-  text-decoration: underline;
-
-  display: flex;
-  justify-content: center;
-  z-index: 4;
 }
