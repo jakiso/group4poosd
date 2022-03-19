@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../App.css';
 import { Field } from './Field';
 import { Buttonb } from './Button';
+import axios from 'axios';
 
 function CenterDiv(){
     var firstName;
@@ -40,12 +41,14 @@ function CenterDiv(){
         var obj = {firstName:firstName.value, lastName:lastName.value, username:username.value, 
           email:email.value, password:password.value};
         var js = JSON.stringify(obj);
+
+        var bp = require('./Path.js');
   
         try
         {  
             //connects front-end to backend
             // B fixes this from local to heroku (uses buildPath)
-            const response = await fetch(buildPath('register'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+            const response = await fetch(bp.buildPath('register'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
   
             var res = JSON.parse(await response.text());
 
