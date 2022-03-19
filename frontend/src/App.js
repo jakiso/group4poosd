@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-d
 
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import MainPage from './pages/MainPage';
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
         </Route>
         <Route path="/Register" exact>
           <RegisterPage />
+        </Route>
+        <Route path="/Main" exact>
+          <MainPage />
         </Route>
         <Redirect to="/Login" />
       </Switch>  
