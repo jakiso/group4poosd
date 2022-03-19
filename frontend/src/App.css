@@ -88,3 +88,88 @@ body {
   display: grid;
   justify-content: center;
 }
+
+#loginName {
+  position: relative;
+  display: flex;
+  width: 405px;
+  height: 56px;
+  background-color: #001A5E;
+
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 14px;
+
+  color: #FEFFDC;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 50px;
+  
+}
+
+#loginPassword {
+  position: relative;
+  display: flex;
+  width: 405px;
+  height: 56px;
+  background-color: #001A5E;
+
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 14px;
+
+  color: #FEFFDC;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 50px;
+  
+}
+
+#loginButton{
+  width: 163px;
+  height: 72px;
+
+  background: #001A5E;
+  border-radius: 14px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+  color:#FEFFDC;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height:0px;
+
+  display: flex;
+  justify-content: center;
+  z-index: 4;
+}
+
+#create_link{
+  color:#001A5E;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+
+  text-decoration: underline;
+
+  display: flex;
+  justify-content: center;
+  z-index: 4;
+}
+
+#loginResult{
+  color:#001A5E;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height:0px;
+
+  display: flex;
+  justify-content: center;
+  z-index: 4;
+}

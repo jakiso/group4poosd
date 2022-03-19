@@ -13,7 +13,8 @@ const path = require('path');
 
 // MERN B updates this to no longer use a connection string
 require('dotenv').config();
-const url = process.env.MONGODB_URI;
+// const url = process.env.MONGODB_URI;
+const url = "mongodb+srv://admin:Leineckerg4lp@cluster0.zx86x.mongodb.net/COP4331?retryWrites=true&w=majority";
 const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
