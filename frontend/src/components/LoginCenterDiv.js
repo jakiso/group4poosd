@@ -83,18 +83,10 @@ function CenterDiv(){
 
         <div className="fields" style={{"height": "20vh"}}>
         
-        {/* <Field className="user_name">&emsp;Username</Field>
-
-        <Field className="password">&emsp;Password</Field> */}
-
-        {/* <Field className="user_name"> */}
         <input type="text" id="loginName" placeholder="Username" 
         ref={(c) => loginName = c} /><br /> 
-        {/* </Field>
-        <Field className="password"> */}
         <input type="password" id="loginPassword" placeholder="Password" 
         ref={(c) => loginPassword = c} /><br />
-        {/* </Field> */}
 
         <span id="loginResult">{message}</span>
 
@@ -105,13 +97,9 @@ function CenterDiv(){
         <input type="submit" id="loginButton" class="buttons" value = "Login"
           onClick={doLogin} />
 
-        {/* <Buttonb className="login_button" onClick={doLogin}>Login</Buttonb> */}
-
         <LoginG className="login_g_button">Login with Google</LoginG>
 
         <LinkP className="forgot_link">Forgot Password</LinkP>
-
-        {/* <LinkP className="create_link">Create Account</LinkP> */}
 
         <Link id="create_link" to="/Register">Create Account</Link>
 
