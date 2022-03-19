@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../App.css';
 import { Field } from './Field';
 import { Buttonb } from './Button';
+import axios from 'axios';
 
 function CenterDiv(){
     var firstName;
@@ -40,7 +41,7 @@ function CenterDiv(){
         var obj = {firstName:firstName.value, lastName:lastName.value, username:username.value, 
           email:email.value, password:password.value};
         var js = JSON.stringify(obj);
-        var ts = 0;
+
         var bp = require('./Path.js');
   
         try

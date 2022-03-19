@@ -6,38 +6,22 @@ import { LinkP } from './LinkP';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useJwt } from "react-jwt";
+import axios from 'axios';
 
 
 const LoginG = styled(Buttonb)`
   line-height: 33px;
 `
 
-function CenterDiv(){
-
-
+function CenterDiv()
+{
   var loginName;
   var loginPassword;
+  
 
   const [message,setMessage] = useState('');
-
-  const app_name = 'letsdothings'
-
-  // B added
-  function buildPath(route)
-  {
-      if (process.env.NODE_ENV === 'production') 
-      {
-          return 'https://' + app_name +  '.herokuapp.com/' + route;
-      }
-      else
-      {        
-          return 'http://localhost:5000/' + route;
-      }
-  }
-
-
+  const app_name = 'letsdothings';
   /** - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - connects to Login API - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
 
   const doLogin = async event => 
   {
@@ -45,10 +29,11 @@ function CenterDiv(){
 
       var obj = {username:loginName.value,password:loginPassword.value};
       var js = JSON.stringify(obj);
-
+      var storage = require('../tokenStorage.js');
+      var bp = require('./Path.js');
+      
       try
       {  
-          var bp = require('./Path.js');
           //connects front-end to backend
           // B fixes this from local to heroku (uses buildPath)
           const response = await fetch(bp.buildPath('login'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
