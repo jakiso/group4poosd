@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import '../App.css';
 import { Field } from './Field';
 import { Buttonb } from './Button';
 import { LinkP } from './LinkP';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { useJwt } from "react-jwt";
+import { isExpired, decodeToken } from "react-jwt";
 import axios from 'axios';
 
 
@@ -15,86 +15,94 @@ const LoginG = styled(Buttonb)`
 
 function CenterDiv()
 {
-  var loginName;
-  var loginPassword;
-  
+    var loginName;
+    var loginPassword;
 
-  const [message,setMessage] = useState('');
-  const app_name = 'letsdothings';
-  /** - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - connects to Login API - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    const [message,setMessage] = useState('');
 
-  const doLogin = async event => 
-  {
-      event.preventDefault();
+    // Login button push
+    const DoLogin = async event => 
+    {
+        event.preventDefault();
 
-      var obj = {username:loginName.value,password:loginPassword.value};
-      var js = JSON.stringify(obj);
-      var storage = require('../tokenStorage.js');
-      var bp = require('./Path.js');
-      
-      try
-      {  
-          //connects front-end to backend
-          // B fixes this from local to heroku (uses buildPath)
-          const response = await fetch(bp.buildPath('login'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
-          
-          var res = JSON.parse(await response.text());
+        var obj = {username:loginName.value,password:loginPassword.value};
+        var js = JSON.stringify(obj);
+        var storage = require('../tokenStorage.js');
+        var bp = require('./Path.js');
 
-          if( res.userId <= 0 )
-          {
-              setMessage('User/Password combination incorrect');
-          }
-          else
-          {
-              var user = {firstName:res.firstName,lastName:res.lastName,id:res.userId}
-              localStorage.setItem('user_data', JSON.stringify(user));
+        try
+        {  
+            // Retrieves token and error from server
+            const response = await fetch(bp.buildPath('login'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
-              setMessage('');
-              window.location.href = '/Main';
-          }
-      }
-      catch(e)
-      {
-          console.log(e.toString());
-          return;
-      }    
-  };
+            // Convert to JSON
+            var res = JSON.parse(await response.text());
+
+            // Store the JWT in local storage
+            storage.storeToken(res);
+            
+            // Decode the token and store in tokenData
+            const tokenData = decodeToken(storage.retrieveToken());
+            
+            // Check if userId is valid
+            if( tokenData.userId <= 0)
+            {
+                // Let user know error and end
+                setMessage(res.error);
+                return;
+            }
+            else
+            {
+                // Valid user move to /Main
+                var user = {firstName:res.firstName,lastName:res.lastName,id:res.userId}
+                localStorage.setItem('user_data', JSON.stringify(user));
+
+                setMessage('');
+                window.location.href = '/Main';
+            }
+        }
+        // JWT not received properly
+        catch(e)
+        {
+            console.log(e.toString());
+            return;
+        }    
+    };
 
 
     return(
 
-      <div className="main_pane">
+        <div className="main_pane">
 
-        <form onSubmit={doLogin}>
+            <form onSubmit={DoLogin}>
 
+                <div className="fields" style={{"height": "20vh"}}>
 
-        <div className="fields" style={{"height": "20vh"}}>
-        
-        <input type="text" id="loginName" placeholder="Username" 
-        ref={(c) => loginName = c} /><br /> 
-        <input type="password" id="loginPassword" placeholder="Password" 
-        ref={(c) => loginPassword = c} /><br />
+                    <input type="text" id="loginName" placeholder="Username" 
+                        ref={(c) => loginName = c} /><br /> 
+                    <input type="password" id="loginPassword" placeholder="Password" 
+                        ref={(c) => loginPassword = c} /><br />
 
-        <span id="loginResult">{message}</span>
+                    <span id="loginResult">{message}</span>
+
+                </div>
+
+                <div className="buttons"  style={{"height": "30vh"}}>
+
+                    <input type="submit" id="loginButton" class="buttons" value = "Login"
+                        onClick={DoLogin} />
+
+                    <LoginG className="login_g_button">Login with Google</LoginG>
+
+                    <LinkP className="forgot_link">Forgot Password</LinkP>
+
+                    <Link id="create_link" to="/Register">Create Account</Link>
+
+                </div>
+
+            </form>
 
         </div>
-
-        <div className="buttons"  style={{"height": "30vh"}}>
-
-        <input type="submit" id="loginButton" class="buttons" value = "Login"
-          onClick={doLogin} />
-
-        <LoginG className="login_g_button">Login with Google</LoginG>
-
-        <LinkP className="forgot_link">Forgot Password</LinkP>
-
-        <Link id="create_link" to="/Register">Create Account</Link>
-
-        </div>
-
-        </form>
-
-      </div>
     );
 };
 

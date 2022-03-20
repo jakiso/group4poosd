@@ -32,49 +32,51 @@ exports.setApp = function ( app, client )
 
 app.post('/login', async (req, res, next) => 
 {
-  // incoming: username, password
-  // outgoing: id, firstName, lastName, error
-	
- var error = '';
- var errMsg;
+    // incoming: username, password
+    // outgoing: id, firstName, lastName, error
 
- const { username, password } = req.body;
+    const { username, password } = req.body;
 
- const db = client.db();
- const results = await db.collection('Users').find({username:username,password:password}).toArray();
+    const db = client.db();
+    const results = await db.collection('Users').find({username:username,password:password}).toArray();
 
- var id = -1;
- var fn = '';
- var ln = '';
+    var id = -1;
+    var fn = '';
+    var ln = '';
 
- if( results.length > 0 )
- {
-   id = results[0].userId;
-   fn = results[0].firstName;
-   ln = results[0].lastName;
-   if (results[0].emailConfirm == -1)
-   {
-       errMsg = 'Please confirm your email before logging in.'
-   }
-    try
+    var errMsg = '';
+
+    if( results.length > 0 )
+    {
+        id = results[0].userId;
+        fn = results[0].firstName;
+        ln = results[0].lastName;
+        
+        if (results[0].emailConfirm == -1)
+        {
+            errMsg = 'Please confirm your email before logging in.'
+        }
+
+        try
+        {
+            const token = require("./createJWT.js");
+            ret = token.createToken( fn, ln, id );
+        }
+        catch(e)
+        {
+            
+            ret = {error:e.message};
+        }
+    }
+    else
     {
         const token = require("./createJWT.js");
+        errMsg = 'Login/Password incorrect';
         ret = token.createToken( fn, ln, id );
     }
-    catch(e)
-    {
-        ret = {error:e.message};
-    }
- }
 
- else
-    {
-        ret = {error:"Login/Password incorrect"};
-    }
-
- var ret = { userId:id, firstName:fn, lastName:ln, error:errMsg};
- res.status(200).json(ret);
-
+    ret = Object.assign(ret, {error:errMsg})
+    res.status(200).json( ret );
 });
 
 app.post('/createFolder', async (req, res, next) =>
