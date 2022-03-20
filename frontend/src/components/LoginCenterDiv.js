@@ -35,7 +35,7 @@ function CenterDiv()
             // Retrieves token and error from server
             const response = await fetch(bp.buildPath('login'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
-            // Convert to JSON
+            // Convert response to JSON
             var res = JSON.parse(await response.text());
 
             // Store the JWT in local storage
@@ -71,37 +71,23 @@ function CenterDiv()
 
 
     return(
-
         <div className="main_pane">
-
             <form onSubmit={DoLogin}>
-
                 <div className="fields" style={{"height": "20vh"}}>
-
                     <input type="text" id="loginName" placeholder="Username" 
                         ref={(c) => loginName = c} /><br /> 
                     <input type="password" id="loginPassword" placeholder="Password" 
                         ref={(c) => loginPassword = c} /><br />
-
                     <span id="loginResult">{message}</span>
-
                 </div>
-
                 <div className="buttons"  style={{"height": "30vh"}}>
-
-                    <input type="submit" id="loginButton" class="buttons" value = "Login"
+                    <input type="submit" id="loginButton" className="buttons" value = "Login"
                         onClick={DoLogin} />
-
                     <LoginG className="login_g_button">Login with Google</LoginG>
-
                     <LinkP className="forgot_link">Forgot Password</LinkP>
-
                     <Link id="create_link" to="/Register">Create Account</Link>
-
                 </div>
-
             </form>
-
         </div>
     );
 };

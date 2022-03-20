@@ -6,22 +6,21 @@ import {LongTab} from '../components/LongTab'
 import styled from 'styled-components'
 
 const TabTitle = styled(LongTab)`
-    
+
 `
 
 function RegisterPage() {
-  return (
-    <body className="background">
+    return (
+        <body className="background">
 
-      <LoginTitle/>
+            <LoginTitle/>
 
-      <TabTitle>Register</TabTitle>
+            <TabTitle>Register</TabTitle>
 
-      <RegisterCenterDiv/>
+            <RegisterCenterDiv/>
 
-    </body>
-    
-  );
+        </body>
+    );
 }
 
 export default RegisterPage;

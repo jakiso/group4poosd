@@ -20,9 +20,9 @@ const Text = styled.text`
 
 export const LongTab = ({children, className}) =>{
     return(
-      <div className="tab">
-      <img className="arc" src={arc} alt="Arc"></img>
-        <Text className={className}>{children}</Text>
-      </div>
+        <div className="tab">
+            <img className="arc" src={arc} alt="Arc"></img>
+            <Text className={className}>{children}</Text>
+        </div>
     )
 }

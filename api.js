@@ -3,11 +3,11 @@ require('mongodb');
 
 exports.setApp = function ( app, client )
 {
-    app.post('/register', async (req, res, next) =>
-    {
+app.post('/register', async (req, res, next) =>
+{
     // incoming: first name, last name, username, email, password
     // outgoing: error
-        
+
     const {firstName, lastName, username, email, password} = req.body;
 
     const newUser = {firstName:firstName, lastName:lastName, username:username, 
@@ -15,20 +15,39 @@ exports.setApp = function ( app, client )
 
     var error = '';
 
+    // Connect to the database
+    const db = client.db();
+
+    // Search the database for the username
+    const exist = await db.collection('Users').find({username:username}).toArray();
+
+    // If the returned array is not 0 then user already exists
+    if (exist.length != 0)
+    {
+        // Send an error that the username already exists
+        error = "Username already exists";
+        var ret = { error: error };
+        res.status(200).json(ret);
+
+        // Exit the api call
+        return;
+    }
+
+    // Insert a new unique username
     try
     {
-        const db = client.db();
-        const result = db.collection('Users').insertOne(newUser);
+        // Insert the new user to the database
+        const result = await db.collection('Users').insertOne(newUser);
     }
     catch(e)
     {
         error = e.toString();
     }
 
+    // Everything is successful send empty error
     var ret = { error: error };
     res.status(200).json(ret);
 });
-
 
 app.post('/login', async (req, res, next) => 
 {
