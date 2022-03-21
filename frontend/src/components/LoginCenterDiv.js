@@ -51,12 +51,23 @@ function CenterDiv()
                 setMessage(res.error);
                 return;
             }
+
+            // The user that is logging in is valid now check for errors
+            // Store the user info locally
+            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId}
+            localStorage.setItem('user_data', JSON.stringify(user));
+
+            // Checks the error message from server.
+            // Lets the user know they must confirm their email before continuing
+            if (res.error == 'Please confirm your email before logging in.')
+            {
+                // Move to /Verify
+                setMessage('');
+                window.location.href = '/Verify';
+            }
             else
             {
                 // Valid user move to /Main
-                var user = {firstName:res.firstName,lastName:res.lastName,id:res.userId}
-                localStorage.setItem('user_data', JSON.stringify(user));
-
                 setMessage('');
                 window.location.href = '/Main';
             }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../App.css';
+import { isExpired, decodeToken } from "react-jwt";
 import { Field } from './Field';
 import { Buttonb } from './Button';
 import axios from 'axios';
@@ -79,8 +80,17 @@ function CenterDiv(){
                 return;
             }
 
-            // If not then account creation is complete
+            // Store the JWT and the user_data
+            var storage = require('../tokenStorage.js');
+            storage.storeToken(res);
+            // Decode the token and store in tokenData
+            const tokenData = decodeToken(storage.retrieveToken());
+            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId}
+            localStorage.setItem('user_data', JSON.stringify(user));
+
+            // Account has been created go to verification page
             setMessage('Your account has been created!');
+            window.location.href = '/Verify';
         }
         catch(e)
         {

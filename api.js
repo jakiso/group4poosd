@@ -44,8 +44,21 @@ app.post('/register', async (req, res, next) =>
         error = e.toString();
     }
 
+    // After the user is inserted, find the user to create a JWT
+    try
+    {
+        const retNewUser = await db.collection('Users').find({username:username}).toArray();
+        console.log(retNewUser);
+        const token = require("./createJWT.js");
+        retToken = token.createToken( retNewUser[0].firstName, retNewUser[0].lastName, retNewUser[0].userId );
+    }
+    catch(e)
+    {
+        error = e.toString();
+    }
+
     // Everything is successful send empty error
-    var ret = { error: error };
+    ret = Object.assign(retToken, {error:error})
     res.status(200).json(ret);
 });
 
