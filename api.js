@@ -121,4 +121,36 @@ app.post('/createFolder', async (req, res, next) =>
     
     res.status(200).json(ret);
 });
+
+// npm install --save @sendgrid/mail 
+app.post('/sendtestmail', async (req, res, next) =>
+{   
+    require('dotenv').config();
+    const sgMail = require('@sendgrid/mail')
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+    
+    const { email } = req.body;
+    var response;
+    
+    const msg = {
+        to: email, // Change to your recipient
+        from: 'group4poosd@gmail.com', // Change to your verified sender
+        subject: 'Sending Test Email',
+        text: 'words words words words words words',
+        html: '<strong>more words more words more words more words</strong>',
+    }
+    sgMail
+    .send(msg)
+    .then(() => {
+        console.log('Email sent')
+        response = "Email successfully sent to " + email + "!";
+        var r = {error:response};
+        res.status(200).json(r);
+    })
+    .catch((error) => {
+        console.error(error)
+        var r = {error:error};
+        res.status(200).json(r);
+    })
+});
 }
