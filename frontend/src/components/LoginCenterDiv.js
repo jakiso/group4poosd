@@ -35,7 +35,7 @@ function CenterDiv()
             // Retrieves token and error from server
             const response = await fetch(bp.buildPath('login'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
-            // Convert to JSON
+            // Convert response to JSON
             var res = JSON.parse(await response.text());
 
             // Store the JWT in local storage
@@ -51,12 +51,23 @@ function CenterDiv()
                 setMessage(res.error);
                 return;
             }
+
+            // The user that is logging in is valid now check for errors
+            // Store the user info locally
+            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId}
+            localStorage.setItem('user_data', JSON.stringify(user));
+
+            // Checks the error message from server.
+            // Lets the user know they must confirm their email before continuing
+            if (res.error == 'Please confirm your email before logging in.')
+            {
+                // Move to /Verify
+                setMessage('');
+                window.location.href = '/Verify';
+            }
             else
             {
                 // Valid user move to /Main
-                var user = {firstName:res.firstName,lastName:res.lastName,id:res.userId}
-                localStorage.setItem('user_data', JSON.stringify(user));
-
                 setMessage('');
                 window.location.href = '/Main';
             }
@@ -71,37 +82,23 @@ function CenterDiv()
 
 
     return(
-
         <div className="main_pane">
-
             <form onSubmit={DoLogin}>
-
                 <div className="fields" style={{"height": "20vh"}}>
-
                     <input type="text" id="loginName" placeholder="Username" 
                         ref={(c) => loginName = c} /><br /> 
                     <input type="password" id="loginPassword" placeholder="Password" 
                         ref={(c) => loginPassword = c} /><br />
-
                     <span id="loginResult">{message}</span>
-
                 </div>
-
                 <div className="buttons"  style={{"height": "30vh"}}>
-
-                    <input type="submit" id="loginButton" class="buttons" value = "Login"
+                    <input type="submit" id="loginButton" className="buttons" value = "Login"
                         onClick={DoLogin} />
-
                     <LoginG className="login_g_button">Login with Google</LoginG>
-
                     <LinkP className="forgot_link">Forgot Password</LinkP>
-
                     <Link id="create_link" to="/Register">Create Account</Link>
-
                 </div>
-
             </form>
-
         </div>
     );
 };
