@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import '../App.css';
 import { isExpired, decodeToken } from "react-jwt";
-import { Field } from './Field';
-import { Buttonb } from './Button';
 import axios from 'axios';
 
 function CenterDiv(){
@@ -103,7 +101,7 @@ function CenterDiv(){
     return(
         <div className="main_pane">
             <form onSubmit={doRegister}>
-                <div className="fields" style={{"height": "40vh"}}>
+                <div className="fields" style={{"display": "flex", "display":"grid"}}>
                     <input type="text" id="firstName" placeholder="First Name" 
                         ref={(c) => firstName = c} /> <br /> 
                     <input type="text" id="lastName" placeholder="Last Name" 
@@ -118,7 +116,7 @@ function CenterDiv(){
                         ref={(c) => confirmPassword = c} /> <br /> 
                     <span id="loginResult" style={{"marginTop": "10px"}}>{message}</span>
                 </div>
-                <div className="buttons" style={{"marginTop": "100px"}}>
+                <div className="buttons" style={{"display": "flex"}}>
                     <input type="submit" id="signUpButton" className="buttons" value = "Sign Up"
                         onClick={doRegister} />
                 </div>

@@ -51,18 +51,18 @@ body {
 
 /* arc png will not change on any page*/
 .arc {
-  position: absolute;
+  /* position: absolute; */
   width: 581px;
   height: 59px;
-  margin-top: 50px;
-  display: flex;
+  /* margin-top: 50px; */
+  /* display: flex; */
   justify-content: center;
-  z-index: 2;
+  /* z-index: 2; */
 }
 
 /* main pane will not change on any page*/
 .main_pane {
-  margin-top: 109px;
+  /* margin-top: 109px; */
   margin-left: auto;
   margin-right: auto;
 
@@ -75,6 +75,7 @@ body {
   background: linear-gradient(180deg,#20CEF2, rgba(32, 206, 242, 0.27) 70%);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 14px;
+  overflow:auto;
 }
 
 .fields{
@@ -107,9 +108,11 @@ input[type=submit]{
   display: flex;
   justify-content: center;
   z-index: 4;
+  margin-left:auto; 
+  margin-right:auto;
 }
 
-#create_link{
+.link{
   color:#001A5E;
   font-family: Denk One;
   font-style: normal;

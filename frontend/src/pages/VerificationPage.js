@@ -1,21 +1,17 @@
 import React from 'react';
 import '../App.css';
-import LoginTitle from '../components/LoginTitle';
 import VerifyCenterDiv from '../components/VerifyCenterDiv';
 import {LongTab} from '../components/LongTab'
 import styled from 'styled-components'
-
-const TabTitle = styled(LongTab)`
-
-`
+import { Title } from '../components/Title';
 
 function VerificationPage() {
     return (
         <body className="background">
 
-            <LoginTitle/>
+            <Title className="title"/>
 
-            <TabTitle>Verification</TabTitle>
+            <LongTab>Verification</LongTab>
             
             <VerifyCenterDiv/>
 
