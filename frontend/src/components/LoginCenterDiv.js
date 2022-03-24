@@ -1,17 +1,11 @@
 import React, { useState } from "react";
 import '../App.css';
-import { Field } from './Field';
 import { Buttonb } from './Button';
-import { LinkP } from './LinkP';
+import { LinkStyled } from './LinkStyled';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { isExpired, decodeToken } from "react-jwt";
 import axios from 'axios';
-
-
-const LoginG = styled(Buttonb)`
-  line-height: 33px;
-`
+import { Link } from "react-router-dom";
 
 function CenterDiv()
 {
@@ -84,19 +78,20 @@ function CenterDiv()
     return(
         <div className="main_pane">
             <form onSubmit={DoLogin}>
-                <div className="fields" style={{"height": "20vh"}}>
+                <div className="fields" style={{"display": "flex", "display":"grid", "row-gap": "1rem"}}>
                     <input type="text" id="loginName" placeholder="Username" 
                         ref={(c) => loginName = c} /><br /> 
                     <input type="password" id="loginPassword" placeholder="Password" 
                         ref={(c) => loginPassword = c} /><br />
                     <span id="loginResult">{message}</span>
                 </div>
-                <div className="buttons"  style={{"height": "30vh"}}>
-                    <input type="submit" id="loginButton" className="buttons" value = "Login"
-                        onClick={DoLogin} />
-                    <LoginG className="login_g_button">Login with Google</LoginG>
-                    <LinkP className="forgot_link">Forgot Password</LinkP>
-                    <Link id="create_link" to="/Register">Create Account</Link>
+                <div style={{"display":"grid", "row-gap": "2rem"}}>
+                    <input type="submit" id="loginButton" value = "Login"
+                        onClick={DoLogin} style={{"margin-top":"40px"}}/>
+                    <input type="submit" id="loginGButton" value = "Login with Google" 
+                    style={{"width":"30%"}}/>
+                    <LinkStyled className="link" link_text="Forgot Password"/>
+                    <LinkStyled className="link" route="/Register" link_text="Create Account"/>
                 </div>
             </form>
         </div>

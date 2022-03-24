@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
-import { Field } from './Field';
-import { Buttonb } from './Button';
 import axios from 'axios';
 
 function CenterDiv(){
@@ -26,9 +24,9 @@ function CenterDiv(){
     };
 
     return(
-        <div className="main_pane"> 
-            <span id="loginResult" style={{"marginTop": "200px"}}>{message}</span><br/>
-            <span id="userData">{userData}</span><br/>
+        <div className="main_pane"> <br/><br/><br/><br/>
+            <span id="loginResult" style={{"marginTop": "0px"}}>{message}</span><br/><br/><br/>
+            <span id="userData" >{userData}</span><br/>
             <span id="tokenData">{tokenData}</span>
             <div className="buttons" style={{"marginTop": "100px"}}>
                 <input type="submit" id="verifyButton" className="buttons" value = "Verify"
