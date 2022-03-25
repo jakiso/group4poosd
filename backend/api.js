@@ -55,6 +55,7 @@ exports.setApp = function ( app, client )
     });
 
     // it will be good to delete places from the database so if no user has it on their list, it wont take up space.
+    // for right now this is only for the places collection. can change to delete from folder later if we don't use Places in the db.
     app.post('/deletePlace', async (req, res, next) =>
     {
         // must use placesId since folders might have the same name from different users.
