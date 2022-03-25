@@ -314,8 +314,7 @@ exports.setApp = function ( app, client )
         const newFolder = new Folder
         ({
             userId: req.body.userId,
-            folderName:req.body.folderName,
-            placeList:new Array()
+            folderName: req.body.folderName,
         });
 
         try
