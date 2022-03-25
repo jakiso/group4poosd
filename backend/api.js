@@ -1,11 +1,124 @@
 require('express');
 require('mongodb');
 var axios = require('axios');
-const User = require('./models/user.js');
+const User = require('./models/newUser.js');
+const Folder = require('./models/folder.js');
 const Place = require('./models/place.js');
 
 exports.setApp = function ( app, client )
 {
+    app.post('/savePlace', async (req, res, next) =>
+    {
+        // req = {folderId, userId, placeName, placeAddress}
+
+        // as of right now this will just save address and name of location to a folder in the placeList array.
+        // in the future we could have an array of users stored for each place in the places collection. 
+        // basically an array of userId's associated with each place.
+
+        // going to create a folder but without the mongoose schema for now.
+        const fid = req.body.folderId;
+        const uid = req.body.userId;
+
+        // using place schema.
+        const newPlace = new Place
+        ({
+            placeName: req.body.placeName,
+            placeAddress: req.body.placeAddress
+        });
+
+        var msg = '';
+
+        try
+        {
+            const db = client.db();
+            const result = await db.collection('Folders').updateOne
+            (
+                {userId: uid, folderId: fid},
+                { $push: 
+                    {placeList: 
+                        {
+                            placeName: newPlace.placeName,
+                            placeAddress: newPlace.placeAddress
+                        }
+                    }
+                }
+            )
+            
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        res.status(200).json(msg);
+    });
+
+    // it will be good to delete places from the database so if no user has it on their list, it wont take up space.
+    app.post('/deletePlace', async (req, res, next) =>
+    {
+        // must use placesId since folders might have the same name from different users.
+        const thisPlace = req.body.placesId;
+        // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
+        var msg = '';
+
+        try
+        {
+            const db = client.db();
+            const result = await db.collection('Places').deleteOne({placesId: thisPlace});
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        res.status(200).json(msg);
+    });
+
+    app.post('/deleteFolder', async (req, res, next) =>
+    {
+        // must use folderId since folders might have the same name from different users.
+        const thisFolder = req.body.folderId;
+        // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
+        var msg = '';
+
+        try
+        {
+            const db = client.db();
+            const result = await db.collection('Folders').deleteOne({folderId: thisFolder});
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            msg = e;
+        }
+
+        res.status(200).json(msg);
+    });
+    // you might be able to do /delete/:id.
+    app.post('/deleteUser', async (req, res, next) =>
+    {
+        // will need userId to delete.
+        const thisUser = req.body.userId;
+        // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
+        var msg;
+
+        try
+        {
+            const db = client.db();
+            const result = await db.collection('Users').deleteOne({userId: thisUser});
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            msg = e;
+        }
+
+        res.status(200).json(msg);
+    });
     app.post('/nearbySearch', async (req, res, next) => 
     {
     // incoming: userId, search
@@ -66,10 +179,19 @@ exports.setApp = function ( app, client )
         // incoming: first name, last name, username, email, password
         // outgoing: error
 
-        const {firstName, lastName, username, email, password} = req.body;
+        const newUser = new User
+        ({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password
+        });
 
-        const newUser = {firstName:firstName, lastName:lastName, username:username, 
-                        email:email, password:password, emailConfirm:-1};
+        // const {firstName, lastName, username, email, password} = req.body;
+
+        // const newUser = {firstName:firstName, lastName:lastName, username:username, 
+        //                 email:email, password:password, emailConfirm:-1};
 
         var error = '';
 
@@ -77,7 +199,7 @@ exports.setApp = function ( app, client )
         const db = client.db();
 
         // Search the database for the username
-        const exist = await db.collection('Users').find({username:username}).toArray();
+        const exist = await db.collection('Users').find({username:newUser.username}).toArray();
 
         // If the returned array is not 0 then user already exists
         if (exist.length != 0)
@@ -96,6 +218,7 @@ exports.setApp = function ( app, client )
         {
             // Insert the new user to the database
             const result = await db.collection('Users').insertOne(newUser);
+            console.log(result);
         }
         catch(e)
         {
@@ -105,11 +228,20 @@ exports.setApp = function ( app, client )
         // After the user is inserted, find the user to create a JWT
         try
         {
-            const retNewUser = await db.collection('Users').find({username:username}).toArray();
+            // only returns the first instance of the username as a single user instead of array.
+            const retNewUser = await db.collection('Users').findOne
+            (
+                {
+                    $or: [
+                        {'username' : newUser.username}
+                    ]
+                }
+            )
             console.log(retNewUser);
             const token = require("./createJWT.js");
-            retToken = token.createToken( retNewUser[0].firstName, retNewUser[0].lastName, retNewUser[0].userId );
+            retToken = token.createToken( retNewUser.firstName, retNewUser.lastName, retNewUser.userId );
         }
+        
         catch(e)
         {
             error = e.toString();
@@ -196,7 +328,7 @@ exports.setApp = function ( app, client )
         }
         catch(e)
         {
-            error = e.toString();
+            console.log(e.message);
         }
 
         var refreshedToken = null;

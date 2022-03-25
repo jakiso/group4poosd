@@ -17,7 +17,7 @@ function App() {
                 <Route path="/Register" exact>
                     <RegisterPage />
                 </Route>
-                <Route path="/Main" exact>
+                <Route path="/" exact>
                     <MainPage />
                 </Route>
                 <Route path="/Verify" exact>
