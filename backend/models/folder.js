@@ -8,18 +8,14 @@ const Folder = mongoose.model(
       type: Number,
       required: true
     },
-    folderId: {
-      type: Number,
-      required: true
-    },
     folderName: {
       type: String,
       required: true
     },
     placeList: [{   // placeList will store the names and addresses of locations.
-      placeName: String,
-      PlaceAddress: String
-  }],
+      placeName: {type:String, default:null},
+      PlaceAddress: {type:String, default:null},
+    }]
     // token: {
     //   type: String,
     //   required: true

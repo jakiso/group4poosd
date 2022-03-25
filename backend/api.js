@@ -97,6 +97,7 @@ exports.setApp = function ( app, client )
 
         res.status(200).json(msg);
     });
+
     // you might be able to do /delete/:id.
     app.post('/deleteUser', async (req, res, next) =>
     {
@@ -119,6 +120,7 @@ exports.setApp = function ( app, client )
 
         res.status(200).json(msg);
     });
+
     app.post('/nearbySearch', async (req, res, next) => 
     {
     // incoming: userId, search
@@ -173,7 +175,8 @@ exports.setApp = function ( app, client )
     {
         console.log(error);
     });
-});
+    });
+
     app.post('/register', async (req, res, next) =>
     {
         // incoming: first name, last name, username, email, password
@@ -303,9 +306,17 @@ exports.setApp = function ( app, client )
 
     app.post('/createFolder', async (req, res, next) =>
     {
-        const {userId, jwtToken, name} = req.body;
+
+        const jwtToken = req.body.jwToken;
         var error = '';
         var token = require('./createJWT.js');
+
+        const newFolder = new Folder
+        ({
+            userId: req.body.userId,
+            folderName:req.body.folderName,
+            placeList:new Array()
+        });
 
         try
         {
@@ -324,7 +335,7 @@ exports.setApp = function ( app, client )
         try
         {
             const db = client.db();
-            const results = await db.collection('Folders').insertOne({userId:userId, name:name});
+            const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderName:newFolder.folderName});
         }
         catch(e)
         {
@@ -341,7 +352,7 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
         
-        var ret = { error: error, jwtToken: refreshedToken };
+        var ret = { error: error, jwToken: refreshedToken };
         
         res.status(200).json(ret);
     });

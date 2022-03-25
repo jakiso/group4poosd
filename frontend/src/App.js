@@ -23,7 +23,7 @@ function App() {
                 <Route path="/Verify" exact>
                     <VerificationPage />
                 </Route>
-                <Redirect to="/Login" />
+                <Redirect to="/" />
             </Switch>  
         </Router>
     );
