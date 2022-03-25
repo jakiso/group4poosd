@@ -81,9 +81,35 @@ exports.setApp = function ( app, client )
     {
         // must use folderId since folders might have the same name from different users.
         const thisFolder = req.body.folderId;
+
+        // Used to create a token later
+        var token = require('./createJWT.js');
+        // Store JWT
+        const jwToken = req.body.jwToken;
+        // Error field
+        var error = '';
+
         // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
         var msg = '';
 
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+
+        // Actual folder deletion
         try
         {
             const db = client.db();
@@ -96,7 +122,20 @@ exports.setApp = function ( app, client )
             msg = e;
         }
 
-        res.status(200).json(msg);
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
     });
 
     // you might be able to do /delete/:id.
