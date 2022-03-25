@@ -15,7 +15,7 @@ exports.setApp = function ( app, client )
         // in the future we could have an array of users stored for each place in the places collection. 
         // basically an array of userId's associated with each place.
 
-        // going to create a folder but without the mongoose schema for now.
+        // no need for folder schema since we are just inserting into an existing folder. 
         const fid = req.body.folderId;
         const uid = req.body.userId;
 
