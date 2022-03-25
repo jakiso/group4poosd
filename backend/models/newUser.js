@@ -27,7 +27,8 @@ const User = mongoose.model(
       type: Number, 
       enum: [-1, 1],
       default: -1
-    }
+    },
+    userId: {}
   })
 );
 
