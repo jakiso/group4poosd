@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components'
 
 const Button = styled.input`
-margin-top: 50px;
+marginTop: 50px;
 width: 163px;
 height: 114px;
 
@@ -18,7 +18,7 @@ color: #FEFFDC;
 background: #001A5E;
 border-radius: 14px;
 align:right;
-column-gap: 1rem;
+columnGap: 1rem;
 `
 
 export const Buttonb = ({className, button_id, button_text, onClick}) =>{

@@ -15,7 +15,7 @@ const Text = styled.text`
     padding: 15px;
 
     // display: flex;
-    justify-content: center;
+    justifyContent: center;
     // letter-spacing: 0.1em;
     // z-index: 4;
 `
@@ -25,7 +25,7 @@ export const SearchTab = ({children, className}) =>{
     return (
         <div className="tab" >
             <img className="search_tab" src={tab_search_dark} alt="Lists" style={{"width":"auto", "height":"100%"
-            ,"object-fit":"cover", "display":"block","margin-left": "auto","margin-right":"auto"}}></img>
+            ,"objectFit":"cover", "display":"block","margin-left": "auto","margin-right":"auto"}}></img>
             <Text className={className}>{children}</Text>
         </div>  
     )
