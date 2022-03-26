@@ -7,8 +7,7 @@ import { CenterDiv } from '../components/CenterDiv';
 import styled from 'styled-components'
 import { SearchTab } from '../components/SearchTab';
 import FoldersUI from '../components/FoldersUI';
-import { Title } from '../components/Title';
-
+import CardsUI from  '../components/CardsUI';
 
 const Buttona = styled(Buttonb)`
 background: #000000;
@@ -46,7 +45,11 @@ function MainPage() {
               <SearchTab children="Activities"/>
               <SearchTab children="Friends"/>
             </div>
-            <CenterDivMain className='main_pane'/>
+              <div>
+                <CenterDivMain className='main_pane'>
+                <CardsUI/>
+                </CenterDivMain>
+              </div>
           </div>
       </div>
       </div>
