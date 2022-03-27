@@ -18,9 +18,9 @@ body {
   position: relative;
   width: 696px;
   height: 114px;
-  margin-top: 50px;
-  margin-left: auto;
-  margin-right: auto;
+  marginTop: 50px;
+  marginLeft: auto;
+  marginRight: auto;
   background: #001A5E;
   border-radius: 14px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -33,20 +33,20 @@ body {
   line-height: 100px;
   
   display: flex;
-  justify-content: center;
+  justifyContent: center;
   letter-spacing: 0.1em;
 }
 
 /* logo png on title will not change on any page*/
 .logo {
-  padding-left: 50px;
+  paddingLeft: 50px;
 }
 
 /* this Account tab will not change on any page*/
 .tab{
   position: relative;
   display: flex;
-  justify-content: center;
+  justifyContent: center;
 }
 
 /* arc png will not change on any page*/
@@ -54,17 +54,17 @@ body {
   /* position: absolute; */
   width: 581px;
   height: 59px;
-  /* margin-top: 50px; */
+  /* marginTop: 50px; */
   /* display: flex; */
-  justify-content: center;
+  justifyContent: center;
   /* z-index: 2; */
 }
 
 /* main pane will not change on any page*/
 .main_pane {
-  /* margin-top: 109px; */
-  margin-left: auto;
-  margin-right: auto;
+  /* marginTop: 109px; */
+  marginLeft: auto;
+  marginRight: auto;
 
   width: 806px;
   height: 720px;
@@ -81,13 +81,13 @@ body {
 .fields{
   padding-top: 100px;
   display: grid;
-  justify-content: center;
+  justifyContent: center;
 }
 
 .buttons{
   padding-top: 20px;
   display: grid;
-  justify-content: center;
+  justifyContent: center;
 }
 
 input[type=submit]{
@@ -106,10 +106,10 @@ input[type=submit]{
   line-height:0px;
 
   display: flex;
-  justify-content: center;
+  justifyContent: center;
   z-index: 4;
-  margin-left:auto; 
-  margin-right:auto;
+  marginLeft:auto; 
+  marginRight:auto;
 }
 
 .link{
@@ -122,7 +122,7 @@ input[type=submit]{
   text-decoration: underline;
 
   display: flex;
-  justify-content: center;
+  justifyContent: center;
   z-index: 4;
 }
 
@@ -135,7 +135,7 @@ input[type=submit]{
   line-height:0px;
 
   display: flex;
-  justify-content: center;
+  justifyContent: center;
   z-index: 4;
 }
 

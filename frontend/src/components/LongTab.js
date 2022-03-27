@@ -13,7 +13,7 @@ const Text = styled.text`
     line-height: 160px;
 
     display: flex;
-    justify-content: center;
+    justifyContent: center;
     letter-spacing: 0.1em;
     z-index: 4;
 `
@@ -22,7 +22,7 @@ export const LongTab = ({children, className}) =>{
     return(
         <div className="tab">
             <img className="arc" src={arc} alt="Arc" style={{"width":"581px", "height":"100"
-            ,"object-fit":"cover", "display":"block","margin-left": "auto","margin-right":"auto"}}></img>
+            ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto"}}></img>
             <Text className={className}>{children}</Text>
         </div>
     )

@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { Title } from '../components/Title';
 
 const TitleHeader = styled(Title)`
-    margin-bottom:40px;
+    marginBottom:40px;
 `
 
 const TabTitle = styled(LongTab)`
@@ -19,7 +19,7 @@ function RegisterPage() {
             
             <div style={{"display":"grid", "gridTemplateRows": "1fr", "align-content":"center"}}>
             <TitleHeader className="title"/>
-            <div class="wrapper" style={{"display":"grid", "gridTemplateRows": "1fr 100%"}}>
+            <div className="wrapper" style={{"display":"grid", "gridTemplateRows": "1fr 100%"}}>
             <TabTitle children="Register"></TabTitle>
             <RegisterCenterDiv/>
             </div>
