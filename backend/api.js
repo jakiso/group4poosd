@@ -399,19 +399,78 @@ exports.setApp = function ( app, client )
 
     app.post('/sendtestmail', async (req, res, next) =>
     {   
+        // Sendgrid setup
         require('dotenv').config();
-        const sgMail = require('@sendgrid/mail')
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+        // Token for checking and refreshing
+        var token = require('./createJWT.js');
     
+        // Error message to be sent
         var error = '';
+
+        // Response of email status
+        var responseMsg = '';
+
+                // Show what gets sent from front-end
+                console.log(req.body);
+
+        // Variable to store the response to be sent back to front-end
+        const r = 
+        {
+            error: error,
+            jwToken: req.body.jwToken,
+            response: responseMsg
+        };
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(req.body.jwToken))
+            {
+                r.error = 'The JWT is no longer valid';
+                r.jwToken = '';
+                r.response = responseMsg;
+
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+
+        }
+
+        // Make a new token and store it in the message to be sent back
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(r.jwToken);
+            r.jwToken = refreshedToken;
+        }
+        catch(e)
+        {
+            console.log("token refresh catch");
+            console.log(e.message);
+        }
+        
+
+
+        // SEND EMAIL STUFF
+
+        // Get usedId from front-end
+        const userId = req.body.userId;
 
         // Connect to the database
         const db = client.db();
         // Search the database for the userId
-        // const exist = await db.collection('Users').find({username:newUser.username}).toArray();
+        const userEmail = await db.collection('Users').findOne({userId:userId});
 
-        // const { email } = req.body;
-        var responseMsg;
+        // retrieved users email
+        console.log(userEmail);
     
         const msg = {
             to: 'mohamed.faizel14b@gmail.com', // Change to your recipient
@@ -423,12 +482,27 @@ exports.setApp = function ( app, client )
         .then(() => {
             console.log('Email sent')
             responseMsg = "Email successfully sent!";
-            var r = {response:responseMsg};
+
+            // Edit responses
+            r.error = error;
+            r.response = responseMsg;
+
+            // Show response before sent
+            console.log(r);
+
+            // Send the response
             res.status(200).json(r);
         })
         .catch((error) => {
             console.error(error)
-            var r = {error:error};
+
+            // Edit response
+            r.error = error;
+
+            // Show response
+            console.log(r)
+
+            // Send response
             res.status(200).json(r);
         });
 
