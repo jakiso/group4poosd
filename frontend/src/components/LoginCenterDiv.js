@@ -1,100 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import '../App.css';
-import { Field } from './Field';
 import { Buttonb } from './Button';
-import { LinkP } from './LinkP';
+import { LinkStyled } from './LinkStyled';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { useJwt } from "react-jwt";
+import { isExpired, decodeToken } from "react-jwt";
 import axios from 'axios';
-
-
-const LoginG = styled(Buttonb)`
-  line-height: 33px;
-`
+import { Link } from "react-router-dom";
 
 function CenterDiv()
 {
-  var loginName;
-  var loginPassword;
-  
+    var loginName;
+    var loginPassword;
 
-  const [message,setMessage] = useState('');
-  const app_name = 'letsdothings';
-  /** - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - connects to Login API - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    const [message,setMessage] = useState('');
 
-  const doLogin = async event => 
-  {
-      event.preventDefault();
+    // Login button push
+    const DoLogin = async event => 
+    {
+        event.preventDefault();
 
-      var obj = {username:loginName.value,password:loginPassword.value};
-      var js = JSON.stringify(obj);
-      var storage = require('../tokenStorage.js');
-      var bp = require('./Path.js');
-      
-      try
-      {  
-          //connects front-end to backend
-          // B fixes this from local to heroku (uses buildPath)
-          const response = await fetch(bp.buildPath('login'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
-          
-          var res = JSON.parse(await response.text());
+        var obj = {username:loginName.value,password:loginPassword.value};
+        var js = JSON.stringify(obj);
+        var storage = require('../tokenStorage.js');
+        var bp = require('./Path.js');
 
-          if( res.userId <= 0 )
-          {
-              setMessage('User/Password combination incorrect');
-          }
-          else
-          {
-              var user = {firstName:res.firstName,lastName:res.lastName,id:res.userId}
-              localStorage.setItem('user_data', JSON.stringify(user));
+        try
+        {  
+            // Retrieves token and error from server
+            const response = await fetch(bp.buildPath('login'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
-              setMessage('');
-              window.location.href = '/Main';
-          }
-      }
-      catch(e)
-      {
-          console.log(e.toString());
-          return;
-      }    
-  };
+            // Convert response to JSON
+            var res = JSON.parse(await response.text());
+
+            // Store the JWT in local storage
+            storage.storeToken(res);
+            
+            // Decode the token and store in tokenData
+            const tokenData = decodeToken(storage.retrieveToken());
+            
+            // Check if userId is valid
+            if( tokenData.userId <= 0)
+            {
+                // Let user know error and end
+                setMessage(res.error);
+                return;
+            }
+
+            // The user that is logging in is valid now check for errors
+            // Store the user info locally
+            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId}
+            localStorage.setItem('user_data', JSON.stringify(user));
+
+            // Checks the error message from server.
+            // Lets the user know they must confirm their email before continuing
+            if (res.error == 'Please confirm your email before logging in.')
+            {
+                // Move to /Verify
+                setMessage('');
+                window.location.href = '/Verify';
+            }
+            else
+            {
+                // Valid user move to /Main
+                setMessage('');
+                window.location.href = '/Main';
+            }
+        }
+        // JWT not received properly
+        catch(e)
+        {
+            console.log(e.toString());
+            return;
+        }    
+    };
 
 
     return(
-
-      <div className="main_pane">
-
-        <form onSubmit={doLogin}>
-
-
-        <div className="fields" style={{"height": "20vh"}}>
-        
-        <input type="text" id="loginName" placeholder="Username" 
-        ref={(c) => loginName = c} /><br /> 
-        <input type="password" id="loginPassword" placeholder="Password" 
-        ref={(c) => loginPassword = c} /><br />
-
-        <span id="loginResult">{message}</span>
-
+        <div className="main_pane">
+            <form onSubmit={DoLogin}>
+                <div className="fields" style={{"display": "flex", "display":"grid", "row-gap": "1rem"}}>
+                    <input type="text" id="loginName" placeholder="Username" 
+                        ref={(c) => loginName = c} /><br /> 
+                    <input type="password" id="loginPassword" placeholder="Password" 
+                        ref={(c) => loginPassword = c} /><br />
+                    <span id="loginResult">{message}</span>
+                </div>
+                <div style={{"display":"grid", "row-gap": "2rem"}}>
+                    <input type="submit" id="loginButton" value = "Login"
+                        onClick={DoLogin} style={{"margin-top":"40px"}}/>
+                    <input type="submit" id="loginGButton" value = "Login with Google" 
+                    style={{"width":"30%"}}/>
+                    <LinkStyled className="link" link_text="Forgot Password"/>
+                    <LinkStyled className="link" route="/Register" link_text="Create Account"/>
+                </div>
+            </form>
         </div>
-
-        <div className="buttons"  style={{"height": "30vh"}}>
-
-        <input type="submit" id="loginButton" class="buttons" value = "Login"
-          onClick={doLogin} />
-
-        <LoginG className="login_g_button">Login with Google</LoginG>
-
-        <LinkP className="forgot_link">Forgot Password</LinkP>
-
-        <Link id="create_link" to="/Register">Create Account</Link>
-
-        </div>
-
-        </form>
-
-      </div>
     );
 };
 
