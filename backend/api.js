@@ -469,22 +469,20 @@ exports.setApp = function ( app, client )
         // Search the database for the userId
         const userEmail = await db.collection('Users').findOne({userId:userId});
 
-        // CRYPTO
-        const { createHmac } = await import('crypto');
-        const secret = 'abcdefg';
-        const hash = createHmac('sha256', secret)
-                       .update(`${userEmail.email}`)
-                       .digest('hex');
-        console.log(hash);
-        //////
+        // Create token for confirmation
+        const hash = token.createConfirmToken(userEmail.email);
+        console.log("email token");
+        console.log(hash.accessToken);
+
+        const placeToken = await db.collection('Users').updateOne({userId: userEmail.userId}, {$set: {confirmToken: hash.accessToken}});
 
         const msg = {
-            to: '3afc8fc7-f271-43b7-b266-83642cfe1c2e@email.webhook.site',//userEmail.email, // Change to your recipient
+            to: userEmail.email, // Change to your recipient
             from: 'group4poosd@gmail.com', // Change to your verified sender
             substitutionWrappers: ['{{', '}}'],
             dynamicTemplateData: {
                 first_name: `${userEmail.firstName}`,
-                url: `http://${req.headers.host}/confirmEmail?token=${hash}`
+                url: `http://${req.headers.host}/confirmEmail?token=${hash.accessToken}`
             },
             templateId: 'd-450016c069bb4859bbaabf2742ff6766',
         }
@@ -528,27 +526,35 @@ exports.setApp = function ( app, client )
         var error = '';
 
         // Get userId from sent
-        const userId = req.body.token;
+        const receivedToken = req.query.token;
 
-        console.log(req.body);
-        console.log(userId);
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(receivedToken))
+            {
+                console.log('The JWT is no longer valid');
+                res.status(400);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+            return;
+        }
 
-        return;
-
+        console.log("request");
+        console.log(req);
 
         // Connect to the database
-        // const db = client.db();
-        // Search the database for the userId
-        // const userEmail = await db.collection('Users').findOne({userId:userId});
+        const db = client.db();
+        const checkedUser = await db.collection('Users').findOne({confirmToken: receivedToken});
+        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$set: {emailConfirm: 1}});
 
-        // CRYPTO
-        // const { createHmac } = await import('crypto');
-        // const secret = 'abcdefg';
-        // const hash = createHmac('sha256', secret)
-        //                .update(`${userEmail.email}`)
-        //                .digest('hex');
-        // console.log(hash);
-        //////
+        res.response(200).redirect(`https://${req.headers.host}/Register`);
+        return;
     });
 
     app.post('/retrieveFolders', async (req, res, next) =>
