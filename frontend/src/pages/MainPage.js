@@ -7,12 +7,11 @@ import { CenterDiv } from '../components/CenterDiv';
 import styled from 'styled-components'
 import { SearchTab } from '../components/SearchTab';
 import FoldersUI from '../components/FoldersUI';
-import { Title } from '../components/Title';
-
 
 const Buttona = styled(Buttonb)`
     background: #000000;
 `
+
 const CenterDivMain = styled(CenterDiv)`
     height: 80%;
     width: 100%;
