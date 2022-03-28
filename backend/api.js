@@ -397,6 +397,66 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
+    app.post('/retrieveFolders', async (req, res, next) =>
+    {
+
+    console.log("CALLED retrieveFolders");
+
+    // These variables are sent from front-end
+    // folders is the text that is being added
+    const {userId, jwtToken} = req.body;
+    var error = '';
+    var token = require('./createJWT.js');
+
+    // Checks if the JWT is expired
+    // Sets the error and returns
+    try
+    {
+        if( token.isExpired(jwtToken))
+        {
+            console.log("TOKEN EXPIRED retrieveFolders");
+            var r = {error:'The JWT is no longer valid', jwtToken:''};
+            res.status(200).json(r);
+            return;
+        }
+    }
+    catch(e)
+    {
+        console.log(e.message);
+        return;
+    }
+
+    // JWT is not expired so add the Folder to the database
+    var results;
+    try
+    {
+        console.log("DOING retrieveFolders");
+        const db = client.db();
+        results = await db.collection('Folders').find({userId:userId}).toArray();
+    }
+    catch(e)
+    {
+        error = e.toString();
+    }
+
+    // Now refresh the token to update the amount of time it is active
+    var refreshedToken = null;
+    try
+    {
+        refreshedToken = token.refresh(jwtToken);
+    }
+    catch(e)
+    {
+        console.log(e.message);
+    }
+
+    // Sen the user back an error field and their refreshed token
+    var ret = { error: error, jwtToken: refreshedToken, folders: results };
+    console.log("FINISHED retrieveFolders");
+    
+    res.status(200).json(ret);
+    });
+
     app.post('/sendtestmail', async (req, res, next) =>
     {   
         require('dotenv').config();
