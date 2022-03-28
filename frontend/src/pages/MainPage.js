@@ -16,13 +16,13 @@ const Buttona = styled(Buttonb)`
 const CenterDivMain = styled(CenterDiv)`
     height: 80%;
     width: 100%;
-    marginTop: 0px;
+    margin-top: 0px;
 `
 
 const CenterDivList = styled(CenterDiv)`
     height: 80%;
     width: 100%;
-    marginTop: 0px;
+    margin-top: 0px;
 `
 
 function MainPage() {
@@ -30,7 +30,7 @@ function MainPage() {
         <body className="background">
             <div style={{"margin":"5%"}}>
                 <TopMarginMain/>
-                <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr", "columnGap":"1rem", "height":"100vh"}}>
+                <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr", "column-gap":"1rem", "height":"100vh"}}>
                     <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
                         <ListsTab children="Lists"/>
                         <div>
@@ -39,8 +39,8 @@ function MainPage() {
                             </CenterDivList>
                         </div>
                     </div>
-                    <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "margin-left":"50px", "margin-right":"50px"}}>
+                    <div class="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
+                        <div style= {{"display":"flex", "gap":"20vh", "justify-content":"center", "margin-left":"50px", "margin-right":"50px"}}>
                             <SearchTab children="Food"/>
                             <SearchTab children="Activities"/>
                             <SearchTab children="Friends"/>

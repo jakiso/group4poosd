@@ -12,14 +12,14 @@ const Text = styled.text`
     font-size: 32px;
     top: 0px;
     padding: 15px;
-    justifyContent: center;
+    justify-content: center;
 `
 // This makes Title component reusable
 export const ListsTab = ({children, className}) =>{
     return (
         <div className="tab">
             <img className="lists_tab" src={tab_list} alt="Lists" style={{"width":"auto", "height":"100%"
-            ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto", "paddingLeft":"20px", "paddingRight":"20px"}}></img>
+            ,"object-fit":"cover", "display":"block","margin-left": "auto","margin-right":"auto", "padding-left":"20px", "padding-right":"20px"}}></img>
              <Text className={className}>{children}</Text>
         </div>  
     )
