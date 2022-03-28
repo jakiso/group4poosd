@@ -4,6 +4,7 @@ var axios = require('axios');
 const User = require('./models/newUser.js');
 const Folder = require('./models/folder.js');
 const Place = require('./models/place.js');
+const { getMaxListeners } = require('./models/newUser.js');
 
 exports.setApp = function ( app, client )
 {
@@ -452,7 +453,36 @@ exports.setApp = function ( app, client )
     // Sen the user back an error field and their refreshed token
     var ret = { error: error, jwtToken: refreshedToken, folders: results };
     console.log("FINISHED retrieveFolders");
-
+    
     res.status(200).json(ret);
+    });
+
+    app.post('/sendtestmail', async (req, res, next) =>
+    {   
+        require('dotenv').config();
+        const sgMail = require('@sendgrid/mail')
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+    
+        // const { email } = req.body;
+        var responseMsg;
+    
+        const msg = {
+            to: 'mohamed.faizel14b@gmail.com', // Change to your recipient
+            from: 'group4poosd@gmail.com', // Change to your verified sender
+            templateId: 'd-450016c069bb4859bbaabf2742ff6766',
+        }
+        sgMail
+        .send(msg)
+        .then(() => {
+            console.log('Email sent')
+            responseMsg = "Email successfully sent!";
+            var r = {response:responseMsg};
+            res.status(200).json(r);
+        })
+        .catch((error) => {
+            console.error(error)
+            var r = {error:error};
+            res.status(200).json(r);
+        })
     });
 }
