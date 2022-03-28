@@ -469,12 +469,23 @@ exports.setApp = function ( app, client )
         // Search the database for the userId
         const userEmail = await db.collection('Users').findOne({userId:userId});
 
-        // retrieved users email
-        console.log(userEmail);
-    
+        // CRYPTO
+        const { createHmac } = await import('crypto');
+        const secret = 'abcdefg';
+        const hash = createHmac('sha256', secret)
+                       .update(`${userEmail.email}`)
+                       .digest('hex');
+        console.log(hash);
+        //////
+
         const msg = {
-            to: 'mohamed.faizel14b@gmail.com', // Change to your recipient
+            to: '3afc8fc7-f271-43b7-b266-83642cfe1c2e@email.webhook.site',//userEmail.email, // Change to your recipient
             from: 'group4poosd@gmail.com', // Change to your verified sender
+            substitutionWrappers: ['{{', '}}'],
+            dynamicTemplateData: {
+                first_name: `${userEmail.firstName}`,
+                url: `http://${req.headers.host}/confirmEmail?token=${hash}`
+            },
             templateId: 'd-450016c069bb4859bbaabf2742ff6766',
         }
         sgMail
@@ -506,6 +517,38 @@ exports.setApp = function ( app, client )
             res.status(200).json(r);
         });
 
+    });
+
+    app.get('/confirmEmail', async (req, res, next) =>
+    {   
+        // Token for checking and refreshing
+        var token = require('./createJWT.js');
+    
+        // Error message to be sent
+        var error = '';
+
+        // Get userId from sent
+        const userId = req.body.token;
+
+        console.log(req.body);
+        console.log(userId);
+
+        return;
+
+
+        // Connect to the database
+        // const db = client.db();
+        // Search the database for the userId
+        // const userEmail = await db.collection('Users').findOne({userId:userId});
+
+        // CRYPTO
+        // const { createHmac } = await import('crypto');
+        // const secret = 'abcdefg';
+        // const hash = createHmac('sha256', secret)
+        //                .update(`${userEmail.email}`)
+        //                .digest('hex');
+        // console.log(hash);
+        //////
     });
 
     app.post('/retrieveFolders', async (req, res, next) =>
