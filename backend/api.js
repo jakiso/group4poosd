@@ -73,7 +73,7 @@ exports.setApp = function ( app, client )
 
         var ret = {error: error, jwToken: refreshedToken, message: msg};
 
-        res.status(200).json(msg);
+        res.status(200).json(ret);
     });
 
     // edits name of folder.
