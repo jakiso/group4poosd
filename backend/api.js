@@ -9,12 +9,13 @@ const { getMaxListeners } = require('./models/newUser.js');
 exports.setApp = function ( app, client )
 {
 
-    // returns array of all the user's folders.
-    app.post('/getUserFolders', async (req, res, next) =>
+    // returns array of all the user's places in a folder
+    app.post('/placesFromFolder', async (req, res, next) =>
     {
         var token = require('./createJWT.js'); var msg = ''; var error = '';
 
         const jwToken = req.body.jwToken; const uid = req.body.userId;
+        const fid = req.body.folderId;
 
         // Checks if the JWT is expired
         // Sets the error and returns
@@ -37,10 +38,20 @@ exports.setApp = function ( app, client )
         {
             const db = client.db();
             // array of folders matching the userId.
-            const result = await db.collection('Folders').find
-            (
-                {userId: uid}
-            ).toArray();
+            const result = await db.collection('Folders').aggregate([
+                {
+                  $match: {
+                    "userId": 3,
+                    "folderId": 53
+                  }
+                },
+                {
+                  "$project": {
+                    "placeList": 1,
+                    _id: 0
+                  }
+                }
+              ]).toArray();
 
             msg = result;
         }
@@ -62,7 +73,7 @@ exports.setApp = function ( app, client )
 
         var ret = {error: error, jwToken: refreshedToken, message: msg};
 
-        res.status(200).json(ret);
+        res.status(200).json(msg);
     });
 
     // edits name of folder.
