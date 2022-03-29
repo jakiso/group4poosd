@@ -385,58 +385,116 @@ exports.setApp = function ( app, client )
 
     app.post('/nearbySearch', async (req, res, next) => 
     {
-    // incoming: userId, search
-    // outgoing: results[], error
 
-    var error = '';
-    var lat;
-    var lng;
-    var url;
+        // incoming: address, latitude, longitude, keyword, radius, type, pageToken
+        // outgoing: many things
 
-    const { address, keyword, radius, type, pageToken } = req.body;
+        var lat;
+        var lng;
+        var searchUrl;
+        var ret;
+        var isError = 0;
+        var errorMsg;
 
-    var _address = address.trim();
+        const { address, latitude, longitude, keyword, radius, type, pageToken} = req.body;
+        const jwToken = req.body.jwToken;
 
-    // Url for geocoding endpoint. Needed to turn an address into latitude and longitude.
-    var geoUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + address + '&key=' + process.env.GOOGLE_API_KEY;
+        var token = require('./createJWT.js');
 
-    // Gets response from geocoding endpoint
-    axios.get(geoUrl)
-    .then(function (geoResponse)
-    {
-        // Store latitude and longtitude of address. Based on the address that Google chooses. 
-        // It's possible that a vague address will lead to a different address than the user intended 
-        lat = geoResponse.data.results[0].geometry.location.lat;
-        lng = geoResponse.data.results[0].geometry.location.lng;
+        if (jwToken != '')
+        {
+            try
+            {
+                if( token.isExpired(jwToken))
+                {
+                    var r = {error:'The JWT is no longer valid', jwToken:''};
+                    res.status(200).json(r);
+                    return;
+                }
+            }
+            catch(e)
+            {
+                console.log(e.message);
+                return;
+            }
+        }
+        if (latitude == '' || longitude == '')
+        {
+            var _address = address.trim();
 
-        // Base url of nearby search endpoint.
-        var baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+            // Url for geocoding endpoint. Needed to turn an address into latitude and longitude.
+            var geoUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + _address + '&key=' + process.env.GOOGLE_API_KEY;
 
-        // If the pageToken is empty, do a normal search based on the input. If pageToken isn't blank, it will attempt to search using said pageToken. 
-        if (pageToken == '')
-        url = baseUrl + 'location=' + lat + '%2C' + lng + '&radius=' + radius + '&type=' + type + '&keyword=' + keyword;
+
+            // Gets response from geocoding endpoint
+            await axios.get(geoUrl)
+            .then(function (geoResponse)
+            {
+                // Store latitude and longtitude of address. Based on the address that Google chooses. 
+                // It's possible that a vague address will lead to a different address than the user intended 
+                lat = geoResponse.data.results[0].geometry.location.lat;
+                lng = geoResponse.data.results[0].geometry.location.lng;
+            })
+            .catch(function()
+            {
+                errorMsg= {error:"Invalid Address"};
+                isError = 1;
+            });
+        }
         else
-        url = baseUrl + 'pagetoken=' + pageToken;
-
-        // Adding the api key.
-        url = url + '&key=' + process.env.GOOGLE_API_KEY;
-
-
-        // Get all the data and return it. Error function's probably don't work correctly.
-        axios.get(url)
-        .then(function (response)
         {
-        res.status(200).json(response.data);
-        })
-        .catch(function(error)
+            lat = latitude;
+            lng = longitude;
+        }
+        
+        if (isError == 0)
         {
-        console.log(error);
-        });
-    })
-    .catch(function(geoError)
-    {
-        console.log(error);
-    });
+            // Base url of nearby search endpoint.
+            var baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+
+            // If the pageToken is empty, do a normal search based on the input. If pageToken isn't blank, it will attempt to search using said pageToken. 
+            if (pageToken == '')
+                searchUrl = baseUrl + 'location=' + lat + '%2C' + lng + '&radius=' + radius + '&type=' + type + '&keyword=' + keyword;
+            else
+                searchUrl = baseUrl + 'pagetoken=' + pageToken;
+
+            // Adding the api key.
+            searchUrl = searchUrl + '&key=' + process.env.GOOGLE_API_KEY;
+
+            // Get all the data and return it.
+            await axios.get(searchUrl)
+            .then(function (response)
+            {
+                ret = response.data;
+            })
+            .catch(function()
+            {
+                errorMsg = {error:"Search Error"};
+                isError = 1;
+            });
+        }
+
+        if (jwToken != '')
+        {
+            var refreshedToken = null;
+            try
+            {
+                refreshedToken = token.refresh(jwToken);
+            }
+            catch(e)
+            {
+                console.log(e.message);
+            }
+
+            ret = Object.assign({}, ret, refreshedToken);
+        }
+        
+        if (isError)
+            ret = Object.assign({}, ret, errorMsg);
+
+            
+        res.status(200).json(ret);
+
     });
 
     app.post('/register', async (req, res, next) =>
