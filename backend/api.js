@@ -8,10 +8,127 @@ const { getMaxListeners } = require('./models/newUser.js');
 
 exports.setApp = function ( app, client )
 {
+
+    // returns array of all the user's folders.
+    app.post('/getUserFolders', async (req, res, next) =>
+    {
+        var token = require('./createJWT.js'); var msg = ''; var error = '';
+
+        const jwToken = req.body.jwToken; const uid = req.body.userId;
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+
+        try
+        {
+            const db = client.db();
+            // array of folders matching the userId.
+            const result = await db.collection('Folders').find
+            (
+                {userId: uid}
+            ).toArray();
+
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
+    });
+
+    // edits name of folder.
+    app.post('/changeFolderName', async (req, res, next) =>
+    {
+        var token = require('./createJWT.js'); var msg = ''; var error = '';
+
+        const jwToken = req.body.jwToken; const newFolderName = req.body.newName;
+        const fid = req.body.folderId; const uid = req.body.userId;
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+
+        try
+        {
+            const db = client.db();
+            // edits name of folder that matches userId and folderId.
+            const result = await db.collection('Folders').updateOne
+            (
+                {userId: uid, folderId: fid},
+                {$set: {"folderName": newFolderName}}
+            )
+            
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
+    });
+
+    // saves a place to a folder under the array, placeList, as an object.
     app.post('/savePlace', async (req, res, next) =>
     {
-        // req = {folderId, userId, placeName, placeAddress}
 
+        var token = require('./createJWT.js');
+        const jwToken = req.body.jwToken;
         // as of right now this will just save address and name of location to a folder in the placeList array.
         // in the future we could have an array of users stored for each place in the places collection. 
         // basically an array of userId's associated with each place.
@@ -28,14 +145,34 @@ exports.setApp = function ( app, client )
         });
 
         var msg = '';
+        var error = '';
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
 
         try
         {
             const db = client.db();
+            // adds an object with placeName and placeAddress IF both are not duplicates.
+            // if didn't add because of duplicate: message.modifiedCount = 0 and message.matchedCount = 1.
             const result = await db.collection('Folders').updateOne
             (
                 {userId: uid, folderId: fid},
-                { $push: 
+                {$addToSet: 
                     {placeList: 
                         {
                             placeName: newPlace.placeName,
@@ -52,22 +189,59 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        res.status(200).json(msg);
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
     });
 
-    // it will be good to delete places from the database so if no user has it on their list, it wont take up space.
-    // for right now this is only for the places collection. can change to delete from folder later if we don't use Places in the db.
+    // deletes a place from folders matching name AND address.
     app.post('/deletePlace', async (req, res, next) =>
     {
-        // must use placesId since folders might have the same name from different users.
-        const thisPlace = req.body.placesId;
+        // using the array of places to match a place name, then deleting that places info from the array.
+        const placeName = req.body.placeName;
+        const folderId = req.body.folderId;
+        const placeAddress = req.body.placeAddress;
+
+        var token = require('./createJWT.js');
+        const jwToken = req.body.jwToken;
         // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
         var msg = '';
+        var error = '';
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
 
         try
         {
             const db = client.db();
-            const result = await db.collection('Places').deleteOne({placesId: thisPlace});
+            // $pull removes all matches, even duplicates. to avoid this, prevents duplicates when adding to folder.
+            const result = await db.collection('Folders').updateOne({"folderId" : folderId},{
+                "$pull" : {"placeList":{"placeName" : placeName, "placeAddress" : placeAddress}}});
             msg = result;
         }
         catch(e)
@@ -75,9 +249,23 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        res.status(200).json(msg);
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
     });
 
+    // deletes a folder using folderId.
     app.post('/deleteFolder', async (req, res, next) =>
     {
         // must use folderId since folders might have the same name from different users.
@@ -139,18 +327,38 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
-    // you might be able to do /delete/:id.
+    // deletes user based on their userId and confirmation of password.
     app.post('/deleteUser', async (req, res, next) =>
     {
+        // msg for deleteOne() result and error for any errors.
+        var msg = ''; var error = ''; var token = require('./createJWT.js');
+
         // will need userId to delete.
-        const thisUser = req.body.userId;
-        // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
-        var msg;
+        const thisUserId = req.body.userId;
+        const thisUserPass = req.body.password;
+        const jwToken = req.body.jwToken;
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
 
         try
         {
             const db = client.db();
-            const result = await db.collection('Users').deleteOne({userId: thisUser});
+            const result = await db.collection('Users').deleteOne({userId: thisUserId, password: thisUserPass});
             msg = result;
         }
         catch(e)
@@ -159,7 +367,20 @@ exports.setApp = function ( app, client )
             msg = e;
         }
 
-        res.status(200).json(msg);
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
     });
 
     app.post('/nearbySearch', async (req, res, next) => 
@@ -327,6 +548,7 @@ exports.setApp = function ( app, client )
             {
                 const token = require("./createJWT.js");
                 ret = token.createToken( fn, ln, id );
+                console.log(ret);
             }
             catch(e)
             {
@@ -345,13 +567,15 @@ exports.setApp = function ( app, client )
         res.status(200).json( ret );
     });
 
+    // needs jwToken, userId, folderId. 
     app.post('/createFolder', async (req, res, next) =>
     {
-
-        const jwtToken = req.body.jwToken;
-        var error = '';
+        // jwToken holds the token needed to give access to this api.
+        const jwToken = req.body.jwToken;
+        var error = ''; var msg = '';
         var token = require('./createJWT.js');
 
+        // new folder construction.
         const newFolder = new Folder
         ({
             userId: req.body.userId,
@@ -360,9 +584,9 @@ exports.setApp = function ( app, client )
 
         try
         {
-            if( token.isExpired(jwtToken))
+            if( token.isExpired(jwToken))
             {
-                var r = {error:'The JWT is no longer valid', jwtToken: ''};
+                var r = {error:'The JWT is no longer valid', jwToken: ''};
                 res.status(200).json(r);
                 return;
             }
@@ -376,6 +600,7 @@ exports.setApp = function ( app, client )
         {
             const db = client.db();
             const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderName:newFolder.folderName});
+            msg = results;
         }
         catch(e)
         {
@@ -385,14 +610,15 @@ exports.setApp = function ( app, client )
         var refreshedToken = null;
         try
         {
-            refreshedToken = token.refresh(jwtToken);
+            refreshedToken = token.refresh(jwToken);
         }
         catch(e)
         {
             console.log(e.message);
         }
         
-        var ret = { error: error, jwToken: refreshedToken };
+        // the message will also output the new object id.
+        var ret = { error: error, jwToken: refreshedToken, message: msg };
         
         res.status(200).json(ret);
     });
