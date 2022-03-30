@@ -281,6 +281,7 @@ exports.setApp = function ( app, client )
                     ]
                 }
             )
+            console.log("New User");
             console.log(retNewUser);
             const token = require("./createJWT.js");
             retToken = token.createToken( retNewUser.firstName, retNewUser.lastName, retNewUser.userId );
@@ -469,6 +470,8 @@ exports.setApp = function ( app, client )
         // Search the database for the userId
         const userEmail = await db.collection('Users').findOne({userId:userId});
 
+        console.log(userEmail);
+
         // Create token for confirmation
         const hash = token.createConfirmToken(userEmail.email);
         console.log("email token");
@@ -482,7 +485,7 @@ exports.setApp = function ( app, client )
             substitutionWrappers: ['{{', '}}'],
             dynamicTemplateData: {
                 first_name: `${userEmail.firstName}`,
-                url: `http://${req.headers.host}/confirmEmail?token=${hash.accessToken}`
+                url: encodeURI(`http://${req.headers.host}/confirmEmail?token=${hash.accessToken}&email=${userEmail.email}`)
             },
             templateId: 'd-450016c069bb4859bbaabf2742ff6766',
         }
@@ -546,14 +549,18 @@ exports.setApp = function ( app, client )
         }
 
         console.log("request");
-        console.log(req);
+        console.log(req.query);
 
         // Connect to the database
         const db = client.db();
-        const checkedUser = await db.collection('Users').findOne({confirmToken: receivedToken});
-        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$set: {emailConfirm: 1}});
+        const checkedUser = await db.collection('Users').findOne({email: req.query.email});
+        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$set: {emailConfirm: 1}, $unset: {confirmToken: ''}});
+        console.log(confirmUser);
 
-        res.response(200).redirect(`https://${req.headers.host}/Register`);
+ 
+        // NEEDS TO REDIRECT TO REACT SERVER
+        res.redirect(`http://${req.headers.host}/`);
+        //////
         return;
     });
 
