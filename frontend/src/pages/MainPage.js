@@ -29,7 +29,7 @@ const CenterDivList = styled(CenterDiv)`
 function MainPage() {
     return (
         <body className="background">
-            <div style={{"margin":"5%"}}>
+            <div style={{"margin":"5%", "margin-top":"0px"}}>
                 <TopMarginMain/>
                 <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr", "column-gap":"1rem", "height":"100vh"}}>
                     <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
