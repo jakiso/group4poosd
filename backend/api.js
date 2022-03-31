@@ -480,12 +480,12 @@ exports.setApp = function ( app, client )
         const placeToken = await db.collection('Users').updateOne({userId: userEmail.userId}, {$set: {confirmToken: hash.accessToken}});
 
         const msg = {
-            to: userEmail.email, // Change to your recipient
+            to: 'rada.rada.rada@hotmail.com',//userEmail.email, // Change to your recipient
             from: 'group4poosd@gmail.com', // Change to your verified sender
             substitutionWrappers: ['{{', '}}'],
             dynamicTemplateData: {
                 first_name: `${userEmail.firstName}`,
-                url: encodeURI(`http://${req.headers.host}/confirmEmail?token=${hash.accessToken}&email=${userEmail.email}`)
+                url: encodeURI(`http://${req.headers.host}/confirmEmail?token=${hash.accessToken}&email=${userEmail.email}&redirect=${req.headers.origin}`)
             },
             templateId: 'd-450016c069bb4859bbaabf2742ff6766',
         }
@@ -559,7 +559,7 @@ exports.setApp = function ( app, client )
 
  
         // NEEDS TO REDIRECT TO REACT SERVER
-        res.redirect(`http://${req.headers.host}/`);
+        res.redirect(`${req.query.redirect}/Verify`);
         //////
         return;
     });

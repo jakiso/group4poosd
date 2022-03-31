@@ -48,7 +48,7 @@ function CenterDiv()
 
             // The user that is logging in is valid now check for errors
             // Store the user info locally
-            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId}
+            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId};
             localStorage.setItem('user_data', JSON.stringify(user));
 
             // Checks the error message from server.
