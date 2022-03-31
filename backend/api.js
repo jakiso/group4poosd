@@ -414,8 +414,8 @@ exports.setApp = function ( app, client )
         // Response of email status
         var responseMsg = '';
 
-                // Show what gets sent from front-end
-                console.log(req.body);
+        // Show what gets sent from front-end
+        console.log(req.body);
 
         // Variable to store the response to be sent back to front-end
         const r = 
@@ -561,6 +561,91 @@ exports.setApp = function ( app, client )
         // NEEDS TO REDIRECT TO REACT SERVER
         res.redirect(`http://${req.headers.host}/`);
         //////
+        return;
+    });
+
+    app.post('/sendResetEmail', async (req, res, next) =>
+    {   
+        // Sendgrid setup
+        require('dotenv').config();
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+        // Error message to be sent
+        var error = '';
+
+        // Response of email status
+        var responseMsg = '';
+
+        // Show what gets sent from front-end
+        console.log(req.body);
+
+        // Variable to store the response to be sent back to front-end
+        const r = 
+        {
+            error: error,
+            jwToken: req.body.jwToken,
+            response: responseMsg
+        };
+
+        // SEND EMAIL STUFF
+
+        // Connect to the database
+        const db = client.db();
+        // Search the database for the account tied to the email
+        const resetUser = await db.collection('Users').findOne({email:req.body.email});
+        console.log(resetUser);
+        
+        // checks if account of email exists before sending email
+        if(resetUser == null) {
+            
+            responseMsg = "An account with that email does not exist.";
+            r.error = error;
+            r.response = responseMsg;
+            res.status(200).json(r);
+
+        } else {
+            
+            const msg = {
+                to: resetUser.email, // Change to your recipient
+                from: 'group4poosd@gmail.com', // Change to your verified sender
+                substitutionWrappers: ['{{', '}}'],
+                dynamicTemplateData: {
+                    username: `${resetUser.username}`,
+                    url: encodeURI(`http://${req.headers.host}/passwordReset&ID=${resetUser.username}`)
+                },
+                templateId: 'd-7e5ebc6daf174a4882b1b6b8b0df631e',
+            }
+            sgMail
+            .send(msg)
+            .then(() => {
+                console.log('Email sent')
+                responseMsg = "Password reset email successfully sent!";
+
+                // Edit responses
+                r.error = error;
+                r.response = responseMsg;
+
+                // Show response before sent
+                console.log(r);
+
+                // Send the response
+                res.status(200).json(r);
+            })
+            .catch((error) => {
+                console.error(error)
+
+                // Edit response
+                r.error = error;
+
+                // Show response
+                console.log(r)
+
+                // Send response
+                res.status(200).json(r);
+            });
+        }
+
         return;
     });
 
