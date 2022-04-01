@@ -2,11 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Buttonb } from './Button';
 import styled from 'styled-components';
 import '../App.css';
+import EditMode from './EditMode';
+import ListButton from './ListButton';
 
-const ListButton = styled(Buttonb)`
+const EditButton = styled(Buttonb)`
     width: 100%;
-    height: 110px;
+    height: 50px;
+    margin-top: 20px;
 `
+
+const AddButton = styled(Buttonb)`
+    width: 100%;
+    height: 50px;
+    background: limegreen;
+    margin-top: 20px;
+`
+const SaveButton = styled(Buttonb)`
+    width: 100%;
+    height: 50px;
+    background: #20CEF2;
+    margin-top: 20px;
+`
+var res;
 
 function FoldersUI()
 {
@@ -15,6 +32,9 @@ function FoldersUI()
 
     // useState for setting the list of folders after its been loaded
     var [folderList, setFolders] = useState([]);
+
+    // useState for setting the editMode
+    var [editMode, setEditMode] = useState(false);
 
     // Function to retrieve the folders, gets run with useState after page loads
     const RetrieveFolders = async () => {
@@ -38,7 +58,7 @@ function FoldersUI()
             const response = await fetch(bp.buildPath('retrieveFolders'), {method:'POST',body:js,headers:{'Content-Type':'application/json'}});
 
             // Wait for response and parse json
-            var res = JSON.parse(await response.text());
+            res = JSON.parse(await response.text());
 
             // Check the error field. empty error is good
             if( res.error && res.error.length > 0 )
@@ -61,7 +81,7 @@ function FoldersUI()
 
                 // uses the useState to change the value of storedFolders
                 setFolders(res.folders.map(({ folderId, folderName }) => (
-                            <ListButton key={folderId} button_text={folderName} />
+                            <ListButton key={folderId} button_text={folderName} trigger_bool={false}/>
                         ))
                 );
             }
@@ -77,9 +97,15 @@ function FoldersUI()
         RetrieveFolders();
     }, []);
 
+
+    function editModefunct(){
+        setEditMode(true);
+    }
+
     return(
          <div style={{"display":"grid", "row-gap": "1rem", "top":"0px", "margin":"10%", "alignContent":"center"}}>
-            {folderList}
+            <EditButton button_text="Edit" onClick={editModefunct}/>
+            <EditMode trigger={editMode} setTrigger={setEditMode} arr={res} arrn={res} sta={setFolders}/>
             
             {/* <ListButton button_text="Favorites"/>
             <ListButton button_text="List 1"/>
