@@ -15,18 +15,18 @@ const TabTitle = styled(LongTab)`
 
 function LoginPage() {
   return (
-    <body className="background">
+    <div className="background">
 
-<div style={{"display":"grid", "gridTemplateRows": "1fr", "align-content":"center"}}>
+<div style={{"display":"grid", "gridTemplateRows": "1fr", "alignContent":"center"}}>
 
       <TitleHeader className="title"/>
-      <div class="wrapper" style={{"display":"grid", "gridTemplateRows": "1fr 100%"}}>
+      <div className="wrapper" style={{"display":"grid", "gridTemplateRows": "1fr 100%"}}>
       <TabTitle children="Login"></TabTitle>
       <LoginCenterDiv/>
       </div>
       </div>
 
-    </body>
+    </div>
     
   );
 }

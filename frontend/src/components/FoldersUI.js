@@ -45,8 +45,8 @@ function FoldersUI()
         // The user data is stored as text and needs to be turned into an object
         var data = JSON.parse(localStorage.user_data);
 
-        // The object to be sent to the api, must contain userId and jwtToken field
-        var obj = {userId:data.id, jwtToken:storage.retrieveToken()};
+        // The object to be sent to the api, must contain userId and jwToken field
+        var obj = {userId:data.id, jwToken:storage.retrieveToken()};
         var js = JSON.stringify(obj);
 
         // Path to send the api call
@@ -71,7 +71,7 @@ function FoldersUI()
                 // setMessage('Got the folders');
                 
                 // Store the received refreshed JWT
-                storage.storeToken( res.jwtToken );
+                storage.storeToken( res.jwToken );
 
                 // Turns the response field into an array of elements
                 // { folderId, name} -> fields of each array object
@@ -103,7 +103,7 @@ function FoldersUI()
     }
 
     return(
-         <div style={{"display":"grid", "row-gap": "1rem", "top":"0px", "margin":"10%", "alignContent":"center"}}>
+         <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"10%", "alignContent":"center"}}>
             <EditButton button_text="Edit" onClick={editModefunct}/>
             <EditMode trigger={editMode} setTrigger={setEditMode} arr={res} arrn={res} sta={setFolders}/>
             

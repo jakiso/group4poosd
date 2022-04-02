@@ -27,7 +27,7 @@ function CardsUI()
         // Use:
         // Name="" Address="" PhoneNumber="" MoreInfo="" Description="" Rating=""
         // To define Info per card
-        <div style={{"display":"grid", "row-gap": "3rem", "top":"0px", "margin":"5%"}}>
+        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%"}}>
             <SearchBar/>
             <InfoCard Name="McDonalds" Address="3737 Pine Tree Lane" PhoneNumber="231-714-5572" MoreInfo="..." DescriptionText="Fast Convenient" Rating="3.1"/>
             <InfoCard Name="Comfort Food" Address="2055 Stanley Avenue" PhoneNumber="860-928-5548" MoreInfo="..." DescriptionText="Food you'll Love" Rating="4.0"/>

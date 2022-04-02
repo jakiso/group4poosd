@@ -25,7 +25,7 @@ export const SearchTab = ({children, className}) =>{
     return (
         <div className="tab" >
             <img className="search_tab" src={tab_search_dark} alt="Lists" style={{"width":"auto", "height":"100%"
-            ,"object-fit":"cover", "display":"block","margin-left": "auto","margin-right":"auto"}}></img>
+            ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto"}}></img>
             <Text className={className}>{children}</Text>
         </div>  
     )
