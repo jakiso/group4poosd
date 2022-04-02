@@ -294,6 +294,8 @@ exports.setApp = function ( app, client )
 
         // Checks if the JWT is expired
         // Sets the error and returns
+        console.log('api line 297');
+        console.log(jwToken);
         try
         {
             if( token.isExpired(jwToken))
@@ -334,6 +336,7 @@ exports.setApp = function ( app, client )
         }
 
         var ret = {error: error, jwToken: refreshedToken, message: msg};
+        console.log(ret);
 
         res.status(200).json(ret);
     });
@@ -699,7 +702,7 @@ exports.setApp = function ( app, client )
 
     // These variables are sent from front-end
     // folders is the text that is being added
-    const {userId, jwtToken} = req.body;
+    const {userId, jwToken} = req.body;
     var error = '';
     var token = require('./createJWT.js');
 
@@ -707,10 +710,10 @@ exports.setApp = function ( app, client )
     // Sets the error and returns
     try
     {
-        if( token.isExpired(jwtToken))
+        if( token.isExpired(jwToken))
         {
             console.log("TOKEN EXPIRED retrieveFolders");
-            var r = {error:'The JWT is no longer valid', jwtToken:''};
+            var r = {error:'The JWT is no longer valid', jwToken:''};
             res.status(200).json(r);
             return;
         }
@@ -738,7 +741,7 @@ exports.setApp = function ( app, client )
     var refreshedToken = null;
     try
     {
-        refreshedToken = token.refresh(jwtToken);
+        refreshedToken = token.refresh(jwToken);
     }
     catch(e)
     {
@@ -746,7 +749,7 @@ exports.setApp = function ( app, client )
     }
 
     // Sen the user back an error field and their refreshed token
-    var ret = { error: error, jwtToken: refreshedToken, folders: results };
+    var ret = { error: error, jwToken: refreshedToken, folders: results };
     console.log("FINISHED retrieveFolders");
     
     res.status(200).json(ret);

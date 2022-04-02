@@ -15,8 +15,8 @@ function FolderEditMode(props){
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
 
-        // The object to be sent to the api, must contain userId and jwtToken field
-        var obj = {folderId:props.folderId, jwtToken:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImZpcnN0TmFtZSI6ImJvYiIsImxhc3ROYW1lIjoic21pdGgiLCJpYXQiOjE2NDg4NjEwMjF9.2qEySf6TkkJe8uuSctETqo20LmRZ3QVZggUiwHFRYaU"};
+        // The object to be sent to the api, must contain userId and jwToken field
+        var obj = {folderId:props.folderId, jwToken:storage.retrieveToken()};
         var js = JSON.stringify(obj);
         console.log(js);
 
@@ -27,7 +27,7 @@ function FolderEditMode(props){
         {
             // Request folders and JWT
             const response = await fetch(bp.buildPath('deleteFolder'), {method:'POST',body:js,headers:{'Content-Type':'application/json'}});
-
+            console.log(response);
             // Wait for response and parse json
             res = JSON.parse(await response.text());
 
@@ -46,7 +46,7 @@ function FolderEditMode(props){
                 // setMessage('Got the folders');
                 
                 // Store the received refreshed JWT
-                storage.storeToken( res.jwtToken );
+                storage.storeToken( res.jwToken );
 
                 // Turns the response field into an array of elements
                 // { folderId, name} -> fields of each array object
@@ -68,12 +68,12 @@ function FolderEditMode(props){
 
     return (props.trigger) ? (
     //this div contains the folder delete cross and edit pen icons (for edit mode)
-    <div style={{"display":"flex", "justify-content":"center", "column-gap":"4vh", "margin-top":"1vh", "overflow":"auto"}}>
+    <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto"}}>
         <div style={{"height":"40px", "width":"40px", "overflow":"hidden"}}>
         <input type="image" src={del} alt="delete" id="delete" onClick={DeleteFolder}/>
             {/* <img src={del} alt="delete" style={{"width":"100%", "height":"100%"}}></img> */}
         </div>  
-        <div style={{"height":"30px", "width":"30px", "overflow":"hidden", "objectFit":"contain", "padding-top":"5px"}}>
+        <div style={{"height":"30px", "width":"30px", "overflow":"hidden", "objectFit":"contain", "paddingTop":"5px"}}>
             <img src={rename} alt="rename" style={{"width":"100%", "height":"100%"}}></img>
         </div>  
     </div>

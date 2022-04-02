@@ -28,10 +28,10 @@ const CenterDivList = styled(CenterDiv)`
 
 function MainPage() {
     return (
-        <body className="background">
-            <div style={{"margin":"5%", "margin-top":"0px"}}>
+        <div className="background">
+            <div style={{"margin":"5%", "marginTop":"0px"}}>
                 <TopMarginMain/>
-                <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr", "column-gap":"1rem", "height":"100vh"}}>
+                <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr", "columnGap":"1rem", "height":"100vh"}}>
                     <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
                         <ListsTab children="Lists"/>
                         <div>
@@ -40,8 +40,8 @@ function MainPage() {
                             </CenterDivList>
                         </div>
                     </div>
-                    <div class="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                        <div style= {{"display":"flex", "gap":"20vh", "justify-content":"center", "margin-left":"50px", "margin-right":"50px"}}>
+                    <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
+                        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
                             <SearchTab children="Food"/>
                             <SearchTab children="Activities"/>
                             <SearchTab children="Friends"/>
@@ -54,7 +54,7 @@ function MainPage() {
                     </div>
                 </div>
             </div>
-        </body>
+        </div>
 
     );
 }
