@@ -36,7 +36,7 @@ function EditMode(props){
 
         {
             props.arr.folders.map(({ folderId, folderName }) => (
-                <ListButton key={folderId} button_text={folderName} trigger_bool={true}/>
+                <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={true}/>
             ))
         }
         </div>
@@ -45,7 +45,7 @@ function EditMode(props){
         {
              props.arrn.folders.map(
                  ({ folderId, folderName }) => (
-                    <ListButton key={folderId} button_text={folderName} trigger_bool={false}/>
+                    <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
                 )
              )
         }
