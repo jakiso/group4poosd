@@ -4,15 +4,17 @@ import axios from 'axios';
 
 function CenterDiv(){
 
-    const [message,setMessage] = useState('');
+    const [message, setMessage] = useState('');
     const [userData, setUserData] = useState('');
     const [tokenData, setTokenData] = useState('');
+    const [buttonMessage, setButtonMessage] = useState('');
 
     // Function to run one and let the user know to verify their email
     useEffect(() => {
         setMessage('Please verify your email');
         setUserData(localStorage.getItem('user_data'));
         setTokenData(localStorage.getItem('token_data'));
+        setButtonMessage('Click to confirm you have verified, or to send another email.');
       }, []);
 
     // Used to store token
@@ -105,6 +107,7 @@ function CenterDiv(){
             {
                 // All good send to main page
                 console.log("EMAIL SENT");
+                setMessage("An email has been sent to you");
             }
         }
         // JWT not received properly
@@ -127,6 +130,7 @@ function CenterDiv(){
             <span id="userData" >{userData}</span><br/>
             <span id="tokenData">{tokenData}</span>
             <div className="buttons" style={{"marginTop": "100px"}}>
+                <span id="loginResult">{buttonMessage}</span><br/>
                 <input type="submit" id="verifyButton" className="buttons" value = "Verify"
                     onClick={() => CheckConfirm()}/>
             </div>
