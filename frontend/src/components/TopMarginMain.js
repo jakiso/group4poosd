@@ -6,7 +6,7 @@ import styled from 'styled-components'
 
 // this left-aligns Title
 const MainTitle = styled(Title)`
-marginLeft: 0px;
+margin-left: 0px;
 float:left;
 `
 const MarginButton = styled(Buttonb)`

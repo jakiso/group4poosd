@@ -12,7 +12,7 @@ const Text = styled.text`
     font-size: 32px;
     top: 0px;
     padding: 15px;
-    justifyContent: center;
+    justify-content: center;
 `
 // This makes Title component reusable
 export const ListsTab = ({children, className}) =>{

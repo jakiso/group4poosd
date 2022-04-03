@@ -5,7 +5,7 @@ import event_pic from '../images/LG_event.png';
 import cross from '../images/cross_add.png';
 
 const Card = styled.div`
-// marginTop: 50px;
+// margin-top: 50px;
 
 filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 font-family: 'Denk One';
@@ -19,7 +19,7 @@ color: #FEFFDC;
 background: #001A5E;
 border-radius: 14px;
 align:right;
-columnGap: 1rem;
+column-gap: 1rem;
 
 width: 100%;
 height: 400px;

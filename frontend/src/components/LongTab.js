@@ -13,7 +13,7 @@ const Text = styled.text`
     line-height: 160px;
 
     display: flex;
-    justifyContent: center;
+    justify-content: center;
     letter-spacing: 0.1em;
     z-index: 4;
 `

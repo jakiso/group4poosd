@@ -9,10 +9,138 @@ const { response } = require('express');
 
 exports.setApp = function ( app, client )
 {
+
+    // returns array of all the user's places in a folder
+    app.post('/placesFromFolder', async (req, res, next) =>
+    {
+        var token = require('./createJWT.js'); var msg = ''; var error = '';
+
+        const jwToken = req.body.jwToken; const uid = req.body.userId;
+        const fid = req.body.folderId;
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+
+        try
+        {
+            const db = client.db();
+            // array of folders matching the userId.
+            const result = await db.collection('Folders').aggregate([
+                {
+                  $match: {
+                    "userId": 3,
+                    "folderId": 53
+                  }
+                },
+                {
+                  "$project": {
+                    "placeList": 1,
+                    _id: 0
+                  }
+                }
+              ]).toArray();
+
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
+    });
+
+    // edits name of folder.
+    app.post('/changeFolderName', async (req, res, next) =>
+    {
+        var token = require('./createJWT.js'); var msg = ''; var error = '';
+
+        const jwToken = req.body.jwToken; const newFolderName = req.body.newName;
+        const fid = req.body.folderId; const uid = req.body.userId;
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+
+        try
+        {
+            const db = client.db();
+            // edits name of folder that matches userId and folderId.
+            const result = await db.collection('Folders').updateOne
+            (
+                {userId: uid, folderId: fid},
+                {$set: {"folderName": newFolderName}}
+            )
+            
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
+    });
+
+    // saves a place to a folder under the array, placeList, as an object.
     app.post('/savePlace', async (req, res, next) =>
     {
-        // req = {folderId, userId, placeName, placeAddress}
 
+        var token = require('./createJWT.js');
+        const jwToken = req.body.jwToken;
         // as of right now this will just save address and name of location to a folder in the placeList array.
         // in the future we could have an array of users stored for each place in the places collection. 
         // basically an array of userId's associated with each place.
@@ -29,14 +157,34 @@ exports.setApp = function ( app, client )
         });
 
         var msg = '';
+        var error = '';
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
 
         try
         {
             const db = client.db();
+            // adds an object with placeName and placeAddress IF both are not duplicates.
+            // if didn't add because of duplicate: message.modifiedCount = 0 and message.matchedCount = 1.
             const result = await db.collection('Folders').updateOne
             (
                 {userId: uid, folderId: fid},
-                { $push: 
+                {$addToSet: 
                     {placeList: 
                         {
                             placeName: newPlace.placeName,
@@ -53,22 +201,59 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        res.status(200).json(msg);
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
     });
 
-    // it will be good to delete places from the database so if no user has it on their list, it wont take up space.
-    // for right now this is only for the places collection. can change to delete from folder later if we don't use Places in the db.
+    // deletes a place from folders matching name AND address.
     app.post('/deletePlace', async (req, res, next) =>
     {
-        // must use placesId since folders might have the same name from different users.
-        const thisPlace = req.body.placesId;
+        // using the array of places to match a place name, then deleting that places info from the array.
+        const placeName = req.body.placeName;
+        const folderId = req.body.folderId;
+        const placeAddress = req.body.placeAddress;
+
+        var token = require('./createJWT.js');
+        const jwToken = req.body.jwToken;
         // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
         var msg = '';
+        var error = '';
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
 
         try
         {
             const db = client.db();
-            const result = await db.collection('Places').deleteOne({placesId: thisPlace});
+            // $pull removes all matches, even duplicates. to avoid this, prevents duplicates when adding to folder.
+            const result = await db.collection('Folders').updateOne({"folderId" : folderId},{
+                "$pull" : {"placeList":{"placeName" : placeName, "placeAddress" : placeAddress}}});
             msg = result;
         }
         catch(e)
@@ -76,9 +261,23 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        res.status(200).json(msg);
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
     });
 
+    // deletes a folder using folderId.
     app.post('/deleteFolder', async (req, res, next) =>
     {
         // must use folderId since folders might have the same name from different users.
@@ -96,6 +295,8 @@ exports.setApp = function ( app, client )
 
         // Checks if the JWT is expired
         // Sets the error and returns
+        console.log('api line 297');
+        console.log(jwToken);
         try
         {
             if( token.isExpired(jwToken))
@@ -136,22 +337,43 @@ exports.setApp = function ( app, client )
         }
 
         var ret = {error: error, jwToken: refreshedToken, message: msg};
+        console.log(ret);
 
         res.status(200).json(ret);
     });
 
-    // you might be able to do /delete/:id.
+    // deletes user based on their userId and confirmation of password.
     app.post('/deleteUser', async (req, res, next) =>
     {
+        // msg for deleteOne() result and error for any errors.
+        var msg = ''; var error = ''; var token = require('./createJWT.js');
+
         // will need userId to delete.
-        const thisUser = req.body.userId;
-        // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
-        var msg;
+        const thisUserId = req.body.userId;
+        const thisUserPass = req.body.password;
+        const jwToken = req.body.jwToken;
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
 
         try
         {
             const db = client.db();
-            const result = await db.collection('Users').deleteOne({userId: thisUser});
+            const result = await db.collection('Users').deleteOne({userId: thisUserId, password: thisUserPass});
             msg = result;
         }
         catch(e)
@@ -160,63 +382,134 @@ exports.setApp = function ( app, client )
             msg = e;
         }
 
-        res.status(200).json(msg);
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
     });
 
     app.post('/nearbySearch', async (req, res, next) => 
     {
-    // incoming: userId, search
-    // outgoing: results[], error
 
-    var error = '';
-    var lat;
-    var lng;
-    var url;
+        // incoming: address, latitude, longitude, keyword, radius, type, pageToken
+        // outgoing: many things
 
-    const { address, keyword, radius, type, pageToken } = req.body;
+        var lat;
+        var lng;
+        var searchUrl;
+        var ret;
+        var isError = 0;
+        var errorMsg;
 
-    var _address = address.trim();
+        const { address, latitude, longitude, keyword, radius, type, pageToken} = req.body;
+        const jwToken = req.body.jwToken;
 
-    // Url for geocoding endpoint. Needed to turn an address into latitude and longitude.
-    var geoUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + address + '&key=' + process.env.GOOGLE_API_KEY;
+        var token = require('./createJWT.js');
 
-    // Gets response from geocoding endpoint
-    axios.get(geoUrl)
-    .then(function (geoResponse)
-    {
-        // Store latitude and longtitude of address. Based on the address that Google chooses. 
-        // It's possible that a vague address will lead to a different address than the user intended 
-        lat = geoResponse.data.results[0].geometry.location.lat;
-        lng = geoResponse.data.results[0].geometry.location.lng;
+        if (jwToken != '')
+        {
+            try
+            {
+                if( token.isExpired(jwToken))
+                {
+                    var r = {error:'The JWT is no longer valid', jwToken:''};
+                    res.status(200).json(r);
+                    return;
+                }
+            }
+            catch(e)
+            {
+                console.log(e.message);
+                return;
+            }
+        }
+        if (latitude == '' || longitude == '')
+        {
+            var _address = address.trim();
 
-        // Base url of nearby search endpoint.
-        var baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+            // Url for geocoding endpoint. Needed to turn an address into latitude and longitude.
+            var geoUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + _address + '&key=' + process.env.GOOGLE_API_KEY;
 
-        // If the pageToken is empty, do a normal search based on the input. If pageToken isn't blank, it will attempt to search using said pageToken. 
-        if (pageToken == '')
-        url = baseUrl + 'location=' + lat + '%2C' + lng + '&radius=' + radius + '&type=' + type + '&keyword=' + keyword;
+
+            // Gets response from geocoding endpoint
+            await axios.get(geoUrl)
+            .then(function (geoResponse)
+            {
+                // Store latitude and longtitude of address. Based on the address that Google chooses. 
+                // It's possible that a vague address will lead to a different address than the user intended 
+                lat = geoResponse.data.results[0].geometry.location.lat;
+                lng = geoResponse.data.results[0].geometry.location.lng;
+            })
+            .catch(function()
+            {
+                errorMsg= {error:"Invalid Address"};
+                isError = 1;
+            });
+        }
         else
-        url = baseUrl + 'pagetoken=' + pageToken;
-
-        // Adding the api key.
-        url = url + '&key=' + process.env.GOOGLE_API_KEY;
-
-
-        // Get all the data and return it. Error function's probably don't work correctly.
-        axios.get(url)
-        .then(function (response)
         {
-        res.status(200).json(response.data);
-        })
-        .catch(function(error)
+            lat = latitude;
+            lng = longitude;
+        }
+        
+        if (isError == 0)
         {
-        console.log(error);
-        });
-    })
-    .catch(function(geoError)
-    {
-        console.log(error);
-    });
+            // Base url of nearby search endpoint.
+            var baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+
+            // If the pageToken is empty, do a normal search based on the input. If pageToken isn't blank, it will attempt to search using said pageToken. 
+            if (pageToken == '')
+                searchUrl = baseUrl + 'location=' + lat + '%2C' + lng + '&radius=' + radius + '&type=' + type + '&keyword=' + keyword;
+            else
+                searchUrl = baseUrl + 'pagetoken=' + pageToken;
+
+            // Adding the api key.
+            searchUrl = searchUrl + '&key=' + process.env.GOOGLE_API_KEY;
+
+            // Get all the data and return it.
+            await axios.get(searchUrl)
+            .then(function (response)
+            {
+                ret = response.data;
+            })
+            .catch(function()
+            {
+                errorMsg = {error:"Search Error"};
+                isError = 1;
+            });
+        }
+
+        if (jwToken != '')
+        {
+            var refreshedToken = null;
+            try
+            {
+                refreshedToken = token.refresh(jwToken);
+            }
+            catch(e)
+            {
+                console.log(e.message);
+            }
+
+            ret = Object.assign({}, ret, refreshedToken);
+        }
+        
+        if (isError)
+            ret = Object.assign({}, ret, errorMsg);
+
+            
+        res.status(200).json(ret);
+
     });
 
     app.post('/register', async (req, res, next) =>
@@ -329,6 +622,7 @@ exports.setApp = function ( app, client )
             {
                 const token = require("./createJWT.js");
                 ret = token.createToken( fn, ln, id );
+                console.log(ret);
             }
             catch(e)
             {
@@ -347,13 +641,15 @@ exports.setApp = function ( app, client )
         res.status(200).json( ret );
     });
 
+    // needs jwToken, userId, folderId. 
     app.post('/createFolder', async (req, res, next) =>
     {
-
-        const jwtToken = req.body.jwToken;
-        var error = '';
+        // jwToken holds the token needed to give access to this api.
+        const jwToken = req.body.jwToken;
+        var error = ''; var msg = '';
         var token = require('./createJWT.js');
 
+        // new folder construction.
         const newFolder = new Folder
         ({
             userId: req.body.userId,
@@ -362,9 +658,9 @@ exports.setApp = function ( app, client )
 
         try
         {
-            if( token.isExpired(jwtToken))
+            if( token.isExpired(jwToken))
             {
-                var r = {error:'The JWT is no longer valid', jwtToken: ''};
+                var r = {error:'The JWT is no longer valid', jwToken: ''};
                 res.status(200).json(r);
                 return;
             }
@@ -378,6 +674,7 @@ exports.setApp = function ( app, client )
         {
             const db = client.db();
             const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderName:newFolder.folderName});
+            msg = results;
         }
         catch(e)
         {
@@ -387,14 +684,15 @@ exports.setApp = function ( app, client )
         var refreshedToken = null;
         try
         {
-            refreshedToken = token.refresh(jwtToken);
+            refreshedToken = token.refresh(jwToken);
         }
         catch(e)
         {
             console.log(e.message);
         }
         
-        var ret = { error: error, jwToken: refreshedToken };
+        // the message will also output the new object id.
+        var ret = { error: error, jwToken: refreshedToken, message: msg };
         
         res.status(200).json(ret);
     });
@@ -893,7 +1191,7 @@ exports.setApp = function ( app, client )
 
     // These variables are sent from front-end
     // folders is the text that is being added
-    const {userId, jwtToken} = req.body;
+    const {userId, jwToken} = req.body;
     var error = '';
     var token = require('./createJWT.js');
 
@@ -901,10 +1199,10 @@ exports.setApp = function ( app, client )
     // Sets the error and returns
     try
     {
-        if( token.isExpired(jwtToken))
+        if( token.isExpired(jwToken))
         {
             console.log("TOKEN EXPIRED retrieveFolders");
-            var r = {error:'The JWT is no longer valid', jwtToken:''};
+            var r = {error:'The JWT is no longer valid', jwToken:''};
             res.status(200).json(r);
             return;
         }
@@ -932,7 +1230,7 @@ exports.setApp = function ( app, client )
     var refreshedToken = null;
     try
     {
-        refreshedToken = token.refresh(jwtToken);
+        refreshedToken = token.refresh(jwToken);
     }
     catch(e)
     {
@@ -940,9 +1238,9 @@ exports.setApp = function ( app, client )
     }
 
     // Sen the user back an error field and their refreshed token
-    var ret = { error: error, jwtToken: refreshedToken, folders: results };
+    var ret = { error: error, jwToken: refreshedToken, folders: results };
     console.log("FINISHED retrieveFolders");
-
+    
     res.status(200).json(ret);
     });
 }

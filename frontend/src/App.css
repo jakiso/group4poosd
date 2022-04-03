@@ -18,9 +18,9 @@ body {
   position: relative;
   width: 696px;
   height: 114px;
-  marginTop: 50px;
-  marginLeft: auto;
-  marginRight: auto;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
   background: #001A5E;
   border-radius: 14px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -33,20 +33,20 @@ body {
   line-height: 100px;
   
   display: flex;
-  justifyContent: center;
+  justify-content: center;
   letter-spacing: 0.1em;
 }
 
 /* logo png on title will not change on any page*/
 .logo {
-  paddingLeft: 50px;
+  padding-left: 50px;
 }
 
 /* this Account tab will not change on any page*/
 .tab{
   position: relative;
   display: flex;
-  justifyContent: center;
+  justify-content: center;
 }
 
 /* arc png will not change on any page*/
@@ -54,17 +54,17 @@ body {
   /* position: absolute; */
   width: 581px;
   height: 59px;
-  /* marginTop: 50px; */
+  /* margin-top: 50px; */
   /* display: flex; */
-  justifyContent: center;
+  justify-content: center;
   /* z-index: 2; */
 }
 
 /* main pane will not change on any page*/
 .main_pane {
-  /* marginTop: 109px; */
-  marginLeft: auto;
-  marginRight: auto;
+  /* margin-top: 109px; */
+  margin-left: auto;
+  margin-right: auto;
 
   width: 806px;
   height: 720px;
@@ -76,18 +76,19 @@ body {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 14px;
   overflow:auto;
+  word-wrap: break-word;
 }
 
 .fields{
   padding-top: 100px;
   display: grid;
-  justifyContent: center;
+  justify-content: center;
 }
 
 .buttons{
   padding-top: 20px;
   display: grid;
-  justifyContent: center;
+  justify-content: center;
 }
 
 input[type=submit]{
@@ -106,10 +107,10 @@ input[type=submit]{
   line-height:0px;
 
   display: flex;
-  justifyContent: center;
+  justify-content: center;
   z-index: 4;
-  marginLeft:auto; 
-  marginRight:auto;
+  margin-left:auto; 
+  margin-right:auto;
 }
 
 .link{
@@ -122,7 +123,7 @@ input[type=submit]{
   text-decoration: underline;
 
   display: flex;
-  justifyContent: center;
+  justify-content: center;
   z-index: 4;
 }
 
@@ -135,7 +136,7 @@ input[type=submit]{
   line-height:0px;
 
   display: flex;
-  justifyContent: center;
+  justify-content: center;
   z-index: 4;
 }
 
@@ -181,4 +182,3 @@ input[type=password]{
   color:#20CEF2;
   opacity: 1; /* Firefox */
 }
-

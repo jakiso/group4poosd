@@ -90,7 +90,8 @@ function CenterDiv()
                         onClick={DoLogin} style={{"marginTop":"40px"}}/>
                     <input type="submit" id="loginGButton" value = "Login with Google" 
                     style={{"width":"30%"}}/>
-                    <LinkStyled className="link" link_text="Forgot Password"/>
+                    {/* This routes back to login page just to avoid getting an unnecessary error. */}
+                    <LinkStyled className="link" link_text="Forgot Password" route="/Login"/>
                     <LinkStyled className="link" route="/Register" link_text="Create Account"/>
                 </div>
             </form>

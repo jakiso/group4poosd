@@ -21,7 +21,8 @@ border-width:0px;
 
 export const Buttonc = ({className, button_id, button_text, onClick}) =>{
     return(
+        // readOnly for true just to get rid of errors in debugging.
         <Button id={button_id} className={className} value = {button_text}
-        onClick={onClick} />
+        onClick={onClick} readOnly={true}/>
     )
 }

@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { Title } from '../components/Title';
 
 const TitleHeader = styled(Title)`
-    marginBottom:40px;
+    margin-bottom:40px;
 `
 
 const TabTitle = styled(LongTab)`
@@ -15,9 +15,9 @@ const TabTitle = styled(LongTab)`
 
 function LoginPage() {
   return (
-    <body className="background">
+    <div className="background">
 
-<div style={{"display":"grid", "gridTemplateRows": "1fr", "align-content":"center"}}>
+<div style={{"display":"grid", "gridTemplateRows": "1fr", "alignContent":"center"}}>
 
       <TitleHeader className="title"/>
       <div className="wrapper" style={{"display":"grid", "gridTemplateRows": "1fr 100%"}}>
@@ -26,7 +26,7 @@ function LoginPage() {
       </div>
       </div>
 
-    </body>
+    </div>
     
   );
 }
