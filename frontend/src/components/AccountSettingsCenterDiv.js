@@ -28,17 +28,17 @@ function CenterDiv(){
                     email:email.value, password:password.value, confirmPassword:confirmPassword.value};
 
         // Loop through the object and check to make sure the value are not empty
-        for(const [key, value] of Object.entries(obj)) 
-        {
+       // for(const [key, value] of Object.entries(obj)) 
+       // {
             // Use string trim function to remove leading and trailing whitespace
-            obj[key] = value.trim();
+       //     obj[key] = value.trim();
 
             // Check if any entry field is empty and stop the submission and let the user know
-            if (obj[key] == "") {
-                setMessage(`${key} is empty`);
-                return;
-            }
-        }
+        //    if (obj[key] == "") {
+        //        setMessage(`${key} is empty`);
+        //        return;
+          //  }
+     //   }
 
         // Check if passwords match
         if(obj.password != obj.confirmPassword)
@@ -87,7 +87,7 @@ function CenterDiv(){
             localStorage.setItem('user_data', JSON.stringify(user));
 
             // Account has been created go to verification page
-            setMessage('Your account has been created!');
+            setMessage('Your account has been changed!');
             window.location.href = '/Verify';
         }
         catch(e)
