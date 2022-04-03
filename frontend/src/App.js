@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainPage from './pages/MainPage';
 import VerificationPage from './pages/VerificationPage';
+import PasswordResetPage from './pages/PasswordResetPage';
 
 function App() {
     return (
@@ -22,6 +23,9 @@ function App() {
                 </Route>
                 <Route path="/Verify" exact>
                     <VerificationPage />
+                </Route>
+                <Route path="/Reset" exact>
+                    <PasswordResetPage />
                 </Route>
                 <Redirect to="/" />
             </Switch>  

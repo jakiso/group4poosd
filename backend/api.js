@@ -5,6 +5,7 @@ const User = require('./models/newUser.js');
 const Folder = require('./models/folder.js');
 const Place = require('./models/place.js');
 const { getMaxListeners } = require('./models/newUser.js');
+const { response } = require('express');
 
 exports.setApp = function ( app, client )
 {
@@ -478,7 +479,6 @@ exports.setApp = function ( app, client )
         if( userEmail.emailConfirm == 1)
         {
             responseMsg = "Email is Confirmed";
-            r.response = responseMsg;
         }
         else 
         {
@@ -657,6 +657,9 @@ exports.setApp = function ( app, client )
         const sgMail = require('@sendgrid/mail');
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+        // Token for checking and updating
+        var token = require('./createJWT');
+
         // Error message to be sent
         var error = '';
 
@@ -673,6 +676,39 @@ exports.setApp = function ( app, client )
             jwToken: req.body.jwToken,
             response: responseMsg
         };
+        
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(req.body.jwToken))
+            {
+                r.error = 'The JWT is no longer valid';
+                r.jwToken = '';
+                r.response = responseMsg;
+
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+
+        }
+
+        // Make a new token and store it in the message to be sent back
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(r.jwToken);
+            r.jwToken = refreshedToken;
+        }
+        catch(e)
+        {
+            console.log("token refresh catch");
+            console.log(e.message);
+        }
 
         // SEND EMAIL STUFF
 
@@ -692,13 +728,20 @@ exports.setApp = function ( app, client )
 
         } else {
             
+            // Create token for confirmation
+            const hash = token.createConfirmToken(userEmail.email);
+            console.log("password reset token");
+            console.log(hash.accessToken);
+
+            const placeToken = await db.collection('Users').updateOne({userId: resetUser.userId}, {$set: {confirmToken: hash.accessToken}});
+            
             const msg = {
                 to: resetUser.email, // Change to your recipient
                 from: 'group4poosd@gmail.com', // Change to your verified sender
                 substitutionWrappers: ['{{', '}}'],
                 dynamicTemplateData: {
                     username: `${resetUser.username}`,
-                    url: encodeURI(`http://${req.headers.host}/passwordReset&ID=${resetUser.username}`)
+                    url: encodeURI(`http://${req.headers.host}/confirmReset?token=${hash.accessToken}&email=${resetUser.email}`)
                 },
                 templateId: 'd-7e5ebc6daf174a4882b1b6b8b0df631e',
             }
@@ -733,6 +776,114 @@ exports.setApp = function ( app, client )
         }
 
         return;
+    });
+
+    app.get('/confirmReset', async (req, res, next) =>
+    {   
+        // Token for checking and refreshing
+        var token = require('./createJWT.js');
+    
+        // Error message to be sent
+        var error = '';
+
+        // Get userId from sent
+        const receivedToken = req.query.token;
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(receivedToken))
+            {
+                console.log('The JWT is no longer valid');
+                res.status(400);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+            return;
+        }
+
+        console.log("request");
+        console.log(req.query);
+
+        // Connect to the database
+        const db = client.db();
+        const checkedUser = await db.collection('Users').findOne({email: req.query.email});
+        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$unset: {confirmToken: ''}});
+        console.log(confirmUser);
+
+ 
+        // NEEDS TO REDIRECT TO REACT SERVER
+        res.redirect(`http://${req.headers.host}/reset`);
+        //////
+        return;
+    });
+
+    app.post('/resetPassword', async (req, res, next) =>
+    {
+        // Token for checking and updating
+        var token = require('./createJWT');
+
+        // Error message to be sent
+        var error = '';
+
+        // Variable to store the response to be sent back to front-end
+        const r = 
+        {
+            error: error,
+            jwToken: req.body.jwToken,
+            response: responseMsg
+        };
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(req.body.jwToken))
+            {
+                r.error = 'The JWT is no longer valid';
+                r.jwToken = '';
+                r.response = responseMsg;
+
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+
+        }
+
+        // Make a new token and store it in the message to be sent back
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(r.jwToken);
+            r.jwToken = refreshedToken;
+        }
+        catch(e)
+        {
+            console.log("token refresh catch");
+            console.log(e.message);
+        }
+
+        // Get usedId from front-end
+        const userId = req.body.userId;
+
+        // Connect to the database
+        const db = client.db();
+        // Search the database for the userId and update password
+        const resetUser = await db.collection('Users').findOne({userId:userId});
+        const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
+            {$set: {password: req.body.password}});
+        
+        responseMsg = "Password successfully updated!"
+        ret = Object.assign(refreshedToken, {error:error})
+        res.status(200).json(ret);
     });
 
     app.post('/retrieveFolders', async (req, res, next) =>
