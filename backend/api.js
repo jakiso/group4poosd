@@ -286,14 +286,14 @@ exports.setApp = function ( app, client )
             const token = require("./createJWT.js");
             retToken = token.createToken( retNewUser.firstName, retNewUser.lastName, retNewUser.userId );
         }
-        
+
         catch(e)
         {
             error = e.toString();
         }
 
         // Everything is successful send empty error
-        ret = Object.assign(retToken, {error:error})
+        ret = Object.assign(retToken, {error:error});
         res.status(200).json(ret);
     });
 
@@ -400,6 +400,7 @@ exports.setApp = function ( app, client )
 
     app.post('/sendtestmail', async (req, res, next) =>
     {   
+        console.log("GET A EMAIL REQUEST");
         // Sendgrid setup
         require('dotenv').config();
         const sgMail = require('@sendgrid/mail');
@@ -470,54 +471,62 @@ exports.setApp = function ( app, client )
         // Search the database for the userId
         const userEmail = await db.collection('Users').findOne({userId:userId});
 
+        console.log("User to send email to");
         console.log(userEmail);
 
-        // Create token for confirmation
-        const hash = token.createConfirmToken(userEmail.email);
-        console.log("email token");
-        console.log(hash.accessToken);
-
-        const placeToken = await db.collection('Users').updateOne({userId: userEmail.userId}, {$set: {confirmToken: hash.accessToken}});
-
-        const msg = {
-            to: 'rada.rada.rada@hotmail.com',//userEmail.email, // Change to your recipient
-            from: 'group4poosd@gmail.com', // Change to your verified sender
-            substitutionWrappers: ['{{', '}}'],
-            dynamicTemplateData: {
-                first_name: `${userEmail.firstName}`,
-                url: encodeURI(`http://${req.headers.host}/confirmEmail?token=${hash.accessToken}&email=${userEmail.email}&redirect=${req.headers.origin}`)
-            },
-            templateId: 'd-450016c069bb4859bbaabf2742ff6766',
-        }
-        sgMail
-        .send(msg)
-        .then(() => {
-            console.log('Email sent')
-            responseMsg = "Email successfully sent!";
-
-            // Edit responses
-            r.error = error;
+        // Check if user has already been verified
+        if( userEmail.emailConfirm == 1)
+        {
+            responseMsg = "Email is Confirmed";
             r.response = responseMsg;
+        }
+        else 
+        {
+            // Create token for confirmation
+            const hash = token.createConfirmToken(userEmail.email);
+            console.log("email token");
+            console.log(hash.accessToken);
 
-            // Show response before sent
-            console.log(r);
+            const placeToken = await db.collection('Users').updateOne({userId: userEmail.userId}, {$set: {confirmToken: hash.accessToken}});
 
-            // Send the response
-            res.status(200).json(r);
-        })
-        .catch((error) => {
-            console.error(error)
+            const msg = {
+                to: userEmail.email, // Change to your recipient
+                from: 'group4poosd@gmail.com', // Change to your verified sender
+                substitutionWrappers: ['{{', '}}'],
+                dynamicTemplateData: {
+                    first_name: `${userEmail.firstName}`,
+                    url: encodeURI(`http://${req.headers.host}/confirmEmail?token=${hash.accessToken}&email=${userEmail.email}&redirect=${req.headers.origin}`)
+                },
+                templateId: 'd-450016c069bb4859bbaabf2742ff6766',
+            }
+            sgMail
+            .send(msg)
+            .then(() => {
+                console.log('Email sent')
+                responseMsg = "Email successfully sent!";
 
-            // Edit response
-            r.error = error;
+                // Edit responses
+                r.error = error;
+                r.response = responseMsg;
 
-            // Show response
-            console.log(r)
+                // Show response before sent
+                console.log(r);
 
+                // Send the response
+                res.status(200).json(r);
+            })
+            .catch((error) => {
+                console.error(error)
+
+                // Edit response
+                r.error = error;
+
+                // Show response
+                console.log(r)
+            });
+        }
             // Send response
             res.status(200).json(r);
-        });
-
     });
 
     app.get('/confirmEmail', async (req, res, next) =>
@@ -562,6 +571,83 @@ exports.setApp = function ( app, client )
         res.redirect(`${req.query.redirect}/Verify`);
         //////
         return;
+    });
+
+    app.post('/checkConfirm', async (req, res, next) =>
+    {   
+        // Token for checking and refreshing
+        var token = require('./createJWT.js');
+    
+        // Error message to be sent
+        var error = '';
+
+        // Variable to store the response to be sent back to front-end
+        const r = 
+        {
+            error: error,
+            jwToken: req.body.jwToken,
+        };
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(req.body.jwToken))
+            {
+                r.error = 'The JWT is no longer valid';
+                r.jwToken = '';
+
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+        }
+
+        // Make a new token and store it in the message to be sent back
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(r.jwToken);
+            r.jwToken = refreshedToken;
+        }
+        catch(e)
+        {
+            console.log("token refresh catch");
+            console.log(e.message);
+        }
+        
+        // Get usedId from front-end
+        const userId = req.body.userId;
+
+        try
+        {
+            // Connect to the database
+            const db = client.db();
+            // Search the database for the userId
+            const userConfirm = await db.collection('Users').findOne({userId:userId});
+
+            // Check if user has already been verified
+            if( userConfirm.emailConfirm == 1)
+            {
+                error = "Email is Confirmed";
+                r.error = error;
+            }
+            else 
+            {
+                error = "Email not Confirmed";
+                r.error = error;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Send response
+        res.status(200).json(r);
     });
 
     app.post('/sendResetEmail', async (req, res, next) =>

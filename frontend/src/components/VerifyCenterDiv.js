@@ -15,20 +15,62 @@ function CenterDiv(){
         setTokenData(localStorage.getItem('token_data'));
       }, []);
 
-    // Another useEffect to send the verifcation email when page loads
-    useEffect(() => {
+    // Used to store token
+    var storage = require('../tokenStorage.js');
+    // Used for patht to send api
+    var bp = require('./Path.js');
 
-    }, []);
+     // Checks if the user is already confirmed
+     const CheckConfirm = async () => 
+     {
+         console.log("CHECKING CONFIRM");
+        // Retrieve userId and token
+        var userId = JSON.parse(localStorage.getItem('user_data')).id;
+        var token = storage.retrieveToken();
+
+        // Puts in object to be sent for email
+        const confirmObj = {userId: userId, jwToken: token};
+        
+        try
+        {
+            // Check if user is confirmed
+            const checkConfirm = await fetch(bp.buildPath('checkConfirm'), {method:'POST',body:JSON.stringify(confirmObj),headers:{'Content-Type': 'application/json'}});
+
+            // Convert response to JSON
+            var res = JSON.parse(await checkConfirm.text());
+
+            // Store the JWT in local storage
+            storage.storeToken(res.jwToken);
+
+            // EMIAL IS CONFIRMED
+            if (res.error == "Email is Confirmed")
+            {
+                console.log("EMAIL IS CONFIRMED");
+                setMessage( res.error );
+                // Email has been confirmed send to main page
+                console.log("GO TO MAIN");
+                window.location.href = '/';
+            }
+            // Email NOT Confirmed
+            else 
+            {
+                console.log("EMAIL NOT CONFIRMED");
+                DoVerify();
+            }
+        }
+        // JWT not received properly
+        catch(e)
+        {
+            console.log(e.toString());
+            return;
+        }
+    };
 
     // When the verify button is clicked  
-    const DoVerify = async event => 
+    const DoVerify = async () => 
     {
-        event.preventDefault();
-
-        // Used to store token
-        var storage = require('../tokenStorage.js');
-        // Used for patht to send api
-        var bp = require('./Path.js');
+        console.log("Sending email");
+        // event.preventDefault();
 
         // Retrieve userId and token
         var userId = JSON.parse(localStorage.getItem('user_data')).id;
@@ -52,6 +94,8 @@ function CenterDiv(){
             // Store the JWT in local storage
             storage.storeToken(res.jwToken);
 
+            console.log(res);
+
             // Check the error field. empty error is good
             if( res.error && res.error.length > 0 )
             {
@@ -59,9 +103,8 @@ function CenterDiv(){
             }
             else
             {
-                //NOT READY YET
                 // All good send to main page
-                // window.location.href = '/';
+                console.log("EMAIL SENT");
             }
         }
         // JWT not received properly
@@ -72,6 +115,12 @@ function CenterDiv(){
         }
     };
 
+    // useEffect runs only once after the page has loaded
+    useEffect(() => {
+        CheckConfirm();
+        console.log("Going once");
+    }, []);
+
     return(
         <div className="main_pane"> <br/><br/><br/><br/>
             <span id="loginResult" style={{"marginTop": "0px"}}>{message}</span><br/><br/><br/>
@@ -79,7 +128,7 @@ function CenterDiv(){
             <span id="tokenData">{tokenData}</span>
             <div className="buttons" style={{"marginTop": "100px"}}>
                 <input type="submit" id="verifyButton" className="buttons" value = "Verify"
-                    onClick={DoVerify}/>
+                    onClick={() => CheckConfirm()}/>
             </div>
         </div>
     );
