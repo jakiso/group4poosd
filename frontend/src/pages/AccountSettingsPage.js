@@ -1,65 +1,32 @@
-// From figma
+import React from 'react';
+import '../App.css';
+import AccountSettingsCenterDiv from '../components/AccountSettingsCenterDiv';
+import {LongTab} from '../components/LongTab'
+import styled from 'styled-components'
+import { Title } from '../components/Title';
 
-import React from "react";
-import Arc from "../Arc";
-import FieldButton from "../FieldButton";
-import "./AccountSettingsPage.css";
+const TitleHeader = styled(Title)`
+    margin-bottom:40px;
+`
 
-function AccountSettingsPage(props) {
-  const {
-    searchDivLayout,
-    arcProps,
-    fieldButton1Props,
-    fieldButton2Props,
-    fieldButton3Props,
-    fieldButton4Props,
-    fieldButton5Props,
-    fieldButton6Props,
-  } = props;
+const TabTitle = styled(LongTab)`
+    line-height:40px;
+`
 
-  return (
-    <div className="container-center-horizontal">
-      <div className="account-settings-page screen">
-        <img className="title-1" src="/img/title@1x.svg" />
-        <Arc arc2Props={arcProps.arc2Props} />
-        <div className="search-div-1">
-          <div className="flex-row">
-            <img className="search-div-layout" src={searchDivLayout} />
-            <div className="frame-1">
-              <FieldButton
-                className={fieldButton1Props.className}
-                fieldButton2Props={fieldButton1Props.fieldButton2Props}
-              />
-              <FieldButton
-                className={fieldButton2Props.className}
-                fieldButton2Props={fieldButton2Props.fieldButton2Props}
-              />
-              <FieldButton
-                className={fieldButton3Props.className}
-                fieldButton2Props={fieldButton3Props.fieldButton2Props}
-              />
-              <FieldButton
-                className={fieldButton4Props.className}
-                fieldButton2Props={fieldButton4Props.fieldButton2Props}
-              />
-              <FieldButton
-                className={fieldButton5Props.className}
-                fieldButton2Props={fieldButton5Props.fieldButton2Props}
-              />
-              <FieldButton
-                className={fieldButton6Props.className}
-                fieldButton2Props={fieldButton6Props.fieldButton2Props}
-              />
+function AccountSettingsPage() {
+    return (
+        <body className="background">
+            
+            <div style={{"display":"grid", "gridTemplateRows": "1fr", "align-content":"center"}}>
+            <TitleHeader className="title"/>
+            <div class="wrapper" style={{"display":"grid", "gridTemplateRows": "1fr 100%"}}>
+            <TabTitle children="Account Settings Page"></TabTitle>
+            <AccountSettingsCenterDiv/>
             </div>
-          </div>
-          <div className="frame-1-1">
-            <img className="login-2" src="/img/login@2x.svg" />
-            <img className="login-3" src="/img/login-1@2x.svg" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+            </div>
+
+        </body>
+    );
 }
 
 export default AccountSettingsPage;
