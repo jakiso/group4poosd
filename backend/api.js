@@ -481,7 +481,7 @@ exports.setApp = function ( app, client )
         const placeToken = await db.collection('Users').updateOne({userId: userEmail.userId}, {$set: {confirmToken: hash.accessToken}});
 
         const msg = {
-            to: 'rada.rada.rada@hotmail.com',//userEmail.email, // Change to your recipient
+            to: userEmail.email, // Change to your recipient
             from: 'group4poosd@gmail.com', // Change to your verified sender
             substitutionWrappers: ['{{', '}}'],
             dynamicTemplateData: {
@@ -656,7 +656,7 @@ exports.setApp = function ( app, client )
                 substitutionWrappers: ['{{', '}}'],
                 dynamicTemplateData: {
                     username: `${resetUser.username}`,
-                    url: encodeURI(`http://${req.headers.host}/resetPassword?token=${hash.accessToken}&email=${resetUser.email}`)
+                    url: encodeURI(`http://${req.headers.host}/confirmReset?token=${hash.accessToken}&email=${resetUser.email}`)
                 },
                 templateId: 'd-7e5ebc6daf174a4882b1b6b8b0df631e',
             }
@@ -732,12 +732,12 @@ exports.setApp = function ( app, client )
 
  
         // NEEDS TO REDIRECT TO REACT SERVER
-        res.redirect(`http://${req.headers.host}/changePassword`);
+        res.redirect(`http://${req.headers.host}/reset`);
         //////
         return;
     });
 
-    app.post('/sendResetEmail', async (req, res, next) =>
+    app.post('/resetPassword', async (req, res, next) =>
     {
         // Token for checking and updating
         var token = require('./createJWT');
@@ -786,20 +786,19 @@ exports.setApp = function ( app, client )
             console.log(e.message);
         }
 
-        if(req.body.password.localeCompare(req.body.confirmPassword) = 0) {
-            // Get usedId from front-end
-            const userId = req.body.userId;
+        // Get usedId from front-end
+        const userId = req.body.userId;
 
-            // Connect to the database
-            const db = client.db();
-            // Search the database for the userId and update password
-            const resetUser = await db.collection('Users').findOne({userId:userId});
-            const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
-                {$set: {password: req.body.password}});
-            responseMsg = "Password successfully updated!"
-        } else {
-            responseMsg = "Passwords must match."
-        }
+        // Connect to the database
+        const db = client.db();
+        // Search the database for the userId and update password
+        const resetUser = await db.collection('Users').findOne({userId:userId});
+        const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
+            {$set: {password: req.body.password}});
+        
+        responseMsg = "Password successfully updated!"
+        ret = Object.assign(refreshedToken, {error:error})
+        res.status(200).json(ret);
     });
 
     app.post('/retrieveFolders', async (req, res, next) =>
