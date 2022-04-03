@@ -4,12 +4,12 @@ import { isExpired, decodeToken } from "react-jwt";
 import axios from 'axios';
 
 function CenterDiv(){
-    var firstName;
-    var lastName;
-    var username;
-    var email;
-    var password;
-    var confirmPassword;
+    var NewfirstName;
+    var NewlastName;
+    var Newusername;
+    var Newemail;
+    var Newpassword;
+    var NewconfirmPassword;
 
     const [message,setMessage] = useState('');
 
@@ -24,8 +24,8 @@ function CenterDiv(){
         event.preventDefault();
 
         // Creates object for all form fields
-        var obj = {NfirstName:firstName.value, NlastName:lastName.value, username:username.value, 
-                    email:email.value, password:password.value, confirmPassword:confirmPassword.value};
+        var obj = {firstName:NewfirstName.value, lastName:NewlastName.value, username:Newusername.value, 
+                    email:Newemail.value, password:Newpassword.value, confirmPassword:NewconfirmPassword.value};
 
         // Loop through the object and check to make sure the value are not empty
        // for(const [key, value] of Object.entries(obj)) 
