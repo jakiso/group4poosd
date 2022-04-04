@@ -33,23 +33,23 @@ width: 100%;
 height: 100%;
 `
 
-export const Carda = ({Name, Address, PhoneNumber,MoreInfo, DescriptionText, Rating}) =>{
+export const Carda = (props) =>{
     return(
         <Card style={{"display":"flex", "gap": "0vh", "overflow":"auto"}}>            
         <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>    
         <div style={{ "height":"100%","width":"20%", "overflow":"auto"}}>
             <img width={"70%"} height={"auto"} src={event_pic} alt="Event"/><br/><br/>
-            <p>Rating {Rating}</p><br/>
-            <img width={"15%"} height={"auto"} src={cross} alt="Event"/>
+            <p>Rating {props.Rating}</p><br/>
+            <img width={"15%"} height={"auto"} src={cross} alt="Event" onClick={()=>{props.setAddToFolder(true);}}/>
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
-            <ListButton button_text={Name}/>
-            <ListButton button_text={Address}/>
-            <ListButton button_text={PhoneNumber}/>
-            <ListButton button_text={MoreInfo}/> 
+            <ListButton button_text={props.Name}/>
+            <ListButton button_text={props.Adress}/>
+            <ListButton button_text={props.PhoneNumber}/>
+            <ListButton button_text={props.MoreInfo}/> 
         </div> 
         <div style={{"width":"40%", "overflow":"auto"}}>
-            <Description button_text={DescriptionText}/>
+            <Description button_text={props.DescriptionText}/>
         </div>  
         </div></Card>
     )

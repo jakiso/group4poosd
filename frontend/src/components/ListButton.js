@@ -26,9 +26,8 @@ column-gap: 1rem;
 function ListButton({className, button_id, button_text, onClick, trigger_bool}){
     //console.log(button_id);
     return (
-        <div>
-        <Folder type="button"id={button_id} className={className}
-        onClick={onClick}>
+        <div onClick={onClick}>
+        <Folder type="button"id={button_id} className={className}>
             <br/>
             <p>{button_text}</p>
             <FolderEditMode trigger={trigger_bool} folderId={button_id}/>
