@@ -78,7 +78,7 @@ function FolderEditMode(props){
                 storage.storeToken( res.jwToken );
 
                 // popup prompt for changing the name of the folder. for aesthetic should prob be changed later.
-                let newFolderName = prompt("New Folder Name:", res.message.folderName);
+                let newFolderName = window.prompt("New Folder Name:", res.message.folderName);
 
                 // do nothing if cancelled, field blank or null
                 if (newFolderName == null || newFolderName == ""){return;}
