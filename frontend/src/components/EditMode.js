@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import '../App.css';
 import ListButton from './ListButton';
 
-
 const SaveButton = styled(Buttonb)`
     width: 100%;
     height: 50px;
@@ -19,20 +18,16 @@ const AddButton = styled(Buttonb)`
     margin-top: 20px;
 `
 
-
-
 function EditMode(props){
 
     // try catch is needed for when page intially loads
     try{
-    return (props.trigger) ? (
+    return (props.trigger) ? ( 
         <div>
         <SaveButton button_text="Save" onClick={()=>{
-            props.setTrigger(false); 
+            props.setTrigger(false);
         }}/>
         <AddButton button_text="Add"/>
-
-        {console.log(props.arr)}
 
         {
             props.arr.folders.map(({ folderId, folderName }) => (
