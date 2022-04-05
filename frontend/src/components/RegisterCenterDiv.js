@@ -83,7 +83,7 @@ function CenterDiv(){
             storage.storeToken(res);
             // Decode the token and store in tokenData
             const tokenData = decodeToken(storage.retrieveToken());
-            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId}
+            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId};
             localStorage.setItem('user_data', JSON.stringify(user));
 
             // Account has been created go to verification page

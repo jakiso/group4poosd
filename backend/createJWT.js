@@ -6,6 +6,11 @@ exports.createToken = function ( fn, ln, id )
     return _createToken( fn, ln, id );
 }
 
+exports.createConfirmToken = function ( email )
+{
+    return _createNewUserTok( email );
+}
+
 _createToken = function ( fn, ln, id )
 {
     try
@@ -31,23 +36,23 @@ _createToken = function ( fn, ln, id )
     return ret;
 }
 
-// _createNewUserTok = function ( email )
-// {
-//     try
-//     {
-//       const expiration = new Date();
-//       const user = {userId:id,firstName:fn,lastName:ln};
+_createNewUserTok = function ( email )
+{
+    try
+    {
+      const expiration = new Date();
+      const emailObj = {email: email};
 
-//       const accessToken =  jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
+      const accessToken =  jwt.sign(emailObj, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
 
-//       var ret = {accessToken:accessToken};
-//     }
-//     catch(e)
-//     {
-//       var ret = {error:e.message};
-//     }
-//     return ret;
-// }
+      var ret = {accessToken:accessToken};
+    }
+    catch(e)
+    {
+      var ret = {error:e.message};
+    }
+    return ret;
+}
 
 exports.isExpired = function( token )
 {

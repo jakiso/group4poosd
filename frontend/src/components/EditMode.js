@@ -40,7 +40,7 @@ function EditMode(props){
         {
              props.arrn.folders.map(
                  ({ folderId, folderName }) => (
-                    <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
+                    <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}  onClick={()=>{props.setAddToFolder(false);}}/>
                 )
              )
         }

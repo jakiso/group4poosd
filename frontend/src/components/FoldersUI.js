@@ -12,7 +12,7 @@ const EditButton = styled(Buttonb)`
 `
 var res;
 
-function FoldersUI()
+function FoldersUI(props)
 {
     // Use state for a message if needed
     const [message, setMessage] = useState('');
@@ -92,7 +92,7 @@ function FoldersUI()
     return(
          <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"10%", "alignContent":"center"}}>
             <EditButton button_text="Edit" onClick={editModefunct}/>
-            <EditMode trigger={editMode} setTrigger={setEditMode} arr={res} arrn={res} sta={setFolders}/>
+            <EditMode trigger={editMode} setTrigger={setEditMode} arr={res} arrn={res} sta={setFolders} setAddToFolder={props.setAddToFolder}/>
          </div>        
     );
 };
