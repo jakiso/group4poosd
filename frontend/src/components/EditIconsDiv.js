@@ -2,7 +2,7 @@ import '../App.css';
 import del from '../images/cross_delete.png';
 import rename from '../images/LG_edit_pen.png';
 
-function FolderEditMode(props){
+function EditIconsDiv(props){
     var res;
 
     const DeleteFolder = async event => {
@@ -139,8 +139,8 @@ function FolderEditMode(props){
         }
     }
 
-    return (props.trigger) ? (
-    //this div contains the folder delete cross and edit pen icons (for edit mode)
+    //return div with cross and pen inside folder button (only if edit_icons==true)
+    return (props.edit_icons) ? (
     <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto"}}>
         <div style={{"height":"40px", "width":"40px", "overflow":"hidden"}}>
             <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={DeleteFolder}/>
@@ -149,7 +149,17 @@ function FolderEditMode(props){
             <input type="image" src={rename} alt="rename" id="rename" style={{"width":"90%", "height":"90%"}} onClick={openInputField}/>
         </div>  
     </div>
-    ) : "";
+    ) :(props.newListMode) ? (
+        // this is the behavior of the edit icons in the case that we are adding a temporary listButton
+        <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto"}}>
+        <div style={{"height":"40px", "width":"40px", "overflow":"hidden"}}>
+            <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={()=>{props.setNewListMode(false)}}/>
+        </div>  
+        <div style={{"display":"30px", "width":"30px", "overflow":"hidden", "objectFit":"contain", "paddingTop":"1px"}}>
+            <input type="image" src={rename} alt="rename" id="rename" style={{"width":"90%", "height":"90%"}}/>
+        </div>  
+    </div>
+    ): "";
 
 }
-export default FolderEditMode;
+export default EditIconsDiv;
