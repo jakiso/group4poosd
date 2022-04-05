@@ -9,6 +9,63 @@ const { response } = require('express');
 
 exports.setApp = function ( app, client )
 {
+    // retrieves single folder with folderId.
+    app.post('/retrieveFolder', async (req, res, next) =>
+    {
+        var token = require('./createJWT.js'); var msg = ''; var error = '';
+
+        const jwToken = req.body.jwToken;
+        const fid = req.body.folderId;
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+
+        try
+        {
+            const db = client.db();
+
+            // grabs folder based on folderId.
+            const result = await db.collection('Folders').findOne
+            (
+                {folderId: fid}
+            )
+            
+            msg = result;
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+        
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+        console.log(ret);
+        res.status(200).json(ret);
+    });
 
     // returns array of all the user's places in a folder
     app.post('/placesFromFolder', async (req, res, next) =>
@@ -82,8 +139,9 @@ exports.setApp = function ( app, client )
     {
         var token = require('./createJWT.js'); var msg = ''; var error = '';
 
-        const jwToken = req.body.jwToken; const newFolderName = req.body.newName;
-        const fid = req.body.folderId; const uid = req.body.userId;
+        const jwToken = req.body.jwToken; 
+        const newFolderName = req.body.newFolderName;
+        const fid = req.body.folderId;
 
         // Checks if the JWT is expired
         // Sets the error and returns
@@ -105,10 +163,11 @@ exports.setApp = function ( app, client )
         try
         {
             const db = client.db();
+
             // edits name of folder that matches userId and folderId.
             const result = await db.collection('Folders').updateOne
             (
-                {userId: uid, folderId: fid},
+                {folderId: fid},
                 {$set: {"folderName": newFolderName}}
             )
             
@@ -599,21 +658,21 @@ exports.setApp = function ( app, client )
         const { username, password } = req.body;
 
         const db = client.db();
-        const results = await db.collection('Users').find({username:username,password:password}).toArray();
+        const results = await db.collection('Users').findOne({username:username,password:password});
 
         var id = -1;
         var fn = '';
         var ln = '';
 
         var errMsg = '';
-
-        if( results.length > 0 )
+        console.log(results);
+        if( results )
         {
-            id = results[0].userId;
-            fn = results[0].firstName;
-            ln = results[0].lastName;
+            id = results.userId;
+            fn = results.firstName;
+            ln = results.lastName;
             
-            if (results[0].emailConfirm == -1)
+            if (results.emailConfirm == -1)
             {
                 errMsg = 'Please confirm your email before logging in.'
             }
@@ -1187,8 +1246,6 @@ exports.setApp = function ( app, client )
     app.post('/retrieveFolders', async (req, res, next) =>
     {
 
-    console.log("CALLED retrieveFolders");
-
     // These variables are sent from front-end
     // folders is the text that is being added
     const {userId, jwToken} = req.body;
@@ -1201,7 +1258,6 @@ exports.setApp = function ( app, client )
     {
         if( token.isExpired(jwToken))
         {
-            console.log("TOKEN EXPIRED retrieveFolders");
             var r = {error:'The JWT is no longer valid', jwToken:''};
             res.status(200).json(r);
             return;
@@ -1217,7 +1273,6 @@ exports.setApp = function ( app, client )
     var results;
     try
     {
-        console.log("DOING retrieveFolders");
         const db = client.db();
         results = await db.collection('Folders').find({userId:userId}).toArray();
     }
@@ -1239,7 +1294,6 @@ exports.setApp = function ( app, client )
 
     // Sen the user back an error field and their refreshed token
     var ret = { error: error, jwToken: refreshedToken, folders: results };
-    console.log("FINISHED retrieveFolders");
     
     res.status(200).json(ret);
     });
