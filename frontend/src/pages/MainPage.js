@@ -5,8 +5,7 @@ import TopMarginMain from '../components/TopMarginMain';
 import { Buttonb } from '../components/Button';
 import { CenterDiv } from '../components/CenterDiv';
 import styled from 'styled-components'
-import { SearchTab } from '../components/SearchTab';
-import FoldersUI from '../components/FoldersUI';
+import ListsUI from '../components/ListsUI';
 import CardsUI from '../components/CardsUI';
 import SelectSearchTab from '../components/SelectSearchTab';
 import {GreyOutSearchTabs} from '../components/GreyOutSearchTabs';
@@ -33,7 +32,7 @@ function MainPage() {
     
     const tabs = ["", "food", "activities", "friends"];
     var [selectTab, setSelectTab] = useState(tabs[0]);
-    var [addToFolder, setAddToFolder] = useState(false);
+    var [saveToListMode, setSaveToListMode] = useState(false);
 
     return (
         <div className="background">
@@ -44,20 +43,20 @@ function MainPage() {
                         <ListsTab children="Lists"/>
                         <div>
                             <CenterDivList className='main_pane'>
-                                <FoldersUI setAddToFolder={setAddToFolder}/>
+                                <ListsUI setSaveToListMode={setSaveToListMode}/>
                             </CenterDivList>
                         </div>
                     </div>
                     <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
                         <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
-                            <GreyOutSearchTabs addToFolder={addToFolder}/>  {/* only shows when addToFolder is true */}
+                            <GreyOutSearchTabs saveToListMode={saveToListMode}/>  {/* only shows when saveToListMode is true */}
                             <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab}/>
                         </div>
                         <div>
                         <CenterDivMain className='main_pane'>
-                            <CardsUI setAddToFolder={setAddToFolder}/>
-                            <GreyOutCardUI addToFolder={addToFolder}> {/* only shows when addToFolder is true */}
-                                <AddPlacePopUp setAddToFolder={setAddToFolder}/>
+                            <CardsUI setSaveToListMode={setSaveToListMode}/>
+                            <GreyOutCardUI saveToListMode={saveToListMode}> {/* only shows when saveToListMode is true */}
+                                <AddPlacePopUp setSaveToListMode={setSaveToListMode}/>
                             </GreyOutCardUI>
                         </CenterDivMain>
                         </div>

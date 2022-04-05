@@ -40,7 +40,7 @@ export const Carda = (props) =>{
         <div style={{ "height":"100%","width":"20%", "overflow":"auto"}}>
             <img width={"70%"} height={"auto"} src={event_pic} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
-            <img width={"15%"} height={"auto"} src={cross} alt="Event" onClick={()=>{props.setAddToFolder(true);}}/>
+            <img width={"15%"} height={"auto"} src={cross} alt="Event" onClick={()=>{props.setSaveToListMode(true);}}/>
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
             <ListButton button_text={props.Name}/>

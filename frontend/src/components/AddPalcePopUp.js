@@ -16,7 +16,7 @@ export const AddPlacePopUp = (props) =>{
             <br/><br/><br/>
            <p style={{"paddingLeft":"50px", "paddingRight":"50px"}}>SELECT list you wish to add to on the left</p>
            <br/>
-           <Buttona button_text="cancel" onClick={()=>{props.setAddToFolder(false);}}/>
+           <Buttona button_text="cancel" onClick={()=>{props.setSaveToListMode(false);}}/>
            </div>
         </div>
 }

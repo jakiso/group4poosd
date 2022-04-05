@@ -12,7 +12,7 @@ const EditButton = styled(Buttonb)`
 `
 var res;
 
-function FoldersUI(props)
+function ListsUI(props)
 {
     // Use state for a message if needed
     const [message, setMessage] = useState('');
@@ -84,17 +84,14 @@ function FoldersUI(props)
         RetrieveFolders();
     });
 
-
-    function editModefunct(){
-        setEditMode(true);
-    }
-
     return(
          <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"10%", "alignContent":"center"}}>
-            <EditButton button_text="Edit" onClick={editModefunct}/>
-            <EditMode trigger={editMode} setTrigger={setEditMode} arr={res} arrn={res} sta={setFolders} setAddToFolder={props.setAddToFolder}/>
+             {/* this EditButton triggers editMode==true */}
+            <EditButton button_text="Edit" onClick={()=>{setEditMode(true);}}/>
+             {/* only if EditButton was clicked does EditMode display*/}
+            <EditMode editMode={editMode} setEditMode={setEditMode} arr={res} setSaveToListMode={props.setSaveToListMode}/>
          </div>        
     );
 };
 
-export default FoldersUI;
+export default ListsUI;

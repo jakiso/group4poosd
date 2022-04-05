@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import { Buttonb } from './Button';
 import styled from 'styled-components';
 import '../App.css';
@@ -19,28 +19,34 @@ const AddButton = styled(Buttonb)`
 `
 
 function EditMode(props){
+    var [newListMode, setNewListMode] = useState(false);
+
 
     // try catch is needed for when page intially loads
     try{
-    return (props.trigger) ? ( 
+    // when editMode==true return a SaveButton, AddButton and ListButtons (with edit_icons)
+    return (props.editMode) ? ( 
         <div>
-        <SaveButton button_text="Save" onClick={()=>{
-            props.setTrigger(false);
-        }}/>
-        <AddButton button_text="Add"/>
+        {/* if editMode==true, this SaveButton can turn set editMode back to false */}
+        <SaveButton button_text="Save" onClick={()=>{props.setEditMode(false); setNewListMode(false);}}/>
+        <AddButton button_text="Add" onClick={()=>{setNewListMode(true);}}/>
+
+        <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode}/>
 
         {
             props.arr.folders.map(({ folderId, folderName }) => (
-                <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={true}/>
+                <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={true}/>
             ))
         }
         </div>
-    ) :( 
+    ) :(     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)
         <div>  
         {
-             props.arrn.folders.map(
+             props.arr.folders.map(
                  ({ folderId, folderName }) => (
-                    <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}  onClick={()=>{props.setAddToFolder(false);}}/>
+                    <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={false}  onClick={()=>{props.setSaveToListMode(false);}}/>
+                    // the onClick here is for when a user is attempts to save specific place to this List
+                    // in the case that placeSaveMode==true (the grey div and pop-up), this onClick can turn placeSaveMode off
                 )
              )
         }

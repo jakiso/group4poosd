@@ -2,7 +2,6 @@ import React from 'react';
 import '../App.css';
 import PasswordCenterDiv from '../components/PasswordCenterDiv';
 import {LongTab} from '../components/LongTab'
-import styled from 'styled-components'
 import { Title } from '../components/Title';
 
 function PasswordResetPage() {
