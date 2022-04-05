@@ -28,7 +28,8 @@ const User = mongoose.model(
       enum: [-1, 1],
       default: -1
     },
-    userId: {}
+    userId: {},
+    confirmToken: {}
   })
 );
 

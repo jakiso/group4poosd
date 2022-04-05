@@ -5,6 +5,7 @@ const User = require('./models/newUser.js');
 const Folder = require('./models/folder.js');
 const Place = require('./models/place.js');
 const { getMaxListeners } = require('./models/newUser.js');
+const { response } = require('express');
 
 exports.setApp = function ( app, client )
 {
@@ -574,18 +575,19 @@ exports.setApp = function ( app, client )
                     ]
                 }
             )
+            console.log("New User");
             console.log(retNewUser);
             const token = require("./createJWT.js");
             retToken = token.createToken( retNewUser.firstName, retNewUser.lastName, retNewUser.userId );
         }
-        
+
         catch(e)
         {
             error = e.toString();
         }
 
         // Everything is successful send empty error
-        ret = Object.assign(retToken, {error:error})
+        ret = Object.assign(retToken, {error:error});
         res.status(200).json(ret);
     });
 
@@ -695,6 +697,493 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
+    app.post('/sendtestmail', async (req, res, next) =>
+    {   
+        console.log("GET A EMAIL REQUEST");
+        // Sendgrid setup
+        require('dotenv').config();
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+        // Token for checking and refreshing
+        var token = require('./createJWT.js');
+    
+        // Error message to be sent
+        var error = '';
+
+        // Response of email status
+        var responseMsg = '';
+
+        // Show what gets sent from front-end
+        console.log(req.body);
+
+        // Variable to store the response to be sent back to front-end
+        const r = 
+        {
+            error: error,
+            jwToken: req.body.jwToken,
+            response: responseMsg
+        };
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(req.body.jwToken))
+            {
+                r.error = 'The JWT is no longer valid';
+                r.jwToken = '';
+                r.response = responseMsg;
+
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+
+        }
+
+        // Make a new token and store it in the message to be sent back
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(r.jwToken);
+            r.jwToken = refreshedToken;
+        }
+        catch(e)
+        {
+            console.log("token refresh catch");
+            console.log(e.message);
+        }
+        
+
+
+        // SEND EMAIL STUFF
+
+        // Get usedId from front-end
+        const userId = req.body.userId;
+
+        // Connect to the database
+        const db = client.db();
+        // Search the database for the userId
+        const userEmail = await db.collection('Users').findOne({userId:userId});
+
+        console.log("User to send email to");
+        console.log(userEmail);
+
+        // Check if user has already been verified
+        if( userEmail.emailConfirm == 1)
+        {
+            responseMsg = "Email is Confirmed";
+        }
+        else 
+        {
+            // Create token for confirmation
+            const hash = token.createConfirmToken(userEmail.email);
+            console.log("email token");
+            console.log(hash.accessToken);
+
+            const placeToken = await db.collection('Users').updateOne({userId: userEmail.userId}, {$set: {confirmToken: hash.accessToken}});
+
+            const msg = {
+                to: userEmail.email, // Change to your recipient
+                from: 'group4poosd@gmail.com', // Change to your verified sender
+                substitutionWrappers: ['{{', '}}'],
+                dynamicTemplateData: {
+                    first_name: `${userEmail.firstName}`,
+                    url: encodeURI(`http://${req.headers.host}/confirmEmail?token=${hash.accessToken}&email=${userEmail.email}&redirect=${req.headers.origin}`)
+                },
+                templateId: 'd-450016c069bb4859bbaabf2742ff6766',
+            }
+            sgMail
+            .send(msg)
+            .then(() => {
+                console.log('Email sent')
+                responseMsg = "Email successfully sent!";
+
+                // Edit responses
+                r.error = error;
+                r.response = responseMsg;
+
+                // Show response before sent
+                console.log(r);
+
+                // Send the response
+                res.status(200).json(r);
+            })
+            .catch((error) => {
+                console.error(error)
+
+                // Edit response
+                r.error = error;
+
+                // Show response
+                console.log(r)
+            });
+        }
+            // Send response
+            res.status(200).json(r);
+    });
+
+    app.get('/confirmEmail', async (req, res, next) =>
+    {   
+        // Token for checking and refreshing
+        var token = require('./createJWT.js');
+    
+        // Error message to be sent
+        var error = '';
+
+        // Get userId from sent
+        const receivedToken = req.query.token;
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(receivedToken))
+            {
+                console.log('The JWT is no longer valid');
+                res.status(400);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+            return;
+        }
+
+        console.log("request");
+        console.log(req.query);
+
+        // Connect to the database
+        const db = client.db();
+        const checkedUser = await db.collection('Users').findOne({email: req.query.email});
+        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$set: {emailConfirm: 1}, $unset: {confirmToken: ''}});
+        console.log(confirmUser);
+
+ 
+        // NEEDS TO REDIRECT TO REACT SERVER
+        res.redirect(`${req.query.redirect}/Verify`);
+        //////
+        return;
+    });
+
+    app.post('/checkConfirm', async (req, res, next) =>
+    {   
+        // Token for checking and refreshing
+        var token = require('./createJWT.js');
+    
+        // Error message to be sent
+        var error = '';
+
+        // Variable to store the response to be sent back to front-end
+        const r = 
+        {
+            error: error,
+            jwToken: req.body.jwToken,
+        };
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(req.body.jwToken))
+            {
+                r.error = 'The JWT is no longer valid';
+                r.jwToken = '';
+
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+        }
+
+        // Make a new token and store it in the message to be sent back
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(r.jwToken);
+            r.jwToken = refreshedToken;
+        }
+        catch(e)
+        {
+            console.log("token refresh catch");
+            console.log(e.message);
+        }
+        
+        // Get usedId from front-end
+        const userId = req.body.userId;
+
+        try
+        {
+            // Connect to the database
+            const db = client.db();
+            // Search the database for the userId
+            const userConfirm = await db.collection('Users').findOne({userId:userId});
+
+            // Check if user has already been verified
+            if( userConfirm.emailConfirm == 1)
+            {
+                error = "Email is Confirmed";
+                r.error = error;
+            }
+            else 
+            {
+                error = "Email not Confirmed";
+                r.error = error;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        // Send response
+        res.status(200).json(r);
+    });
+
+    app.post('/sendResetEmail', async (req, res, next) =>
+    {   
+        // Sendgrid setup
+        require('dotenv').config();
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+        // Token for checking and updating
+        var token = require('./createJWT');
+
+        // Error message to be sent
+        var error = '';
+
+        // Response of email status
+        var responseMsg = '';
+
+        // Show what gets sent from front-end
+        console.log(req.body);
+
+        // Variable to store the response to be sent back to front-end
+        const r = 
+        {
+            error: error,
+            jwToken: req.body.jwToken,
+            response: responseMsg
+        };
+        
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(req.body.jwToken))
+            {
+                r.error = 'The JWT is no longer valid';
+                r.jwToken = '';
+                r.response = responseMsg;
+
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+
+        }
+
+        // Make a new token and store it in the message to be sent back
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(r.jwToken);
+            r.jwToken = refreshedToken;
+        }
+        catch(e)
+        {
+            console.log("token refresh catch");
+            console.log(e.message);
+        }
+
+        // SEND EMAIL STUFF
+
+        // Connect to the database
+        const db = client.db();
+        // Search the database for the account tied to the email
+        const resetUser = await db.collection('Users').findOne({email:req.body.email});
+        console.log(resetUser);
+        
+        // checks if account of email exists before sending email
+        if(resetUser == null) {
+            
+            responseMsg = "An account with that email does not exist.";
+            r.error = error;
+            r.response = responseMsg;
+            res.status(200).json(r);
+
+        } else {
+            
+            // Create token for confirmation
+            const hash = token.createConfirmToken(userEmail.email);
+            console.log("password reset token");
+            console.log(hash.accessToken);
+
+            const placeToken = await db.collection('Users').updateOne({userId: resetUser.userId}, {$set: {confirmToken: hash.accessToken}});
+            
+            const msg = {
+                to: resetUser.email, // Change to your recipient
+                from: 'group4poosd@gmail.com', // Change to your verified sender
+                substitutionWrappers: ['{{', '}}'],
+                dynamicTemplateData: {
+                    username: `${resetUser.username}`,
+                    url: encodeURI(`http://${req.headers.host}/confirmReset?token=${hash.accessToken}&email=${resetUser.email}`)
+                },
+                templateId: 'd-7e5ebc6daf174a4882b1b6b8b0df631e',
+            }
+            sgMail
+            .send(msg)
+            .then(() => {
+                console.log('Email sent')
+                responseMsg = "Password reset email successfully sent!";
+
+                // Edit responses
+                r.error = error;
+                r.response = responseMsg;
+
+                // Show response before sent
+                console.log(r);
+
+                // Send the response
+                res.status(200).json(r);
+            })
+            .catch((error) => {
+                console.error(error)
+
+                // Edit response
+                r.error = error;
+
+                // Show response
+                console.log(r)
+
+                // Send response
+                res.status(200).json(r);
+            });
+        }
+
+        return;
+    });
+
+    app.get('/confirmReset', async (req, res, next) =>
+    {   
+        // Token for checking and refreshing
+        var token = require('./createJWT.js');
+    
+        // Error message to be sent
+        var error = '';
+
+        // Get userId from sent
+        const receivedToken = req.query.token;
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(receivedToken))
+            {
+                console.log('The JWT is no longer valid');
+                res.status(400);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+            return;
+        }
+
+        console.log("request");
+        console.log(req.query);
+
+        // Connect to the database
+        const db = client.db();
+        const checkedUser = await db.collection('Users').findOne({email: req.query.email});
+        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$unset: {confirmToken: ''}});
+        console.log(confirmUser);
+
+ 
+        // NEEDS TO REDIRECT TO REACT SERVER
+        res.redirect(`http://${req.headers.host}/reset`);
+        //////
+        return;
+    });
+
+    app.post('/resetPassword', async (req, res, next) =>
+    {
+        // Token for checking and updating
+        var token = require('./createJWT');
+
+        // Error message to be sent
+        var error = '';
+
+        // Variable to store the response to be sent back to front-end
+        const r = 
+        {
+            error: error,
+            jwToken: req.body.jwToken,
+            response: responseMsg
+        };
+
+        // Check if token is expired
+        try
+        {
+            if( token.isExpired(req.body.jwToken))
+            {
+                r.error = 'The JWT is no longer valid';
+                r.jwToken = '';
+                r.response = responseMsg;
+
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log("token expired catch");
+            console.log(e.message);
+
+        }
+
+        // Make a new token and store it in the message to be sent back
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(r.jwToken);
+            r.jwToken = refreshedToken;
+        }
+        catch(e)
+        {
+            console.log("token refresh catch");
+            console.log(e.message);
+        }
+
+        // Get usedId from front-end
+        const userId = req.body.userId;
+
+        // Connect to the database
+        const db = client.db();
+        // Search the database for the userId and update password
+        const resetUser = await db.collection('Users').findOne({userId:userId});
+        const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
+            {$set: {password: req.body.password}});
+        
+        responseMsg = "Password successfully updated!"
+        ret = Object.assign(refreshedToken, {error:error})
+        res.status(200).json(ret);
+    });
+
     app.post('/retrieveFolders', async (req, res, next) =>
     {
 
@@ -753,34 +1242,5 @@ exports.setApp = function ( app, client )
     console.log("FINISHED retrieveFolders");
     
     res.status(200).json(ret);
-    });
-
-    app.post('/sendtestmail', async (req, res, next) =>
-    {   
-        require('dotenv').config();
-        const sgMail = require('@sendgrid/mail')
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-    
-        // const { email } = req.body;
-        var responseMsg;
-    
-        const msg = {
-            to: 'mohamed.faizel14b@gmail.com', // Change to your recipient
-            from: 'group4poosd@gmail.com', // Change to your verified sender
-            templateId: 'd-450016c069bb4859bbaabf2742ff6766',
-        }
-        sgMail
-        .send(msg)
-        .then(() => {
-            console.log('Email sent')
-            responseMsg = "Email successfully sent!";
-            var r = {response:responseMsg};
-            res.status(200).json(r);
-        })
-        .catch((error) => {
-            console.error(error)
-            var r = {error:error};
-            res.status(200).json(r);
-        })
     });
 }
