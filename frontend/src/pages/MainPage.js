@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../App.css';
 import { ListsTab } from '../components/ListsTab';
 import TopMarginMain from '../components/TopMarginMain';
@@ -8,7 +8,10 @@ import styled from 'styled-components'
 import { SearchTab } from '../components/SearchTab';
 import FoldersUI from '../components/FoldersUI';
 import CardsUI from '../components/CardsUI';
-
+import SelectSearchTab from '../components/SelectSearchTab';
+import {GreyOutSearchTabs} from '../components/GreyOutSearchTabs';
+import { GreyOutCardUI } from '../components/GreyOutCardUI';
+import { AddPlacePopUp } from '../components/AddPalcePopUp';
 
 const Buttona = styled(Buttonb)`
     background: #000000;
@@ -27,6 +30,11 @@ const CenterDivList = styled(CenterDiv)`
 `
 
 function MainPage() {
+    
+    const tabs = ["", "food", "activities", "friends"];
+    var [selectTab, setSelectTab] = useState(tabs[0]);
+    var [addToFolder, setAddToFolder] = useState(false);
+
     return (
         <div className="background">
             <div style={{"margin":"5%", "marginTop":"0px"}}>
@@ -36,19 +44,21 @@ function MainPage() {
                         <ListsTab children="Lists"/>
                         <div>
                             <CenterDivList className='main_pane'>
-                                <FoldersUI/>
+                                <FoldersUI setAddToFolder={setAddToFolder}/>
                             </CenterDivList>
                         </div>
                     </div>
                     <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
-                            <SearchTab children="Food"/>
-                            <SearchTab children="Activities"/>
-                            <SearchTab children="Friends"/>
+                        <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
+                            <GreyOutSearchTabs addToFolder={addToFolder}/>  {/* only shows when addToFolder is true */}
+                            <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab}/>
                         </div>
                         <div>
                         <CenterDivMain className='main_pane'>
-                            <CardsUI/>
+                            <CardsUI setAddToFolder={setAddToFolder}/>
+                            <GreyOutCardUI addToFolder={addToFolder}> {/* only shows when addToFolder is true */}
+                                <AddPlacePopUp setAddToFolder={setAddToFolder}/>
+                            </GreyOutCardUI>
                         </CenterDivMain>
                         </div>
                     </div>

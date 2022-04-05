@@ -20,14 +20,20 @@ const Text = styled.text`
     // z-index: 4;
 `
 
-// This makes Title component reusable
-export const SearchTab = ({children, className}) =>{
-    return (
-        <div className="tab" >
-            <img className="search_tab" src={tab_search_dark} alt="Lists" style={{"width":"auto", "height":"100%"
+export const SearchTab = (props) =>{
+    return (props.selected) ? (
+
+        <div className="tab" onClick={props.customOnClick}>
+            <img className="search_tab" src={tab_search_light} alt="Lists" style={{"width":"auto", "height":"102%"
             ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto"}}></img>
-            <Text className={className}>{children}</Text>
+            <Text className={props.className}>{props.children}</Text>
         </div>  
-    )
+    ):(
+        <div className="tab" onClick={props.customOnClick}>
+        <img className="search_tab" src={tab_search_dark} alt="Lists" style={{"width":"auto", "height":"100%"
+        ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto"}}></img>
+        <Text className={props.className}>{props.children}</Text>
+    </div>  
+    );
 }
 

@@ -18,6 +18,7 @@ function TopMarginMain() {
   return (
     <div style={{"display":"flex", "gap": "20vh",  "marginBottom":"40px"}}>
       <MainTitle className="title"/>
+      <MarginButton button_id="account"  button_text="Account"/>
       <MarginButton button_id="suprise"  button_text="Suprise Me!"/>
       <MarginButton button_id="logout"  button_text="Logout"/>
     </div>  
