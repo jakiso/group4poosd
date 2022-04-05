@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components'
 import { Buttonc } from './CardButton';
-import event_pic from '../images/LG_event.png';
 import cross from '../images/cross_add.png';
 
 const Card = styled.div`
@@ -38,7 +37,7 @@ export const Carda = (props) =>{
         <Card style={{"display":"flex", "gap": "0vh", "overflow":"auto"}}>            
         <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>    
         <div style={{ "height":"100%","width":"20%", "overflow":"auto"}}>
-            <img width={"70%"} height={"auto"} src={event_pic} alt="Event"/><br/><br/>
+            <img width={"70%"} height={"auto"} src={props.src} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
             <img width={"15%"} height={"auto"} src={cross} alt="Event" onClick={()=>{props.setSaveToListMode(true);}}/>
         </div> 
