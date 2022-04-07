@@ -6,6 +6,7 @@ const Folder = mongoose.model(
     // might not need userId here but I believe we might.
     userId: {type: Number, required: true},
     folderName: {type: String, required: true},
+    folderType: {type: String, required: true},
     placeList: [{placeName: String, placeAddress: String}]
   }) 
 );

@@ -591,19 +591,32 @@ exports.setApp = function ( app, client )
         //                 email:email, password:password, emailConfirm:-1};
 
         var error = '';
+        var ret;
 
         // Connect to the database
         const db = client.db();
 
-        // Search the database for the username
-        const exist = await db.collection('Users').find({username:newUser.username}).toArray();
+        // Search the database for the username and email
+        const userExist = await db.collection('Users').find({username:newUser.username}).toArray();
+        const emailExist = await db.collection('Users').find({email:newUser.email}).toArray();
 
         // If the returned array is not 0 then user already exists
-        if (exist.length != 0)
+        if (userExist.length != 0)
         {
             // Send an error that the username already exists
             error = "Username already exists";
-            var ret = { error: error };
+            ret = { error: error };
+            res.status(200).json(ret);
+
+            // Exit the api call
+            return;
+        }
+
+        if (emailExist.length != 0)
+        {
+            // Send an error that the email already exists
+            error = "Email already exists";
+            ret = { error: error };
             res.status(200).json(ret);
 
             // Exit the api call
@@ -625,6 +638,7 @@ exports.setApp = function ( app, client )
         // After the user is inserted, find the user to create a JWT
         try
         {
+            await delay(300);
             // only returns the first instance of the username as a single user instead of array.
             const retNewUser = await db.collection('Users').findOne
             (
@@ -648,6 +662,14 @@ exports.setApp = function ( app, client )
         // Everything is successful send empty error
         ret = Object.assign(retToken, {error:error});
         res.status(200).json(ret);
+
+        function delay(milliseconds)
+        {
+            return new Promise(resolve=> 
+                {
+                    setTimeout(resolve, milliseconds);
+                });
+        }
     });
 
     app.post('/login', async (req, res, next) => 
@@ -712,6 +734,7 @@ exports.setApp = function ( app, client )
         const newFolder = new Folder
         ({
             userId: req.body.userId,
+            folderType: req.body.folderType,
             folderName: req.body.folderName,
         });
 
@@ -732,7 +755,7 @@ exports.setApp = function ( app, client )
         try
         {
             const db = client.db();
-            const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderName:newFolder.folderName});
+            const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderType:newFolder.folderType, folderName:newFolder.folderName});
             msg = results;
         }
         catch(e)
@@ -1248,7 +1271,7 @@ exports.setApp = function ( app, client )
 
     // These variables are sent from front-end
     // folders is the text that is being added
-    const {userId, jwToken} = req.body;
+    const {userId, folderType, jwToken} = req.body;
     var error = '';
     var token = require('./createJWT.js');
 
@@ -1274,7 +1297,8 @@ exports.setApp = function ( app, client )
     try
     {
         const db = client.db();
-        results = await db.collection('Folders').find({userId:userId}).toArray();
+        results = await db.collection('Folders').find({userId:userId, folderType:folderType}).toArray();
+        console.log(results);
     }
     catch(e)
     {
