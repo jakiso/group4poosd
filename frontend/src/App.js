@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MainPage from './pages/MainPage';
 import VerificationPage from './pages/VerificationPage';
+import AccountSettingsPage from './pages/AccountSettingsPage';
 
 function App() {
     return (
@@ -16,6 +17,9 @@ function App() {
                 </Route>
                 <Route path="/Register" exact>
                     <RegisterPage />
+                </Route>
+                <Route path="/AccountSettings" exact>
+                    <AccountSettingsPage />
                 </Route>
                 <Route path="/" exact>
                     <MainPage />
