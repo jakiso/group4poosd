@@ -7,7 +7,6 @@ function CenterDiv(){
     var NewfirstName;
     var NewlastName;
     var Newusername;
-    var Newemail;
     var Newpassword;
     var NewconfirmPassword;
 
@@ -25,7 +24,7 @@ function CenterDiv(){
 
         // Creates object for all form fields
         var obj = {firstName:NewfirstName.value, lastName:NewlastName.value, username:Newusername.value, 
-                    email:Newemail.value, password:Newpassword.value, confirmPassword:NewconfirmPassword.value};
+                     password:Newpassword.value, confirmPassword:NewconfirmPassword.value};
 
         // Loop through the object and check to make sure the value are not empty
        // for(const [key, value] of Object.entries(obj)) 
@@ -47,12 +46,7 @@ function CenterDiv(){
             return;
         }
         
-        // Check if the email is valid based on RegEx
-        if(!validEmail.test(email.value))
-        {
-            setMessage('Email is not valid');
-            return;
-        }
+ 
         
         // Remove the confirm password from the object
         delete obj.confirmPassword;
@@ -103,17 +97,15 @@ function CenterDiv(){
             <form onSubmit={doChangeAccount}>
                 <div className="fields" style={{"display": "flex", "display":"grid"}}>
                     <input type="text" id="firstName" placeholder="New First Name?" 
-                        ref={(c) => firstName = c} /> <br /> 
+                        ref={(c) => NewfirstName = c} /> <br /> 
                     <input type="text" id="lastName" placeholder="New Last Name?" 
-                        ref={(c) => lastName = c} /> <br /> 
+                        ref={(c) => NewlastName = c} /> <br /> 
                     <input type="text" id="username" placeholder="New Username?" 
-                        ref={(c) => username = c} /> <br /> 
-                    <input type="text" id="email" placeholder="New Email?" 
-                        ref={(c) => email = c} /> <br /> 
+                        ref={(c) => Newusername = c} /> <br /> 
                     <input type="password" id="password" placeholder="New Password?" 
-                        ref={(c) => password = c} /> <br /> 
+                        ref={(c) => Newpassword = c} /> <br /> 
                     <input type="password" id="confirmPassword" placeholder="Confirm New Password" 
-                        ref={(c) => confirmPassword = c} /> <br /> 
+                        ref={(c) => NewconfirmPassword = c} /> <br /> 
                     <span id="loginResult" style={{"marginTop": "10px"}}>{message}</span>
                 </div>
                 <div className="buttons" style={{"display": "flex"}}>
