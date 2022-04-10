@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');           
-const PORT = process.env.PORT || 5000;  
+const PORT = process.env.PORT || 5000; 
 const app = express();
 
 app.set('port', PORT);
@@ -22,7 +22,7 @@ api.setApp( app, client );
 if (process.env.NODE_ENV === 'production') 
 {
     // Set static folder
-    app.use(express.static('frontend/build'));
+    app.use(express.static('../frontend/build'));
 
     app.get('*', (req, res) => 
     {
