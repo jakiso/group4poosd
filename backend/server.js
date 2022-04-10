@@ -22,7 +22,7 @@ api.setApp( app, client );
 if (process.env.NODE_ENV === 'production') 
 {
     // Set static folder
-    app.use(express.static('../frontend/build'));
+    app.use(express.static('../frontend/public'));
 
     app.get('*', (req, res) => 
     {
