@@ -33,7 +33,7 @@ function ListsUI(props)
         var data = JSON.parse(localStorage.user_data);
 
         // The object to be sent to the api, must contain userId and jwToken field
-        var obj = {userId:data.id, jwToken:storage.retrieveToken()};
+        var obj = {userId:data.id, folderType:"food", jwToken:storage.retrieveToken()};
         var js = JSON.stringify(obj);
 
         // Path to send the api call
