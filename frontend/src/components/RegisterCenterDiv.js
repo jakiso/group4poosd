@@ -61,34 +61,34 @@ function CenterDiv(){
 
         try
         {  
-             // Turn object into JSON
-            var js = JSON.stringify(obj);
+            //  // Turn object into JSON
+            // var js = JSON.stringify(obj);
 
-            // Build path for website
-            var bp = require('./Path.js');
-            // Send object to register
-            const response = await fetch(bp.buildPath('register'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+            // // Build path for website
+            // var bp = require('./Path.js');
+            // // Send object to register
+            // const response = await fetch(bp.buildPath('register'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
-            // Response
-            var res = JSON.parse(await response.text());
+            // // Response
+            // var res = JSON.parse(await response.text());
 
-            // Check if error is not empty
-            if(res.error != '')
-            {
-                setMessage(res.error);
-                return;
-            }
+            // // Check if error is not empty
+            // if(res.error != '')
+            // {
+            //     setMessage(res.error);
+            //     return;
+            // }
 
-            // Store the JWT and the user_data
-            var storage = require('../tokenStorage.js');
-            storage.storeToken(res);
-            // Decode the token and store in tokenData
-            const tokenData = decodeToken(storage.retrieveToken());
-            var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId};
-            localStorage.setItem('user_data', JSON.stringify(user));
+            // // Store the JWT and the user_data
+            // var storage = require('../tokenStorage.js');
+            // storage.storeToken(res);
+            // // Decode the token and store in tokenData
+            // const tokenData = decodeToken(storage.retrieveToken());
+            // var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId};
+            // localStorage.setItem('user_data', JSON.stringify(user));
 
-            // Account has been created go to verification page
-            setMessage('Your account has been created!');
+            // // Account has been created go to verification page
+            // setMessage('Your account has been created!');
             window.location.href = '/Verify';
         }
         catch(e)
