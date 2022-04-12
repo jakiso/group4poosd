@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import '../App.css';
 import { isExpired, decodeToken } from "react-jwt";
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 function CenterDiv(){
+    const navigate = useHistory();
+    const handleOnClick = useCallback(() => 
+        navigate.push('/Verify'),
+         [navigate]
+    );
     var firstName;
     var lastName;
     var username;
@@ -121,7 +127,10 @@ function CenterDiv(){
             {/* </form> */} 
             <div className="buttons" style={{"display": "flex"}}>
                     <input type="submit" id="signUpButton" className="buttons" value = "Sign Up"
-                        onClick={doRegister} />
+                        onClick={()=> {
+                            handleOnClick();
+                        }
+                    } />
             </div>
         </div>
     );
