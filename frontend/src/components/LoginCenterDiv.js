@@ -63,7 +63,7 @@ function CenterDiv()
             {
                 // Valid user move to /Main
                 setMessage('');
-                window.location.href = '/Main';
+                window.location.href = '/';
             }
         }
         // JWT not received properly
