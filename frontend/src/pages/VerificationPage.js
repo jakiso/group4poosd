@@ -1,8 +1,7 @@
 import React from 'react';
 import '../App.css';
 import VerifyCenterDiv from '../components/VerifyCenterDiv';
-import {LongTab} from '../components/LongTab'
-import styled from 'styled-components'
+import {LongTab} from '../components/LongTab';
 import { Title } from '../components/Title';
 
 function VerificationPage() {
