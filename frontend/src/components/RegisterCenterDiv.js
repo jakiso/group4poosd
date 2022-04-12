@@ -11,51 +11,51 @@ function CenterDiv(){
     var password;
     var confirmPassword;
 
-    const [message,setMessage] = useState('');
+    // const [message,setMessage] = useState('');
 
-    // RegEx for checking email
-    // Valid email must have: (1char)@(2char).(2char)
-    const validEmail = new RegExp(
-        '(.+)@((.+){2,})\.((.+){2,})'
-    );
+    // // RegEx for checking email
+    // // Valid email must have: (1char)@(2char).(2char)
+    // const validEmail = new RegExp(
+    //     '(.+)@((.+){2,})\.((.+){2,})'
+    // );
 
     const doRegister = async event => 
     {
         event.preventDefault();
 
-        // Creates object for all form fields
-        var obj = {firstName:firstName.value, lastName:lastName.value, username:username.value, 
-                    email:email.value, password:password.value, confirmPassword:confirmPassword.value};
+        // // Creates object for all form fields
+        // var obj = {firstName:firstName.value, lastName:lastName.value, username:username.value, 
+        //             email:email.value, password:password.value, confirmPassword:confirmPassword.value};
 
-        // Loop through the object and check to make sure the value are not empty
-        for(const [key, value] of Object.entries(obj)) 
-        {
-            // Use string trim function to remove leading and trailing whitespace
-            obj[key] = value.trim();
+        // // Loop through the object and check to make sure the value are not empty
+        // for(const [key, value] of Object.entries(obj)) 
+        // {
+        //     // Use string trim function to remove leading and trailing whitespace
+        //     obj[key] = value.trim();
 
-            // Check if any entry field is empty and stop the submission and let the user know
-            if (obj[key] == "") {
-                setMessage(`${key} is empty`);
-                return;
-            }
-        }
+        //     // Check if any entry field is empty and stop the submission and let the user know
+        //     if (obj[key] == "") {
+        //         setMessage(`${key} is empty`);
+        //         return;
+        //     }
+        // }
 
         // Check if passwords match
-        if(obj.password != obj.confirmPassword)
-        {
-            setMessage('Passwords do not match');
-            return;
-        }
+        // if(obj.password != obj.confirmPassword)
+        // {
+        //     setMessage('Passwords do not match');
+        //     return;
+        // }
         
         // Check if the email is valid based on RegEx
-        if(!validEmail.test(email.value))
-        {
-            setMessage('Email is not valid');
-            return;
-        }
+        // if(!validEmail.test(email.value))
+        // {
+        //     setMessage('Email is not valid');
+        //     return;
+        // }
         
-        // Remove the confirm password from the object
-        delete obj.confirmPassword;
+        // // Remove the confirm password from the object
+        // delete obj.confirmPassword;
 
        
 
@@ -102,7 +102,7 @@ function CenterDiv(){
     return(
         <div className="main_pane">
             <form onSubmit={doRegister}>
-                <div className="fields" style={{"display": "flex", "display":"grid"}}>
+                {/* <div className="fields" style={{"display": "flex", "display":"grid"}}>
                     <input type="text" id="firstName" placeholder="First Name" 
                         ref={(c) => firstName = c} /> <br /> 
                     <input type="text" id="lastName" placeholder="Last Name" 
@@ -116,7 +116,7 @@ function CenterDiv(){
                     <input type="password" id="confirmPassword" placeholder="Confirm Password" 
                         ref={(c) => confirmPassword = c} /> <br /> 
                     <span id="loginResult" style={{"marginTop": "10px"}}>{message}</span>
-                </div>
+                </div> */}
                 <div className="buttons" style={{"display": "flex"}}>
                     <input type="submit" id="signUpButton" className="buttons" value = "Sign Up"
                         onClick={doRegister} />
