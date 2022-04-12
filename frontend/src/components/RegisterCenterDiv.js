@@ -57,14 +57,15 @@ function CenterDiv(){
         // Remove the confirm password from the object
         delete obj.confirmPassword;
 
-        // Turn object into JSON
-        var js = JSON.stringify(obj);
-
-        // Build path for website
-        var bp = require('./Path.js');
+       
 
         try
         {  
+             // Turn object into JSON
+            var js = JSON.stringify(obj);
+
+            // Build path for website
+            var bp = require('./Path.js');
             // Send object to register
             const response = await fetch(bp.buildPath('register'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
