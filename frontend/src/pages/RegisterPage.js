@@ -18,12 +18,12 @@ function RegisterPage() {
         <body className="background">
             
             <div style={{"display":"grid", "gridTemplateRows": "1fr", "align-content":"center"}}>
-            <TitleHeader className="title"/>
+            {/* <TitleHeader className="title"/>
             <div class="wrapper" style={{"display":"grid", "gridTemplateRows": "1fr 100%"}}>
-            <TabTitle children="Register"></TabTitle>
+            <TabTitle children="Register"></TabTitle> */}
             <RegisterCenterDiv/>
             </div>
-            </div>
+            
 
         </body>
     );
