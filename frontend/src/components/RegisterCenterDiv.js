@@ -101,7 +101,7 @@ function CenterDiv(){
 
     return(
         <div className="main_pane">
-            <form onSubmit={doRegister}>
+            {/* <form onSubmit={doRegister}>
                 {/* <div className="fields" style={{"display": "flex", "display":"grid"}}>
                     <input type="text" id="firstName" placeholder="First Name" 
                         ref={(c) => firstName = c} /> <br /> 
@@ -117,11 +117,12 @@ function CenterDiv(){
                         ref={(c) => confirmPassword = c} /> <br /> 
                     <span id="loginResult" style={{"marginTop": "10px"}}>{message}</span>
                 </div> */}
-                <div className="buttons" style={{"display": "flex"}}>
+                
+            {/* </form> */} 
+            <div className="buttons" style={{"display": "flex"}}>
                     <input type="submit" id="signUpButton" className="buttons" value = "Sign Up"
                         onClick={doRegister} />
-                </div>
-            </form>
+            </div>
         </div>
     );
 }
