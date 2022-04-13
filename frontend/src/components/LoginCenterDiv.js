@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import '../App.css';
 import { Buttonb } from './Button';
 import { LinkStyled } from './LinkStyled';
 import styled from 'styled-components';
 import { isExpired, decodeToken } from "react-jwt";
-import axios from 'axios';
-import { Link } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
+
 
 function CenterDiv()
 {
     var loginName;
     var loginPassword;
+
+    const navigate = useHistory();
+    const redirectToVerify = useCallback(() => navigate.push('/Verify'), [navigate]);
 
     const [message,setMessage] = useState('');
 
@@ -57,13 +60,15 @@ function CenterDiv()
             {
                 // Move to /Verify
                 setMessage('');
-                window.location.href = '/Verify';
+
+                redirectToVerify();
+                // window.location.href = '/Verify'; // does not work in deployed
             }
             else
             {
                 // Valid user move to /Main
                 setMessage('');
-                window.location.href = '/Main';
+                window.location.href = '/';
             }
         }
         // JWT not received properly
