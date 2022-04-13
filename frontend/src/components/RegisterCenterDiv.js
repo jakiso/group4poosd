@@ -93,8 +93,8 @@ function CenterDiv(){
             // Account has been created go to verification page
             setMessage('Your account has been created!');
 
-            redirectToVerify();
-            // window.location.href = '/Verify'; // does not work for some reason!
+            // redirectToVerify();
+            window.location.href = '/Verify'; // does not work for some reason!
         }
         catch(e)
         {
