@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import '../App.css';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
+
 
 function CenterDiv(){
     var password;
     var confirmPassword;
+
+    const navigate = useHistory();
+    const redirectToLogin = useCallback(() => navigate.push('/Login'), [navigate]);
 
     const [message,setMessage] = useState('');
 
@@ -71,7 +76,9 @@ function CenterDiv(){
 
             // Account has been created go to verification page
             setMessage('Your password has been successfully reset!');
-            window.location.href = '/Login';
+
+            redirectToLogin();
+            // window.location.href = '/Login'; // does not work in deployed
         }
         catch(e)
         {

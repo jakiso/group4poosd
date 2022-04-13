@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import '../App.css';
 import { isExpired, decodeToken } from "react-jwt";
-import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 function CenterDiv(){
     var NewfirstName;
@@ -9,6 +9,9 @@ function CenterDiv(){
     var Newusername;
     var Newpassword;
     var NewconfirmPassword;
+
+    const navigate = useHistory();
+    const redirectToVerify = useCallback(() => navigate.push('/Verify'), [navigate]);
 
     const [message,setMessage] = useState('');
 
@@ -82,7 +85,9 @@ function CenterDiv(){
 
             // Account has been created go to verification page
             setMessage('Your account has been changed!');
-            window.location.href = '/Verify';
+
+            redirectToVerify();
+            // window.location.href = '/Verify'; does not work for deployed
         }
         catch(e)
         {
