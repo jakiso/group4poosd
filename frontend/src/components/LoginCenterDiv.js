@@ -82,6 +82,7 @@ function CenterDiv()
 
     return(
         <div className="main_pane">
+            <div style={{"display":"grid", "rowGap": "2rem"}}>
             <form onSubmit={DoLogin}>
                 <div className="fields" style={{"display": "flex", "display":"grid", "rowGap": "1rem"}}>
                     <input type="text" id="loginName" placeholder="Username" 
@@ -89,17 +90,19 @@ function CenterDiv()
                     <input type="password" id="loginPassword" placeholder="Password" 
                         ref={(c) => loginPassword = c} /><br />
                     <span id="loginResult">{message}</span>
-                </div>
-                <div style={{"display":"grid", "rowGap": "2rem"}}>
                     <input type="submit" id="loginButton" value = "Login"
                         onClick={DoLogin} style={{"marginTop":"40px"}}/>
+                </div>
+            </form>
+            <div style={{"display":"grid", "rowGap": "2rem"}}>
                     <input type="submit" id="loginGButton" value = "Login with Google" 
                     style={{"width":"30%"}}/>
                     {/* This routes back to login page just to avoid getting an unnecessary error. */}
-                    <LinkStyled className="link" link_text="Forgot Password" route="/Login"/>
+                    <LinkStyled className="link" link_text="Forgot Password" route="/Reset"/>
                     <LinkStyled className="link" route="/Register" link_text="Create Account"/>
-                </div>
-            </form>
+            </div>
+            <br/>
+            </div>
         </div>
     );
 };
