@@ -1,12 +1,17 @@
 {
-    "name": "letsdothings",
+    "name": "backend",
     "version": "1.0.0",
     "description": "",
     "main": "server.js",
     "scripts": {
+<<<<<<< HEAD
         "start": "node backend/server.js",
         "heroku-postbuild": " NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend",
         "server": "nodemon backend/server.js"
+=======
+        "start": "node ./backend/server.js",
+        "heroku-postbuild": " NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+>>>>>>> ddbe0e66 (relocated package JSON and env)
     },
     "author": "",
     "license": "ISC",
