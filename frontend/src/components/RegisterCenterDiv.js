@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import '../App.css';
 import { isExpired, decodeToken } from "react-jwt";
-import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 function CenterDiv(){
+
+    const navigate = useHistory();
+    const redirectToVerify = useCallback(() => navigate.push('/Verify'), [navigate]);
+
     var firstName;
     var lastName;
     var username;
@@ -88,7 +92,9 @@ function CenterDiv(){
 
             // Account has been created go to verification page
             setMessage('Your account has been created!');
-            window.location.href = '/Verify';
+
+            redirectToVerify();
+            // window.location.href = '/Verify'; // does not work for some reason!
         }
         catch(e)
         {
@@ -118,7 +124,7 @@ function CenterDiv(){
                 </div>
                 <div className="buttons" style={{"display": "flex"}}>
                     <input type="submit" id="signUpButton" className="buttons" value = "Sign Up"
-                        onClick={doRegister} />
+                        onClick={()=>{doRegister();}} />
                 </div>
             </form>
         </div>

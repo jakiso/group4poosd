@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import '../App.css';
 import { Buttonb } from './Button';
 import { LinkStyled } from './LinkStyled';
 import styled from 'styled-components';
 import { isExpired, decodeToken } from "react-jwt";
-import axios from 'axios';
-import { Link } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
+
 
 function CenterDiv()
 {
     var loginName;
     var loginPassword;
+
+    const navigate = useHistory();
+    const redirectToVerify = useCallback(() => navigate.push('/Verify'), [navigate]);
 
     const [message,setMessage] = useState('');
 
@@ -57,13 +60,15 @@ function CenterDiv()
             {
                 // Move to /Verify
                 setMessage('');
-                window.location.href = '/Verify';
+
+                redirectToVerify();
+                // window.location.href = '/Verify'; // does not work in deployed
             }
             else
             {
                 // Valid user move to /Main
                 setMessage('');
-                window.location.href = '/Main';
+                window.location.href = '/';
             }
         }
         // JWT not received properly
@@ -77,6 +82,7 @@ function CenterDiv()
 
     return(
         <div className="main_pane">
+            <div style={{"display":"grid", "rowGap": "2rem"}}>
             <form onSubmit={DoLogin}>
                 <div className="fields" style={{"display": "flex", "display":"grid", "rowGap": "1rem"}}>
                     <input type="text" id="loginName" placeholder="Username" 
@@ -84,17 +90,19 @@ function CenterDiv()
                     <input type="password" id="loginPassword" placeholder="Password" 
                         ref={(c) => loginPassword = c} /><br />
                     <span id="loginResult">{message}</span>
-                </div>
-                <div style={{"display":"grid", "rowGap": "2rem"}}>
                     <input type="submit" id="loginButton" value = "Login"
                         onClick={DoLogin} style={{"marginTop":"40px"}}/>
+                </div>
+            </form>
+            <div style={{"display":"grid", "rowGap": "2rem"}}>
                     <input type="submit" id="loginGButton" value = "Login with Google" 
                     style={{"width":"30%"}}/>
                     {/* This routes back to login page just to avoid getting an unnecessary error. */}
-                    <LinkStyled className="link" link_text="Forgot Password" route="/Login"/>
+                    <LinkStyled className="link" link_text="Forgot Password" route="/Reset"/>
                     <LinkStyled className="link" route="/Register" link_text="Create Account"/>
-                </div>
-            </form>
+            </div>
+            <br/>
+            </div>
         </div>
     );
 };
