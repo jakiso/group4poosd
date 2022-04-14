@@ -457,6 +457,62 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
+    app.post('/changeUserSettings', async (req, res, next) =>
+    {
+        var ret = '';
+        const { userId, newPassword, newFirstName, newLastName, newUsername, jwToken} = req.body
+        var token = require('./createJWT.js');
+
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var err = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(err);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+
+        const db = client.db();
+
+        // Search the database for the username and email
+        const usernameExist = await db.collection('Users').find({username:newUsername}).toArray();
+
+        // If the returned array is not 0 then user already exists
+        if (usernameExist.length != 0)
+        {
+            // Send an error that the username already exists
+            error = "Username already exists";
+            ret = { error: error };
+            res.status(200).json(ret);
+
+            // Exit the api call
+            return;
+        }
+
+        await db.collection('Users').updateOne({userId : userId}, {$set : {firstName: newFirstName, lastName : newLastName, password : newPassword, username: newUsername}});
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        ret = Object.assign({}, refreshedToken);
+
+        res.status(200).json(ret);
+    });
+
     app.post('/nearbySearch', async (req, res, next) => 
     {
 
