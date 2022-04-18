@@ -34,7 +34,7 @@ function CardsUI(props)
             <InfoCard Name="Comfort Food" Address="2055 Stanley Avenue" PhoneNumber="860-928-5548" MoreInfo="..." DescriptionText="Food you'll Love" Rating="4.0" src={food_pic} setSaveToListMode={props.setSaveToListMode}/>
             <InfoCard Name="Coffee Shop" Address="3868 Holt Street" PhoneNumber="561-292-8638" MoreInfo="..." DescriptionText="Keep Calm and have some Coffee" Rating="4.9" src={food_pic} setSaveToListMode={props.setSaveToListMode}/>
         </div>
-    ): (props.selectTab==="activities")?(
+    ): (props.selectTab==="activity")?(
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%"}}>
         <SearchBar/>
         <InfoCard Name="Road Trip" Address="3865 Holt Street" PhoneNumber="305-714-5560" MoreInfo="..." DescriptionText="Sights like you've Never Seen" Rating="3.1" src={event_pic} setSaveToListMode={props.setSaveToListMode}/>
