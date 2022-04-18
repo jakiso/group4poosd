@@ -790,7 +790,7 @@ exports.setApp = function ( app, client )
         const newFolder = new Folder
         ({
             userId: req.body.userId,
-            folderType: req.body.folderType,
+            folderType: req.body.folderType.toLowerCase(),
             folderName: req.body.folderName,
         });
 
@@ -1326,10 +1326,13 @@ exports.setApp = function ( app, client )
     {
 
     // These variables are sent from front-end
-    // folders is the text that is being added
-    const {userId, folderType, jwToken} = req.body;
+    // folderType needs to be made to lower in order to correctly match the folderType string.
+    const userId = req.body.userId;
+    const jwToken = req.body.jwToken;
+    const folderType = req.body.folderType.toLowerCase();
     var error = '';
     var token = require('./createJWT.js');
+    
 
     // Checks if the JWT is expired
     // Sets the error and returns
@@ -1337,7 +1340,8 @@ exports.setApp = function ( app, client )
     {
         if( token.isExpired(jwToken))
         {
-            var r = {error:'The JWT is no longer valid', jwToken:''};
+            var r = {error:'The JWT is no longer valid', jwToken: ''};
+            
             res.status(200).json(r);
             return;
         }
@@ -1354,7 +1358,7 @@ exports.setApp = function ( app, client )
     {
         const db = client.db();
         results = await db.collection('Folders').find({userId:userId, folderType:folderType}).toArray();
-        console.log(results);
+
     }
     catch(e)
     {
