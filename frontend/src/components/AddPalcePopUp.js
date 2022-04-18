@@ -10,7 +10,8 @@ const Buttona = styled(Buttonb)`
 `
 
 export const AddPlacePopUp = (props) =>{
-    return  <div className='main_pane' style={{"height": "30%","width": "30%",
+    return (props.setSaveToListMode && !props.editMode) ? (  
+        <div className='main_pane' style={{"height": "30%","width": "30%",
         "marginTop": "0px", "overflow":"auto", "position":"relative", "background":"#20CEF2", "top":"15%", "line-height": "200%"}}>
             <div style={{"display":"grid"}}>
             <br/><br/><br/>
@@ -19,4 +20,5 @@ export const AddPlacePopUp = (props) =>{
            <Buttona button_text="cancel" onClick={()=>{props.setSaveToListMode(false);}}/>
            </div>
         </div>
+    ): ("");
 }
