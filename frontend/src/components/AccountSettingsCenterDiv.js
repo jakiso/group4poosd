@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import '../App.css';
 import { isExpired, decodeToken } from "react-jwt";
-import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 function CenterDiv(){
     var NewfirstName;
@@ -10,13 +10,14 @@ function CenterDiv(){
     var Newpassword;
     var NewconfirmPassword;
 
+    const navigate = useHistory();
+    const tokenData = decodeToken(storage.retrieveToken());
+    const redirectToVerify = useCallback(() => navigate.push('/Verify'), [navigate]);
     const [message,setMessage] = useState('');
 
-    // RegEx for checking email
-    // Valid email must have: (1char)@(2char).(2char)
-    const validEmail = new RegExp(
-        '(.+)@((.+){2,})\.((.+){2,})'
-    );
+    var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId};
+    localStorage.setItem('user_data', JSON.stringify(user));
+
 
     const doChangeAccount = async event => 
     {
@@ -26,21 +27,10 @@ function CenterDiv(){
         var obj = {firstName:NewfirstName.value, lastName:NewlastName.value, username:Newusername.value, 
                      password:Newpassword.value, confirmPassword:NewconfirmPassword.value};
 
-        // Loop through the object and check to make sure the value are not empty
-       // for(const [key, value] of Object.entries(obj)) 
-       // {
-            // Use string trim function to remove leading and trailing whitespace
-       //     obj[key] = value.trim();
-
-            // Check if any entry field is empty and stop the submission and let the user know
-        //    if (obj[key] == "") {
-        //        setMessage(`${key} is empty`);
-        //        return;
-          //  }
-     //   }
 
         // Check if passwords match
-        if(obj.password != obj.confirmPassword)
+
+        if(obj.password != obj.confirmPassword && obj.password)
         {
             setMessage('Passwords do not match');
             return;
@@ -59,8 +49,8 @@ function CenterDiv(){
 
         try
         {  
-            // Send object to register
-            const response = await fetch(bp.buildPath('changeAccount'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+            
+            const response = await fetch(bp.buildPath('changeusersettings'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             // Response
             var res = JSON.parse(await response.text());
@@ -80,9 +70,8 @@ function CenterDiv(){
             var user = {firstName:tokenData.firstName,lastName:tokenData.lastName,id:tokenData.userId}
             localStorage.setItem('user_data', JSON.stringify(user));
 
-            // Account has been created go to verification page
+
             setMessage('Your account has been changed!');
-            window.location.href = '/Verify';
         }
         catch(e)
         {
