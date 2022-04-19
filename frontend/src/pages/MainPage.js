@@ -30,9 +30,11 @@ const CenterDivList = styled(CenterDiv)`
 
 function MainPage() {
     
-    const tabs = ["", "food", "activities", "friends"];
-    var [selectTab, setSelectTab] = useState(tabs[0]);
+    const tabs = ["", "food", "activity", "friends"];
+    var [selectTab, setSelectTab] = useState(tabs[1]);
     var [saveToListMode, setSaveToListMode] = useState(false);
+    // useState for setting the editMode
+    var [editMode, setEditMode] = useState(false);
 
     return (
         <div className="background">
@@ -43,20 +45,20 @@ function MainPage() {
                         <ListsTab children="Lists"/>
                         <div>
                             <CenterDivList className='main_pane'>
-                                <ListsUI setSaveToListMode={setSaveToListMode}/>
+                                <ListsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab} editMode={editMode} setEditMode={setEditMode}/>
                             </CenterDivList>
                         </div>
                     </div>
                     <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
                         <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
-                            <GreyOutSearchTabs saveToListMode={saveToListMode}/>  {/* only shows when saveToListMode is true */}
+                            <GreyOutSearchTabs saveToListMode={saveToListMode} editMode={editMode}/>  {/* only shows when saveToListMode is true */}
                             <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab}/>
                         </div>
                         <div>
                         <CenterDivMain className='main_pane'>
                             <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
-                            <GreyOutCardUI saveToListMode={saveToListMode}> {/* only shows when saveToListMode is true */}
-                                <AddPlacePopUp setSaveToListMode={setSaveToListMode}/>
+                            <GreyOutCardUI saveToListMode={saveToListMode} editMode={editMode}> {/* only shows when saveToListMode is true */}
+                                <AddPlacePopUp setSaveToListMode={setSaveToListMode} editMode={editMode}/>
                             </GreyOutCardUI>
                         </CenterDivMain>
                         </div>

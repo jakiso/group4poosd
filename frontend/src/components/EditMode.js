@@ -3,6 +3,7 @@ import { Buttonb } from './Button';
 import styled from 'styled-components';
 import '../App.css';
 import ListButton from './ListButton';
+import ListType from './ListType';
 
 const SaveButton = styled(Buttonb)`
     width: 100%;
@@ -33,23 +34,14 @@ function EditMode(props){
 
         <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode}/>
 
-        {
-            props.arr.folders.map(({ folderId, folderName }) => (
-                <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={true}/>
-            ))
-        }
+        <ListType edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} folderType={props.folderType} setSaveToListMode={props.setSaveToListMode}/>
+
         </div>
     ) :(     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)
-        <div>  
-        {
-             props.arr.folders.map(
-                 ({ folderId, folderName }) => (
-                    <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={false}  onClick={()=>{props.setSaveToListMode(false);}}/>
-                    // the onClick here is for when a user is attempts to save specific place to this List
-                    // in the case that placeSaveMode==true (the grey div and pop-up), this onClick can turn placeSaveMode off
-                )
-             )
-        }
+        <div> 
+        
+        <ListType edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} folderType={props.folderType} setSaveToListMode={props.setSaveToListMode}/>
+
         </div>
     );
     } catch(e){return null;}
