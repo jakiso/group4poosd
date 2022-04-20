@@ -1,6 +1,6 @@
 import React from 'react';
 import '../App.css';
-import PasswordCenterDiv from '../components/PasswordCenterDiv';
+import EmailSendingDiv from '../components/EmailSendingDiv';
 import {LongTab} from '../components/LongTab'
 import { Title } from '../components/Title';
 
@@ -12,7 +12,7 @@ function PasswordResetPage() {
 
             <LongTab>Reset</LongTab>
             
-            <PasswordCenterDiv/>
+            <EmailSendingDiv/>
 
         </body>
     );

@@ -1254,26 +1254,6 @@ exports.setApp = function ( app, client )
             jwToken: req.body.jwToken,
             response: responseMsg
         };
-        
-        // Check if token is expired
-        try
-        {
-            if( token.isExpired(req.body.jwToken))
-            {
-                r.error = 'The JWT is no longer valid';
-                r.jwToken = '';
-                r.response = responseMsg;
-
-                res.status(200).json(r);
-                return;
-            }
-        }
-        catch(e)
-        {
-            console.log("token expired catch");
-            console.log(e.message);
-
-        }
 
         // Make a new token and store it in the message to be sent back
         var refreshedToken = null;
@@ -1307,7 +1287,7 @@ exports.setApp = function ( app, client )
         } else {
             
             // Create token for confirmation
-            const hash = token.createConfirmToken(userEmail.email);
+            const hash = token.createConfirmToken(resetUser.email);
             console.log("password reset token");
             console.log(hash.accessToken);
 
