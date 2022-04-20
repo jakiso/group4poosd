@@ -63,7 +63,7 @@ function ListsUI(props)
                 res_food = JSON.parse(await response_food.text());
                 
                 // Check the error field. empty error is good
-                if(false)
+                if( res_food.error && res_food.error.length > 0 )
                 {
                     setMessage( "API Error:" + res_food.error);
                 }
@@ -83,7 +83,7 @@ function ListsUI(props)
 
                     // uses the useState to change the value of storedFolders
                     setFolders(res_food.folders.map(({ folderId, folderName, folderType }) => (
-                                <ListButton key={folderId} button_id={folderId} button_text={folderName+folderType} trigger_bool={false}/>
+                                <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
                             ))
                     );
 
@@ -95,7 +95,7 @@ function ListsUI(props)
                 res_activity = JSON.parse(await response_activity.text());
 
                 // Check the error field. empty error is good
-                if(false)
+                if( res_activity.error && res_activity.error.length > 0 )
                 {
                     setMessage( "API Error:" + res_activity.error);
                 }
@@ -115,7 +115,7 @@ function ListsUI(props)
 
                     // uses the useState to change the value of storedFolders
                     setFolders(res_activity.folders.map(({ folderId, folderName, folderType }) => (
-                                <ListButton key={folderId} button_id={folderId} button_text={folderName+folderType} trigger_bool={false}/>
+                                <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
                             ))
                     );
                 }

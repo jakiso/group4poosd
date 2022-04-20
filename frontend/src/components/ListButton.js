@@ -41,24 +41,56 @@ align:right;
 columnGap: 1rem;
 `
 
-function ListButton({className, button_id, button_text, onClick, edit_icons, newListMode, setNewListMode}){
+const RenameInput = styled.input`
+width: 80%;
+height: auto;
+
+filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+font-family: 'Denk One';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 30px;
+text-align: left;
+border: none;
+text-align: center;
+
+color: #FEFFDC;
+background: #001A5E;
+border-radius: 14px;
+align:right;
+columnGap: 1rem;
+`
+
+function ListButton({className, button_id, button_text, onClick, edit_icons, newListMode, setNewListMode, setEditMode}){
+    var [isDisabled, setIsDisabled] = useState(true)
+    var [newFolderName, setNewFolderName] = useState(button_text);
+
+    const getInputValue = (event)=>{
+        // show the user input value to console
+        setNewFolderName(event.target.value);
+        console.log(newFolderName);
+    };
+
     // in the case that this is a new list 
-    return (newListMode==true) ? (
+    return (newListMode===true) ? (
         <div onClick={onClick}>
         <List type="button"id={button_id} className={className}>
             <br/>
             <Input id="new_list" placeholder="   new list name"/>
-            <EditIconsDiv edit_icons={edit_icons} folderId={button_id} newListMode={newListMode} setNewListMode={setNewListMode}/> {/* only returns this div within button if edit_icons==true */}
+            <EditIconsDiv edit_icons={edit_icons} folderId={button_id} newListMode={newListMode}
+             setNewListMode={setNewListMode} setEditMode={setEditMode}/> {/* only returns this div within button if edit_icons==true */}
         </List>
         </div>
-    ) : (newListMode==false) ? (
+    ) : (newListMode===false) ? (
         ""
     ) : (
         <div onClick={onClick}>
         <List type="button"id={button_id} className={className}>
             <br/>
-            <p>{button_text}</p>
-            <EditIconsDiv edit_icons={edit_icons} folderId={button_id}/> {/* only returns this div within button if edit_icons==true */}
+            <RenameInput placeholder={button_text} disabled={isDisabled} onChange={getInputValue}/>
+            <EditIconsDiv edit_icons={edit_icons} folderId={button_id} isDisabled={isDisabled}
+             setIsDisabled={setIsDisabled} newFolderName={newFolderName} /> {/* only returns this div within button if edit_icons==true */}
         </List>
         </div>
     );
