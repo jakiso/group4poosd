@@ -9,7 +9,7 @@ import { GreyOutCardUI } from './GreyOutCardUI';
 const EditButton = styled(Buttonb)`
     width: 100%;
     height: 50px;
-    margin-top: 20px;
+    margin-top:0px;
 `
 var res, res_food, res_activity;
 
@@ -128,13 +128,19 @@ function ListsUI(props)
         }
     }
 
-    // useEffect runs only once after the page has loaded
+    // // useEffect runs only once after the page has loaded
+    // useEffect(() => {
+    //     RetrieveFolders();
+    // }, []);
+
+    // // useEffect runs only once after the page has loaded
     useEffect(() => {
         RetrieveFolders();
-    });
+    // }, [props.selectTab, props.editMode]);
+    }, [props]);
 
     return(
-         <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"10%", "alignContent":"center"}}>
+         <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"0% 10% 10% 10%", "alignContent":"center"}}>
              {/* this EditButton triggers editMode==true */}
             <EditButton button_text="Edit" onClick={()=>{props.setEditMode(true);}}/>
              {/* only if EditButton was clicked does EditMode display*/}

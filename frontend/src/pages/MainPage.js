@@ -31,7 +31,7 @@ const CenterDivList = styled(CenterDiv)`
 function MainPage() {
     
     const tabs = ["", "food", "activity", "friends"];
-    var [selectTab, setSelectTab] = useState(tabs[1]);
+    var [selectTab, setSelectTab] = useState(tabs[0]);
     var [saveToListMode, setSaveToListMode] = useState(false);
     // useState for setting the editMode
     var [editMode, setEditMode] = useState(false);

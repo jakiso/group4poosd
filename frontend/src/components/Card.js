@@ -21,7 +21,7 @@ align:right;
 column-gap: 1rem;
 
 width: 100%;
-height: 400px;
+height: 300px;
 `
 const ListButton = styled(Buttonc)`
 width: 100%;
@@ -33,13 +33,13 @@ height: 100%;
 `
 
 export const Carda = (props) =>{
-    return(
-        <Card style={{"display":"flex", "gap": "0vh", "overflow":"auto"}}>            
+    return(                                                     // margin: top right bottom left
+        <Card style={{"display":"flex", "gap": "0vh", "overflow":"hidden"}}>            
         <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>    
-        <div style={{ "height":"100%","width":"20%", "overflow":"auto"}}>
-            <img width={"70%"} height={"auto"} src={props.src} alt="Event"/><br/><br/>
+        <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
+            <img width={"100rem"} height={"auto"} src={props.src} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
-            <img width={"15%"} height={"auto"} src={cross} alt="Event" onClick={()=>{props.setSaveToListMode(true);}}/>
+            <img width={"20rem"} height={"auto"} src={cross} alt="Event" onClick={()=>{props.setSaveToListMode(true);}}/>
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
             <ListButton button_text={props.Name}/>

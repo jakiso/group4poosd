@@ -22,13 +22,14 @@ const Text = styled.text`
 
 export const SearchTab = (props) =>{
     return (props.selected) ? (
-
+        // light tab
         <div className="tab" onClick={props.customOnClick}>
             <img className="search_tab" src={tab_search_light} alt="Lists" style={{"width":"auto", "height":"102%"
             ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto"}}></img>
             <Text className={props.className}>{props.children}</Text>
         </div>  
     ):(
+        // dark tab
         <div className="tab" onClick={props.customOnClick}>
         <img className="search_tab" src={tab_search_dark} alt="Lists" style={{"width":"auto", "height":"100%"
         ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto"}}></img>

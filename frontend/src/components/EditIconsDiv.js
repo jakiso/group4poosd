@@ -44,6 +44,12 @@ function EditIconsDiv(props){
     };
 
     async function changeName(){
+
+        if (props.newFolderName.length > 9) {
+            window.alert('Please enter a name less than 10 characters.')
+            return;
+        }
+
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
 

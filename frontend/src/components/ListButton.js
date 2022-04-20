@@ -49,7 +49,7 @@ filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 font-family: 'Denk One';
 font-style: normal;
 font-weight: 400;
-font-size: 20px;
+font-size: 30px;
 line-height: 30px;
 text-align: left;
 border: none;
@@ -90,7 +90,7 @@ function ListButton({className, button_id, button_text, onClick, edit_icons, new
             <br/>
             <RenameInput placeholder={button_text} disabled={isDisabled} onChange={getInputValue}/>
             <EditIconsDiv edit_icons={edit_icons} folderId={button_id} isDisabled={isDisabled}
-             setIsDisabled={setIsDisabled} newFolderName={newFolderName} /> {/* only returns this div within button if edit_icons==true */}
+             setIsDisabled={setIsDisabled} newFolderName={newFolderName}/> {/* only returns this div within button if edit_icons==true */}
         </List>
         </div>
     );
