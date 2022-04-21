@@ -59,7 +59,7 @@ function MainPage() {
                             <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
                             <GreyOutCardUI saveToListMode={saveToListMode} editMode={editMode}> {/* only shows when saveToListMode is true */}
                                 <AddPlacePopUp setSaveToListMode={setSaveToListMode} editMode={editMode}/>
-                            </GreyOutCardUI>
+                        </GreyOutCardUI>
                         </CenterDivMain>
                         </div>
                     </div>
