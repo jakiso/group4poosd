@@ -620,7 +620,7 @@ exports.setApp = function ( app, client )
 
             
         res.status(200).json(ret);
-
+        console.log(res)
     });
 
     app.post('/nearbyActivitySearch', async (req, res, next) => 

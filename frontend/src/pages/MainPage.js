@@ -31,7 +31,7 @@ const CenterDivList = styled(CenterDiv)`
 function MainPage() {
     
     const tabs = ["", "food", "activity", "friends"];
-    var [selectTab, setSelectTab] = useState(tabs[1]);
+    var [selectTab, setSelectTab] = useState(tabs[0]);
     var [saveToListMode, setSaveToListMode] = useState(false);
     // useState for setting the editMode
     var [editMode, setEditMode] = useState(false);
@@ -59,7 +59,7 @@ function MainPage() {
                             <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
                             <GreyOutCardUI saveToListMode={saveToListMode} editMode={editMode}> {/* only shows when saveToListMode is true */}
                                 <AddPlacePopUp setSaveToListMode={setSaveToListMode} editMode={editMode}/>
-                            </GreyOutCardUI>
+                        </GreyOutCardUI>
                         </CenterDivMain>
                         </div>
                     </div>
