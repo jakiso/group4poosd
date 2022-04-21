@@ -27,7 +27,7 @@ function ListsUI(props)
     // this use effect updates Lists being displayed depending on what tab you are in
     useEffect(() => {
         setFolderType(props.selectTab);
-      },[props.selectTab]);
+    },[props.selectTab]);
 
     // // useState for setting the editMode
     // var [editMode, setEditMode] = useState(false);
@@ -137,7 +137,7 @@ function ListsUI(props)
     useEffect(() => {
         RetrieveFolders();
     // }, [props.selectTab, props.editMode]);
-    }, [props]);
+    }, [folderType, props]);
 
     return(
          <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"0% 10% 10% 10%", "alignContent":"center"}}>
