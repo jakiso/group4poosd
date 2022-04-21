@@ -86,7 +86,7 @@ function EditIconsDiv(props){
         }
     }
 
-    console.log(props)
+    //console.log(props)
 
     //return div with cross and pen inside folder button (only if edit_icons==true)
     return (props.edit_icons) ? (

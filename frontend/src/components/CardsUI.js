@@ -24,11 +24,11 @@ height: 100%;
 var res_food, res_activity;
 
 function CardsUI(props)
-{ //                                                                margin: top left bottom right
-        // Path to send the api call
-        var bp = require('./Path.js');
+{
+    // Path to send the api call
+    var bp = require('./Path.js');
 
-            // Use state for a message if needed
+    // Use state for a message if needed
     const [message, setMessage] = useState('');
 
     // useState for setting the list of folders after its been loaded
@@ -36,25 +36,30 @@ function CardsUI(props)
 
     var [search, setSearch] = useState("");
 
-/// API call function
+    // API call function
     const RetrievePlaces = async () => {
+        
+        // Later this should grab values from the filter radius button, address from location button, etc.
+        // keyword: search will return the same places each time regardless of the keyword since address is UCF.
+        var searchObj = {address:"UCF", latitude:"", longitude:"", radius: 8000, jwToken: "", pageToken:"", keyword:""};
+        searchObj = JSON.stringify(searchObj);
 
         if(props.selectTab==="food") {
-
-            const response_food = await fetch(bp.buildPath('nearbyFoodSearch'), {method:'POST',body:search,headers:{'Content-Type':'application/json'}});
-
+            
+            const response_food = await fetch(bp.buildPath('nearbyFoodSearch'), {method:'POST',body:searchObj,headers:{'Content-Type':'application/json'}});
             // Wait for response and parse json
             res_food = JSON.parse(await response_food.text());
-
+            console.log(res_food.results)
             // Check the error field. empty error is good
             if( res_food.error && res_food.error.length > 0 )
             {
                 setMessage( "API Error:" + res_food.error);
             }
+            
             else
             {
                 // uses the useState to change the value of storedFolders
-                setPlaceList(res_food.slice(0, 2).map(({ name, vicinity, user_ratings_total }) => (
+                setPlaceList(res_food.results.slice(0, 2).map(({ name, vicinity, user_ratings_total }) => (
                             // <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
                             <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText="..." Rating={user_ratings_total} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                         ))
@@ -92,15 +97,15 @@ function CardsUI(props)
         }
     }
 
-    // useEffect(() => {
-    //     RetrievePlaces();
-    // });
+    useEffect(() => {
+        RetrievePlaces();
+    }, [search]);
 
     return(props.selectTab==="food")?(
         // Use:
         // Name="" Address="" PhoneNumber="" MoreInfo="" Description="" Rating=""
         // To define Info per card
-        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "margin-top":"0%"}}>
+        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%"}}>
             <SearchBar setSearch={setSearch} search={search}/>
             {placeList}
 
@@ -109,7 +114,7 @@ function CardsUI(props)
             <InfoCard Name="Coffee Shop" Address="3868 Holt Street" PhoneNumber="561-292-8638" MoreInfo="..." DescriptionText="Keep Calm and have some Coffee" Rating="4.9" src={food_pic} setSaveToListMode={props.setSaveToListMode}/> */}
         </div>
     ): (props.selectTab==="activity")?(
-        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "margin-top":"0%"}}>
+        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%"}}>
         <SearchBar setSearch={setSearch} search={search}/>
         {placeList}
 
@@ -118,7 +123,7 @@ function CardsUI(props)
         <InfoCard Name="Concert" Address="2852 Tinker Field" PhoneNumber="479-214-5874" MoreInfo="..." DescriptionText="Dance Dance Dance" Rating="4.9" src={event_pic} setSaveToListMode={props.setSaveToListMode}/> */}
     </div>
     ):(props.selectTab==="friends")?(
-        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "margin-top":"0%"}}>
+        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%"}}>
         <SearchBar setSearch={setSearch} search={search}/>
         <InfoCard Name="Anna Himenez" Address="3020 Pike Street" PhoneNumber="856-506-3605" MoreInfo="..." DescriptionText="Like 4 Like" Rating="3.1" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
         <InfoCard Name="Jeff Downey" Address="1015 Briarwood Drive" PhoneNumber="321-837-7259" MoreInfo="..." DescriptionText="Foodie" Rating="4.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
