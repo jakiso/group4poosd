@@ -28,8 +28,9 @@ width: 100%;
 height: 50px;
 `
 const Description = styled(Buttonc)`
-width: 100%;
-height: 100%;
+width: 50%;
+height: 50%;
+padding: 10%;
 `
 
 export const Carda = (props) =>{
@@ -43,7 +44,7 @@ export const Carda = (props) =>{
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
             <ListButton button_text={props.Name}/>
-            <ListButton button_text={props.Adress}/>
+            <ListButton button_text={props.Address}/>
             <ListButton button_text={props.PhoneNumber}/>
             <ListButton button_text={props.MoreInfo}/> 
         </div> 

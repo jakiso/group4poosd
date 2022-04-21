@@ -48,7 +48,6 @@ export const SearchBar = ({className, button_id, button_text, setSearch, search}
     const getInputValue = (event)=>{
         // show the user input value to console
         setSearch(document.getElementById("searchBar").value);
-        console.log(document.getElementById("searchBar").value);
     };
 
     return(

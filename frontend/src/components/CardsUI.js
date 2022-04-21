@@ -32,9 +32,11 @@ function CardsUI(props)
     const [message, setMessage] = useState('');
 
     // useState for setting the list of folders after its been loaded
-    var [placeList, setPlaceList] = useState([]);
+    var [placeListFood, setPlaceListFood] = useState([]);
+    var [placeListActivity, setPlaceListActivity] = useState([]);
 
     var [search, setSearch] = useState("");
+    var body;
 
     // API call function
     const RetrievePlaces = async () => {
@@ -45,8 +47,12 @@ function CardsUI(props)
         searchObj = JSON.stringify(searchObj);
 
         if(props.selectTab==="food") {
-            
-            const response_food = await fetch(bp.buildPath('nearbyFoodSearch'), {method:'POST',body:searchObj,headers:{'Content-Type':'application/json'}});
+
+            body = "{"+"\"address\""+":"+"\""+search+"\""+","+"\"latitude\""+":"+"\"\","+"\"longitude\""+":"+"\"\","+"\"radius\""+":"+"8000"+","
+            +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\"\"}";
+
+            const response_food = await fetch(bp.buildPath('nearbyFoodSearch'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
+
             // Wait for response and parse json
             res_food = JSON.parse(await response_food.text());
             console.log(res_food.results)
@@ -59,9 +65,8 @@ function CardsUI(props)
             else
             {
                 // uses the useState to change the value of storedFolders
-                setPlaceList(res_food.results.slice(0, 2).map(({ name, vicinity, user_ratings_total }) => (
-                            // <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText="..." Rating={user_ratings_total} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types }) => (
+                            <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                         ))
                 );
 
@@ -70,7 +75,10 @@ function CardsUI(props)
         }
         else if (props.selectTab==="activity") {
 
-            const response_activity = await fetch(bp.buildPath('nearbyActivitySearch'), {method:'POST',body:search,headers:{'Content-Type':'application/json'}});
+            body = "{"+"\"address\""+":"+"\""+search+"\""+","+"\"latitude\""+":"+"\"\","+"\"longitude\""+":"+"\"\","+"\"radius\""+":"+"8000"+","
+            +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\"\"}";
+
+            const response_activity = await fetch(bp.buildPath('nearbyActivitySearch'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
 
             // Wait for response and parse json
             res_activity = JSON.parse(await response_activity.text());
@@ -84,10 +92,9 @@ function CardsUI(props)
             {
 
                 // uses the useState to change the value of storedFolders
-                setPlaceList(res_activity.slice(0, 2).map(({ name, vicinity }) => (
-                            // <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText="..." Rating="..." src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
-                        ))
+                setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types }) => (
+                            <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                            ))
                 );
 
             }
@@ -107,7 +114,7 @@ function CardsUI(props)
         // To define Info per card
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%"}}>
             <SearchBar setSearch={setSearch} search={search}/>
-            {placeList}
+            {placeListFood}
 
             {/* <InfoCard Name="McDonalds" Address="3737 Pine Tree Lane" PhoneNumber="231-714-5572" MoreInfo="..." DescriptionText="Fast Convenient" Rating="3.1" src={food_pic} setSaveToListMode={props.setSaveToListMode}/>
             <InfoCard Name="Comfort Food" Address="2055 Stanley Avenue" PhoneNumber="860-928-5548" MoreInfo="..." DescriptionText="Food you'll Love" Rating="4.0" src={food_pic} setSaveToListMode={props.setSaveToListMode}/>
@@ -116,7 +123,7 @@ function CardsUI(props)
     ): (props.selectTab==="activity")?(
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%"}}>
         <SearchBar setSearch={setSearch} search={search}/>
-        {placeList}
+        {placeListActivity}
 
         {/* <InfoCard Name="Road Trip" Address="3865 Holt Street" PhoneNumber="305-714-5560" MoreInfo="..." DescriptionText="Sights like you've Never Seen" Rating="3.1" src={event_pic} setSaveToListMode={props.setSaveToListMode}/>
         <InfoCard Name="Kyaking" Address="2229 Southside Lane" PhoneNumber="215-268-9864" MoreInfo="..." DescriptionText="Row your Boat" Rating="4.0" src={event_pic} setSaveToListMode={props.setSaveToListMode}/>
