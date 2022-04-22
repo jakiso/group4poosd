@@ -22,24 +22,24 @@ border-radius: 14px;
 align:right;
 column-gap: 1rem;
 `
-const Input = styled.input`
-width: 80%;
-height: auto;
+// const Input = styled.input`
+// width: 80%;
+// height: auto;
 
-filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-font-family: 'Denk One';
-font-style: normal;
-font-weight: 400;
-font-size: 20px;
-line-height: 30px;
-text-align: left;
+// filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+// font-family: 'Denk One';
+// font-style: normal;
+// font-weight: 400;
+// font-size: 20px;
+// line-height: 30px;
+// text-align: left;
 
-color: #FEFFDC;
-background: #001A5E;
-border-radius: 14px;
-align:right;
-columnGap: 1rem;
-`
+// color: #FEFFDC;
+// background: #001A5E;
+// border-radius: 14px;
+// align:right;
+// columnGap: 1rem;
+// `
 
 const RenameInput = styled.input`
 width: 80%;
@@ -71,7 +71,7 @@ function ListButton(props){
     // console.log(props)
 
     async function changeName(){
-    
+
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
     
@@ -110,7 +110,7 @@ function ListButton(props){
     // changes newFolderName on every keystroke. for now, also changes the folder name in the database at every key stroke.
     useEffect(() => {
         if (newFolderName.length !== 0) changeName();
-        else newFolderName = props.button_text;
+
         if (props.button_id === undefined) return;
         
     },[newFolderName])
