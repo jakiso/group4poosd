@@ -68,7 +68,14 @@ function wait(ms) {
 
 function ListButton(props){
     var [isDisabled, setIsDisabled] = useState(true)
-    var [newFolderName, setNewFolderName] = useState('');
+    
+    // this is for the new folder.
+    var [newFolder, setNewFolder] = useState('');
+
+    // this is for renaming the folder.
+    var [newFolderName, setNewFolderName] = useState(props.button_text);
+
+    // console.log(props)
 
     async function changeName(){
     
@@ -109,9 +116,10 @@ function ListButton(props){
 
     // changes newFolderName on every keystroke. for now, also changes the folder name in the database at every key stroke.
     useEffect(() => {
-        if(newFolderName.length === 0) return;
-        else if (props.button_id === undefined) return;
-        changeName()
+        if (newFolderName.length !== 0) changeName();
+        else newFolderName = props.button_text;
+        if (props.button_id === undefined) return;
+        
     },[newFolderName])
 
     // in the case that this is a new list 
@@ -130,7 +138,7 @@ function ListButton(props){
         <div onClick={props.onClick}>
         <List type="button"id={props.button_id} className={props.className}>
             <br/>
-            <RenameInput placeholder={props.button_text} maxLength="9" disabled={isDisabled} onChange={e => setNewFolderName(e.target.value)}/>
+            <RenameInput placeholder={props.button_text} maxLength="10" disabled={isDisabled} onChange={e => setNewFolderName(e.target.value)}/>
             <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} isDisabled={isDisabled}
              setIsDisabled={setIsDisabled} newFolderName={newFolderName} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icons==true */}
         </List>
