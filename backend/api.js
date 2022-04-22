@@ -7,6 +7,11 @@ const Place = require('./models/place.js');
 const { getMaxListeners } = require('./models/newUser.js');
 const { response } = require('express');
 
+// wait function to prevent needed info from getting grabbed by next query before its ready
+function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 exports.setApp = function ( app, client )
 {
     // retrieves single folder with folderId.
@@ -354,10 +359,6 @@ exports.setApp = function ( app, client )
         // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
         var msg = '';
 
-        // Checks if the JWT is expired
-        // Sets the error and returns
-        console.log('api line 297');
-        console.log(jwToken);
         try
         {
             if( token.isExpired(jwToken))
@@ -382,7 +383,6 @@ exports.setApp = function ( app, client )
         }
         catch(e)
         {
-            console.log(e.message);
             msg = e;
         }
 
@@ -398,7 +398,6 @@ exports.setApp = function ( app, client )
         }
 
         var ret = {error: error, jwToken: refreshedToken, message: msg};
-        console.log(ret);
 
         res.status(200).json(ret);
     });
@@ -887,7 +886,7 @@ exports.setApp = function ( app, client )
         var ln = '';
 
         var errMsg = '';
-        console.log(results);
+
         if( results )
         {
             id = results.userId;
@@ -903,11 +902,9 @@ exports.setApp = function ( app, client )
             {
                 const token = require("./createJWT.js");
                 ret = token.createToken( fn, ln, id );
-                console.log(ret);
             }
             catch(e)
             {
-                
                 ret = {error:e.message};
             }
         }
@@ -956,6 +953,7 @@ exports.setApp = function ( app, client )
         {
             const db = client.db();
             const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderType:newFolder.folderType, folderName:newFolder.folderName});
+            wait(200)
             msg = results;
         }
         catch(e)

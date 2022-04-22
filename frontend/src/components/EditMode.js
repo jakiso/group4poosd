@@ -19,11 +19,71 @@ const AddButton = styled(Buttonb)`
     margin-top: 20px;
 `
 
+function getUserId() {
+    var user;
+    var userId;
+    try {
+        user = localStorage.getItem('user_data')
+        userId = user.id
+    }
+    catch (e) {
+        console.log(e.message);
+    }
+    console.log(user)
+    return user;
+}
+
 function EditMode(props){
     var [newListMode, setNewListMode] = useState(false);
+        
+    // this is for the new folder.
+    var [newFolder, setNewFolder] = useState('');
 
-    // tracks if the name change of a folder happens. if so, change it in the database.
-    var [newName, setNewname] = useState("")
+    // creating a folder. the value is read dont listen to vscode.
+    async function createFolder(){
+
+        // prevents new folder from having an empty name.
+        if (newFolder === '') return;
+        // Storage to access the locally stored JWT
+        var storage = require('../tokenStorage.js');
+        var userId = getUserId();
+        var jsonId = JSON.parse(userId);
+        userId = jsonId.id;
+    
+        // The object to be sent to the api, must contain folderId and jwToken field
+        var obj = {userId: userId, folderType: props.folderType, folderName: newFolder, jwToken:storage.retrieveToken(), newFolderName: newFolder};
+        var js = JSON.stringify(obj);
+    
+        // Path to send the api call
+        var bp = require('./Path.js');
+    
+        try
+        {
+            // Request folders and JWT
+            const response = await fetch(bp.buildPath('createFolder'), {method:'POST', body:js, headers:{'Content-Type':'application/json'}});
+    
+            // Wait for response and parse json
+            var res = JSON.parse(await response.text());
+    
+            // Check the error field. empty error is good
+            if( res.error && res.error.length > 0 )
+            {
+                console.log(res.error);
+            }
+            else
+            {
+                // Store the received refreshed JWT
+                storage.storeToken( res.jwToken );                
+            }
+        }
+        catch(e)
+        {
+            console.log(e.toString());
+        }
+
+        // setting newFolder back to empty
+        setNewFolder('');
+    }
 
     // try catch is needed for when page intially loads
     try{
@@ -32,17 +92,14 @@ function EditMode(props){
         <div>
         {/* if editMode==true, this SaveButton can turn set editMode back to false */}
         <SaveButton button_text="Save" onClick={()=>{
-            // here we want to grab all of the folders names inside of the text field.
-            // if they are different than what the actual folder is, change it in the database and retrieve folders again(refresh).
-
+            createFolder();
             props.setEditMode(false); 
-            setNewListMode(false);}
-            
-            }/>
+            setNewListMode(false);
+        }}/>
         <AddButton button_text="Add" onClick={()=>{setNewListMode(true);}}/>
 
         <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode} 
-            update={props.update} setUpdate={props.setUpdate}/>
+            update={props.update} setUpdate={props.setUpdate} newFolder={newFolder} setNewFolder={setNewFolder}/>
 
         <ListType edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} 
         folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} 
