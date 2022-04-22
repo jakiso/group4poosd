@@ -45,7 +45,7 @@ function MainPage() {
                         <ListsTab children="Lists"/>
                         <div>
                             <CenterDivList className='main_pane'>
-                                <ListsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab} editMode={editMode} setEditMode={setEditMode}/>
+                                <ListsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab} editMode={editMode} setEditMode={setEditMode} />
                             </CenterDivList>
                         </div>
                     </div>

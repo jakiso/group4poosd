@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Buttonb } from './Button';
 import styled from 'styled-components';
 import '../App.css';
@@ -22,6 +22,8 @@ const AddButton = styled(Buttonb)`
 function EditMode(props){
     var [newListMode, setNewListMode] = useState(false);
 
+    // tracks if the name change of a folder happens. if so, change it in the database.
+    var [newName, setNewname] = useState("")
 
     // try catch is needed for when page intially loads
     try{
@@ -29,12 +31,22 @@ function EditMode(props){
     return (props.editMode) ? ( 
         <div>
         {/* if editMode==true, this SaveButton can turn set editMode back to false */}
-        <SaveButton button_text="Save" onClick={()=>{props.setEditMode(false); setNewListMode(false);}}/>
+        <SaveButton button_text="Save" onClick={()=>{
+            // here we want to grab all of the folders names inside of the text field.
+            // if they are different than what the actual folder is, change it in the database and retrieve folders again(refresh).
+
+            props.setEditMode(false); 
+            setNewListMode(false);}
+            
+            }/>
         <AddButton button_text="Add" onClick={()=>{setNewListMode(true);}}/>
 
-        <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode}/>
+        <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode} 
+            update={props.update} setUpdate={props.setUpdate}/>
 
-        <ListType edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} folderType={props.folderType} setSaveToListMode={props.setSaveToListMode}/>
+        <ListType edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} 
+        folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} 
+            setUpdate={props.setUpdate}/>
 
         </div>
     ) :(     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)

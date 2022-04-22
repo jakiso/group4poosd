@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import '../App.css';
 import EditMode from './EditMode';
 import ListButton from './ListButton';
-import { GreyOutCardUI } from './GreyOutCardUI';
+// import { GreyOutCardUI } from './GreyOutCardUI';
 
 const EditButton = styled(Buttonb)`
     width: 100%;
@@ -15,6 +15,7 @@ var res, res_food, res_activity;
 
 function ListsUI(props)
 {
+    // console.log(props)
     // Use state for a message if needed
     const [message, setMessage] = useState('');
 
@@ -23,6 +24,9 @@ function ListsUI(props)
 
     // useState for setting the list of folders after its been loaded
     var [folderType, setFolderType] = useState("activity");
+
+    // useState for any updates to the folders in edit mode.
+    var [update, setUpdate] = useState(false)
 
     // this use effect updates Lists being displayed depending on what tab you are in
     useEffect(() => {
@@ -133,18 +137,18 @@ function ListsUI(props)
     //     RetrieveFolders();
     // }, []);
 
-    // // useEffect runs only once after the page has loaded
+
     useEffect(() => {
         RetrieveFolders();
-    // }, [props.selectTab, props.editMode]);
-    }, [folderType, props]);
+    }, [folderType, props, update]);
 
     return(
          <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"0% 10% 10% 10%", "alignContent":"center"}}>
              {/* this EditButton triggers editMode==true */}
             <EditButton button_text="Edit" onClick={()=>{props.setEditMode(true);}}/>
              {/* only if EditButton was clicked does EditMode display*/}
-            <EditMode editMode={props.editMode} setEditMode={props.setEditMode} folderType={folderType} arr_food={res_food} arr_activity={res_activity} setSaveToListMode={props.setSaveToListMode}/>
+            <EditMode editMode={props.editMode} setEditMode={props.setEditMode} folderType={folderType} arr_food={res_food} 
+                arr_activity={res_activity} setSaveToListMode={props.setSaveToListMode} update={update} setUpdate={setUpdate}/>
          </div>        
     );
 };

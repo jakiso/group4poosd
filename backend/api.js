@@ -138,10 +138,12 @@ exports.setApp = function ( app, client )
     app.post('/changeFolderName', async (req, res, next) =>
     {
         var token = require('./createJWT.js'); var msg = ''; var error = '';
-
+        
         const jwToken = req.body.jwToken; 
         const newFolderName = req.body.newFolderName;
         const fid = req.body.folderId;
+
+        
 
         // Checks if the JWT is expired
         // Sets the error and returns
@@ -159,7 +161,7 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-
+        console.log({jwToken, newFolderName, fid})
         try
         {
             const db = client.db();

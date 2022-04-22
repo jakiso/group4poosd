@@ -11,7 +11,8 @@ function ListType(props){
         <div>
             {
             props.arr_food.folders.map(({ folderId, folderName, folderType }) => (
-                <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={props.edit_icons}   onClick={()=>{props.setSaveToListMode(false);}}/>
+                <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={props.edit_icons}  
+                onClick={()=>{props.setSaveToListMode(false);}} update={props.update} setUpdate={props.setUpdate}/>
             ))
             }
         </div>
@@ -20,7 +21,8 @@ function ListType(props){
             {
             props.arr_activity.folders.map(
             ({ folderId, folderName, folderType }) => (
-                <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={props.edit_icons}  onClick={()=>{props.setSaveToListMode(false);}}/>
+                <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={props.edit_icons}  
+                    onClick={()=>{props.setSaveToListMode(false);}} update={props.update} setUpdate={props.setUpdate}/>
                 // the onClick here is for when a user is attempts to save specific place to this List
                 // in the case that placeSaveMode==true (the grey div and pop-up), this onClick can turn placeSaveMode off
             ))

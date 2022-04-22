@@ -43,62 +43,21 @@ function EditIconsDiv(props){
         }
     };
 
-    async function changeName(){
-
-        if (props.newFolderName.length > 9) {
-            window.alert('Please enter a name less than 10 characters.')
-            return;
-        }
-
-        // Storage to access the locally stored JWT
-        var storage = require('../tokenStorage.js');
-
-        // The object to be sent to the api, must contain folderId and jwToken field
-        var obj = {folderId:props.folderId, jwToken:storage.retrieveToken(), newFolderName: props.newFolderName};
-        var js = JSON.stringify(obj);
-        console.log(js)
-
-        // Path to send the api call
-        var bp = require('./Path.js');
-
-        try
-        {
-            // Request folders and JWT
-            const response = await fetch(bp.buildPath('changeFolderName'), {method:'POST', body:js, headers:{'Content-Type':'application/json'}});
-
-            // Wait for response and parse json
-            res = JSON.parse(await response.text());
-
-            // Check the error field. empty error is good
-            if( res.error && res.error.length > 0 )
-            {
-                console.log(res.error);
-            }
-            else
-            {
-                // Store the received refreshed JWT
-                storage.storeToken( res.jwToken );                
-            }
-        }
-        catch(e)
-        {
-            console.log(e.toString());
-        }
-    }
-
-    //console.log(props)
+    // console.log(props)
 
     //return div with cross and pen inside folder button (only if edit_icons==true)
     return (props.edit_icons) ? (
     <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto"}}>
         <div style={{"height":"40px", "width":"40px", "overflow":"hidden"}}>
-            <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={DeleteFolder}/>
+            <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={() => {
+                DeleteFolder()
+                props.setUpdate(!props.update)
+                }}/>
         </div>  
         <div style={{"display":"30px", "width":"30px", "overflow":"hidden", "objectFit":"contain", "paddingTop":"1px"}}>
             <input type="image" src={rename} alt="rename" id="rename" style={{"width":"90%", "height":"90%"}}
             onClick={() => {
                 props.setIsDisabled(false)
-                changeName()
                 }}/>
         </div>  
     </div>
