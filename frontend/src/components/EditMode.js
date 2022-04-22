@@ -29,15 +29,66 @@ function getUserId() {
     catch (e) {
         console.log(e.message);
     }
-    console.log(user)
+
     return user;
+}
+
+function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function EditMode(props){
     var [newListMode, setNewListMode] = useState(false);
-        
+    // this is for renaming the folder.
+    var [newFolderName, setNewFolderName] = useState(props.button_text);
+    // for grabbing the folderId from ListButton
+    var [thisFolderId, setThisFolderId] = useState();
+
+    // to fix edit enable for new lists
+    var [tempEnableFix, setTempEnableFix] = useState(false)
+
+    // console.log(props)
+
     // this is for the new folder.
     var [newFolder, setNewFolder] = useState('');
+
+    async function changeName(){
+
+        // Storage to access the locally stored JWT
+        var storage = require('../tokenStorage.js');
+        
+        // The object to be sent to the api, must contain folderId and jwToken field
+        var obj = {folderId:thisFolderId, jwToken:storage.retrieveToken(), newFolderName: newFolderName};
+        var js = JSON.stringify(obj);        
+    
+        // Path to send the api call
+        var bp = require('./Path.js');
+    
+        try
+        {
+            // Request folders and JWT
+            const response = await fetch(bp.buildPath('changeFolderName'), {method:'POST', body:js, headers:{'Content-Type':'application/json'}});
+    
+            // Wait for response and parse json
+            var res = JSON.parse(await response.text());
+            // console.log(res)
+    
+            // Check the error field. empty error is good
+            if( res.error && res.error.length > 0 )
+            {
+                console.log(res.error);
+            }
+            else
+            {
+                // Store the received refreshed JWT
+                storage.storeToken( res.jwToken );                
+            }
+        }
+        catch(e)
+        {
+            console.log(e.toString());
+        }
+    }
 
     // creating a folder. the value is read dont listen to vscode.
     async function createFolder(){
@@ -93,23 +144,28 @@ function EditMode(props){
         {/* if editMode==true, this SaveButton can turn set editMode back to false */}
         <SaveButton button_text="Save" onClick={()=>{
             createFolder();
-            props.setEditMode(false); 
+            props.setUpdate(!props.update)
             setNewListMode(false);
+            changeName();
+            // maybe need to wait here before showing the lists again?
+            props.setEditMode(false);
         }}/>
         <AddButton button_text="Add" onClick={()=>{setNewListMode(true);}}/>
 
-        <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode} 
-            update={props.update} setUpdate={props.setUpdate} newFolder={newFolder} setNewFolder={setNewFolder}/>
+        <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode} tempEnableFix={tempEnableFix}
+            setTempEnableFix={setTempEnableFix} setThisFolderId={setThisFolderId}
+            update={props.update} setUpdate={props.setUpdate} newFolder={newFolder} setNewFolder={setNewFolder} setNewFolderName={setNewFolderName}/>
 
-        <ListType edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} 
+        <ListType key={props.folderType} edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} 
         folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} 
-            setUpdate={props.setUpdate}/>
+            setUpdate={props.setUpdate} setNewFolderName={setNewFolderName} setThisFolderId={setThisFolderId}/>
 
         </div>
     ) :(     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)
         <div> 
         
-        <ListType edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} folderType={props.folderType} setSaveToListMode={props.setSaveToListMode}/>
+        <ListType key={props.folderType} edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} 
+        folderType={props.folderType} setThisFolderId={setThisFolderId} setSaveToListMode={props.setSaveToListMode} setNewFolderName={setNewFolderName}/>
 
         </div>
     );

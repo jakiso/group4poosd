@@ -58,6 +58,8 @@ function EditIconsDiv(props){
             <input type="image" src={rename} alt="rename" id="rename" style={{"width":"90%", "height":"90%"}}
             onClick={() => {
                 props.setIsDisabled(false)
+                // when the rename button is clicked, stores the id
+                props.setThisFolderId(props.folderId)
                 }}/>
         </div>  
     </div>
@@ -68,7 +70,10 @@ function EditIconsDiv(props){
             <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={()=>{props.setNewListMode(false)}}/>
         </div>  
         <div style={{"display":"30px", "width":"30px", "overflow":"hidden", "objectFit":"contain", "paddingTop":"1px"}}>
-            <input type="image" src={rename} alt="rename" id="rename" style={{"width":"90%", "height":"90%"}}/>
+            <input type="image" src={rename} alt="rename" id="rename" style={{"width":"90%", "height":"90%"}} onClick={() => {
+                // this is for disabling the edit after adding the folder.
+                props.setTempEnableFix(false)
+            }}/>
         </div>  
     </div>
     ): "";

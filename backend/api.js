@@ -953,7 +953,6 @@ exports.setApp = function ( app, client )
         {
             const db = client.db();
             const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderType:newFolder.folderType, folderName:newFolder.folderName});
-            wait(200)
             msg = results;
         }
         catch(e)

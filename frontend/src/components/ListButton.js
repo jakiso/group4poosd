@@ -64,63 +64,16 @@ columnGap: 1rem;
 
 function ListButton(props){
     var [isDisabled, setIsDisabled] = useState(true)
-
-    // this is for renaming the folder.
-    var [newFolderName, setNewFolderName] = useState(props.button_text);
-
+    
     // console.log(props)
-
-    async function changeName(){
-
-        // Storage to access the locally stored JWT
-        var storage = require('../tokenStorage.js');
-    
-        // The object to be sent to the api, must contain folderId and jwToken field
-        var obj = {folderId:props.button_id, jwToken:storage.retrieveToken(), newFolderName: newFolderName};
-        var js = JSON.stringify(obj);
-    
-        // Path to send the api call
-        var bp = require('./Path.js');
-    
-        try
-        {
-            // Request folders and JWT
-            const response = await fetch(bp.buildPath('changeFolderName'), {method:'POST', body:js, headers:{'Content-Type':'application/json'}});
-    
-            // Wait for response and parse json
-            var res = JSON.parse(await response.text());
-    
-            // Check the error field. empty error is good
-            if( res.error && res.error.length > 0 )
-            {
-                console.log(res.error);
-            }
-            else
-            {
-                // Store the received refreshed JWT
-                storage.storeToken( res.jwToken );                
-            }
-        }
-        catch(e)
-        {
-            console.log(e.toString());
-        }
-    }
-
-    // changes newFolderName on every keystroke. for now, also changes the folder name in the database at every key stroke.
-    useEffect(() => {
-        if (newFolderName.length !== 0) changeName();
-
-        if (props.button_id === undefined) return;
-        
-    },[newFolderName])
 
     // in the case that this is a new list 
     return (props.newListMode===true) ? (
         <div onClick={props.onClick}>
         <List key={props.button_id} type="button" id={props.button_id} className={props.className}>
             <br/>
-            <RenameInput id="new_list" placeholder="new list" maxLength="10" onChange={e => props.setNewFolder(e.target.value)}/>
+            <RenameInput id="new_list" placeholder="new list" maxLength="10" disabled={props.tempEnableFix} 
+                onChange={e => props.setNewFolder(e.target.value)} setTempEnableFix={props.setTempEnableFix}/>
             <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} newListMode={props.newListMode} 
              setNewListMode={props.setNewListMode} setEditMode={props.setEditMode} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icon==true */}
         </List>
@@ -131,9 +84,9 @@ function ListButton(props){
         <div onClick={props.onClick}>
         <List key={props.button_id} type="button" id={props.button_id} className={props.className}>
             <br/>
-            <RenameInput placeholder={props.button_text} maxLength="10" disabled={isDisabled} onChange={e => setNewFolderName(e.target.value)}/>
-            <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} isDisabled={isDisabled}
-             setIsDisabled={setIsDisabled} newFolderName={newFolderName} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icons==true */}
+            <RenameInput placeholder={props.button_text} maxLength="10" disabled={isDisabled} onChange={e => props.setNewFolderName(e.target.value)}/>
+            <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} isDisabled={isDisabled} setThisFolderId={props.setThisFolderId}
+             setIsDisabled={setIsDisabled} newFolderName={props.newFolderName} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icons==true */}
         </List>
         </div>
     );

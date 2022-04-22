@@ -140,7 +140,7 @@ function ListsUI(props)
 
     useEffect(() => {
         RetrieveFolders();
-    }, [folderType, props, update]);
+    }, [folderType, props.editMode, update]);
 
     return(
          <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"0% 10% 10% 10%", "alignContent":"center"}}>
