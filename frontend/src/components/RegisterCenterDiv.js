@@ -44,6 +44,9 @@ function CenterDiv(){
             }
         }
 
+        // Sets username to lowercase
+        obj.username.toString().toLowerCase();
+
         // Check if passwords match
         if(obj.password != obj.confirmPassword)
         {
@@ -60,6 +63,11 @@ function CenterDiv(){
         
         // Remove the confirm password from the object
         delete obj.confirmPassword;
+
+        // Password hashing
+        var bcrypt = require('bcryptjs');
+        var salt = bcrypt.genSaltSync(10);
+        obj.password = bcrypt.hashSync(obj.password, salt);
 
         // Turn object into JSON
         var js = JSON.stringify(obj);

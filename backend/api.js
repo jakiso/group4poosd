@@ -879,7 +879,8 @@ exports.setApp = function ( app, client )
         const { username, password } = req.body;
 
         const db = client.db();
-        const results = await db.collection('Users').findOne({username:username,password:password});
+        // const results = await db.collection('Users').findOne({username:username,password:password});
+        const results = await db.collection('Users').findOne({username:username});
 
         var id = -1;
         var fn = '';
@@ -898,24 +899,44 @@ exports.setApp = function ( app, client )
                 errMsg = 'Please confirm your email before logging in.'
             }
 
-            try
-            {
-                const token = require("./createJWT.js");
-                ret = token.createToken( fn, ln, id );
-            }
-            catch(e)
-            {
-                ret = {error:e.message};
-            }
-        }
-        else
-        {
-            const token = require("./createJWT.js");
-            errMsg = 'Login/Password incorrect';
-            ret = token.createToken( fn, ln, id );
-        }
+            // Check password
+            var bcrypt = require('bcryptjs');
+            var pass = new Promise(function(resolve, reject) {
+                bcrypt.compare(password, results.password, function(err, res) {
+                    if (err) {
+                         reject(err);
+                    } else {
+                        console.log(res);
+                        resolve(res);
+                    }
+                });
+            });
 
-        ret = Object.assign(ret, {error:errMsg})
+            if (await pass) 
+            {   
+                // Password is right
+                // console.log("Password Right");
+                try
+                {
+                    const token = require("./createJWT.js");
+                    ret = token.createToken( fn, ln, id );
+                }
+                catch(e)
+                {
+                    ret = {error:e.message};
+                }
+            }       
+            else
+            {
+                // Password is wrong
+                // console.log("Password Wrong");
+                const token = require("./createJWT.js");
+                errMsg = 'Login/Password incorrect';
+                ret = token.createToken( fn, ln, -1 );
+            }
+        }
+        ret = Object.assign(ret, {error:errMsg});
+        console.log(ret);
         res.status(200).json( ret );
     });
 

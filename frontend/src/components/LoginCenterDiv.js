@@ -22,7 +22,9 @@ function CenterDiv()
     {
         event.preventDefault();
 
-        var obj = {username:loginName.value,password:loginPassword.value};
+        console.log(loginPassword.value);
+
+        var obj = {username:loginName.value.toString().toLowerCase(),password:loginPassword.value};
         var js = JSON.stringify(obj);
         var storage = require('../tokenStorage.js');
         var bp = require('./Path.js');
