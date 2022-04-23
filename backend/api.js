@@ -1244,28 +1244,15 @@ exports.setApp = function ( app, client )
         var responseMsg = '';
 
         // Show what gets sent from front-end
-        console.log(req.body);
+        // console.log(req.body);
 
         // Variable to store the response to be sent back to front-end
         const r = 
         {
             error: error,
-            jwToken: req.body.jwToken,
-            response: responseMsg
+            response: responseMsg,
+            jwToken: null
         };
-
-        // Make a new token and store it in the message to be sent back
-        var refreshedToken = null;
-        try
-        {
-            refreshedToken = token.refresh(r.jwToken);
-            r.jwToken = refreshedToken;
-        }
-        catch(e)
-        {
-            console.log("token refresh catch");
-            console.log(e.message);
-        }
 
         // SEND EMAIL STUFF
 
@@ -1274,6 +1261,20 @@ exports.setApp = function ( app, client )
         // Search the database for the account tied to the email
         const resetUser = await db.collection('Users').findOne({email:req.body.email});
         console.log(resetUser);
+
+        // Make a new token and store it in the message to be sent back
+        var emailToken = null;
+        try
+        {
+            emailToken = token.createToken( resetUser.id, resetUser.email );
+            r.jwToken = emailToken;
+        }
+        catch(e)
+        {
+            console.log("token generation catch");
+            console.log(e.message);
+            console.log(r);
+        }
         
         // checks if account of email exists before sending email
         if(resetUser == null) {
@@ -1298,7 +1299,7 @@ exports.setApp = function ( app, client )
                 substitutionWrappers: ['{{', '}}'],
                 dynamicTemplateData: {
                     username: `${resetUser.username}`,
-                    url: encodeURI(`http://${req.headers.host}/confirmReset?token=${hash.accessToken}&email=${resetUser.email}`)
+                    url: encodeURI(`http://${req.headers.host}/confirmReset?token=${hash.accessToken}&email=${resetUser.email}&redirect=${req.headers.origin}`)
                 },
                 templateId: 'd-7e5ebc6daf174a4882b1b6b8b0df631e',
             }
@@ -1374,7 +1375,7 @@ exports.setApp = function ( app, client )
 
  
         // NEEDS TO REDIRECT TO REACT SERVER
-        res.redirect(`http://${req.headers.host}/reset`);
+        res.redirect(`${req.query.redirect}/PasswordChange`);
         //////
         return;
     });

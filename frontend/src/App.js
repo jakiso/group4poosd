@@ -8,6 +8,7 @@ import MainPage from './pages/MainPage';
 import VerificationPage from './pages/VerificationPage';
 import PasswordResetPage from './pages/PasswordResetPage';
 import AccountSettingsPage from './pages/AccountSettingsPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
 
 function App() {
     return (
@@ -30,6 +31,9 @@ function App() {
                 </Route>
                 <Route path="/Reset" exact>
                     <PasswordResetPage />
+                </Route>
+                <Route path="/PasswordChange" exact>
+                    <ChangePasswordPage />
                 </Route>
                 <Redirect to="/" />
             </Switch>  
