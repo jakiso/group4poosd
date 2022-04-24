@@ -4,7 +4,7 @@ var axios = require('axios');
 const User = require('./models/newUser.js');
 const Folder = require('./models/folder.js');
 const Place = require('./models/place.js');
-const { getMaxListeners } = require('./models/newUser.js');
+const { getMaxListeners, db } = require('./models/newUser.js');
 const { response } = require('express');
 
 // wait function to prevent needed info from getting grabbed by next query before its ready
@@ -232,7 +232,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var r = {error:'The JWT is no longer valid', jwToken:''};
-                res.status(200).json(r);
+                res.status(500).json(r);
                 return;
             }
         }
@@ -241,10 +241,23 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
+        const db = client.db();
+        const folderExist = await db.collection('Folders').find({userId: uid,folderId:fid}).toArray();
+      
 
+        if (folderExist.length === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "no folder with given userId and folderId";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
         try
         {
-            const db = client.db();
+
             // adds an object with placeName and placeAddress IF both are not duplicates.
             // if didn't add because of duplicate: message.modifiedCount = 0 and message.matchedCount = 1.
             const result = await db.collection('Folders').updateOne
@@ -304,7 +317,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var r = {error:'The JWT is no longer valid', jwToken:''};
-                res.status(200).json(r);
+                res.status(500).json(r);
                 return;
             }
         }
@@ -313,10 +326,10 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-
+        const db = client.db();
         try
         {
-            const db = client.db();
+            
             // $pull removes all matches, even duplicates. to avoid this, prevents duplicates when adding to folder.
             const result = await db.collection('Folders').updateOne({"folderId" : folderId},{
                 "$pull" : {"placeList":{"placeName" : placeName, "placeAddress" : placeAddress}}});
@@ -325,6 +338,17 @@ exports.setApp = function ( app, client )
         catch(e)
         {
             console.log(e.message);
+        }
+
+        if (msg.modifiedCount === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "Place doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
         }
 
         // Now refresh the token to update the amount of time it is active
@@ -364,7 +388,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var r = {error:'The JWT is no longer valid', jwToken:''};
-                res.status(200).json(r);
+                res.status(500).json(r);
                 return;
             }
         }
@@ -373,11 +397,24 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
+        const db = client.db();
+        const folderExist = await db.collection('Folders').find({folderId:thisFolder}).toArray();
+      
 
+        if (folderExist.length === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "folder doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
         // Actual folder deletion
         try
         {
-            const db = client.db();
+           
             const result = await db.collection('Folders').deleteOne({folderId: thisFolder});
             msg = result;
         }
@@ -469,7 +506,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var err = {error:'The JWT is no longer valid', jwToken:''};
-                res.status(200).json(err);
+                res.status(500).json(err);
                 return;
             }
         }
@@ -490,13 +527,13 @@ exports.setApp = function ( app, client )
             // Send an error that the username already exists
             error = "Username already exists";
             ret = { error: error };
-            res.status(200).json(ret);
+            res.status(500).json(ret);
 
             // Exit the api call
             return;
         }
 
-        await db.collection('Users').updateOne({userId : userId}, {$set : {firstName: newFirstName, lastName : newLastName, password : newPassword, username: newUsername}});
+        const result = await db.collection('Users').updateOne({userId : userId}, {$set : {firstName: newFirstName, lastName : newLastName, password : newPassword, username: newUsername}});
 
         // Now refresh the token to update the amount of time it is active
         var refreshedToken = null;
@@ -510,7 +547,7 @@ exports.setApp = function ( app, client )
         }
 
         ret = Object.assign({}, refreshedToken);
-
+        
         res.status(200).json(ret);
     });
 
@@ -538,7 +575,7 @@ exports.setApp = function ( app, client )
                 if( token.isExpired(jwToken))
                 {
                     var r = {error:'The JWT is no longer valid', jwToken:''};
-                    res.status(200).json(r);
+                    res.status(500).json(r);
                     return;
                 }
             }
@@ -593,6 +630,11 @@ exports.setApp = function ( app, client )
             .then(function (response)
             {
                 ret = response.data;
+                if(ret.status != "OK")
+                {
+                    isError = 1;
+                    errorMsg = {error: ret.status};
+                }
             })
             .catch(function()
             {
@@ -606,7 +648,6 @@ exports.setApp = function ( app, client )
                 await axios.get(placeDetailsUrl)
                 .then(function (placeDetailsRes)
                 {
-                    console.log(i);
                     ret.results[i]["opening_hours"] = placeDetailsRes.data.result.opening_hours;
                     ret.results[i]["website"] = placeDetailsRes.data.result.website;
                     ret.results[i]["reviews"] = placeDetailsRes.data.result.reviews;
@@ -640,11 +681,13 @@ exports.setApp = function ( app, client )
         }
         
         if (isError)
+        {
             ret = Object.assign({}, ret, errorMsg);
-
-            
-        res.status(200).json(ret);
-        console.log(res)
+            res.status(500).json(ret);
+        }
+        else
+            res.status(200).json(ret);
+        
     });
 
     app.post('/nearbyActivitySearch', async (req, res, next) => 
@@ -671,7 +714,7 @@ exports.setApp = function ( app, client )
                 if( token.isExpired(jwToken))
                 {
                     var r = {error:'The JWT is no longer valid', jwToken:''};
-                    res.status(200).json(r);
+                    res.status(500).json(r);
                     return;
                 }
             }
@@ -724,6 +767,11 @@ exports.setApp = function ( app, client )
             .then(function (searchResponse)
             {
                 ret = searchResponse.data;
+                if(ret.status != "OK")
+                {
+                    isError = 1;
+                    errorMsg = {error: ret.status};
+                }
             })
             .catch(function()
             {
@@ -739,6 +787,11 @@ exports.setApp = function ( app, client )
             await axios.get(searchUrl)
             .then(function (searchResponse)
             {
+                if(searchResponse.status != "OK")
+                {
+                    isError = 1;
+                    errorMsg = {error: ret.status};
+                }
                 ret['results'].push(...searchResponse.data.results);
             })
             .catch(function()
@@ -755,6 +808,11 @@ exports.setApp = function ( app, client )
             await axios.get(searchUrl)
             .then(function (searchResponse)
             {
+                if(searchResponse.status != "OK")
+                {
+                    isError = 1;
+                    errorMsg = {error: ret.status};
+                }
                 ret['results'].push(...searchResponse.data.results);
             })
             .catch(function()
@@ -775,7 +833,6 @@ exports.setApp = function ( app, client )
                 await axios.get(placeDetailsUrl)
                 .then(function (placeDetailsRes)
                 {
-                    console.log(i);
                     ret.results[i]["opening_hours"] = placeDetailsRes.data.result.opening_hours;
                     ret.results[i]["website"] = placeDetailsRes.data.result.website;
                     ret.results[i]["reviews"] = placeDetailsRes.data.result.reviews;
@@ -809,10 +866,12 @@ exports.setApp = function ( app, client )
         }
         
         if (isError)
+        {
             ret = Object.assign({}, ret, errorMsg);
-
-            
-        res.status(200).json(ret);
+            res.status(500).json(ret);
+        }
+        else
+            res.status(200).json(ret);
 
     });
 
@@ -851,7 +910,7 @@ exports.setApp = function ( app, client )
             // Send an error that the username already exists
             error = "Username already exists";
             ret = { error: error };
-            res.status(200).json(ret);
+            res.status(500).json(ret);
 
             // Exit the api call
             return;
@@ -862,7 +921,7 @@ exports.setApp = function ( app, client )
             // Send an error that the email already exists
             error = "Email already exists";
             ret = { error: error };
-            res.status(200).json(ret);
+            res.status(500).json(ret);
 
             // Exit the api call
             return;
@@ -953,16 +1012,18 @@ exports.setApp = function ( app, client )
             {
                 ret = {error:e.message};
             }
+
+            ret = Object.assign(ret, {error:errMsg})
+            res.status(200).json( ret );
         }
         else
         {
             const token = require("./createJWT.js");
             errMsg = 'Login/Password incorrect';
             ret = token.createToken( fn, ln, id );
+            ret = Object.assign(ret, {error:errMsg})
+            res.status(500).json( ret );
         }
-
-        ret = Object.assign(ret, {error:errMsg})
-        res.status(200).json( ret );
     });
 
     // needs jwToken, userId, folderId. 
@@ -970,7 +1031,7 @@ exports.setApp = function ( app, client )
     {
         // jwToken holds the token needed to give access to this api.
         const jwToken = req.body.jwToken;
-        var error = ''; var msg = '';
+        var error = ''; var msg = ''; var ret;
         var token = require('./createJWT.js');
 
         // new folder construction.
@@ -986,7 +1047,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var r = {error:'The JWT is no longer valid', jwToken: ''};
-                res.status(200).json(r);
+                res.status(500).json(r);
                 return;
             }
         }
@@ -994,10 +1055,25 @@ exports.setApp = function ( app, client )
         {
             console.log(e.message);
         }
+        const db = client.db();
+        const userIdExist = await db.collection('Users').find({userId:newFolder.userId}).toArray();
+      
+
+        if (userIdExist.length === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "userId doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
+
+        
 
         try
         {
-            const db = client.db();
             const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderType:newFolder.folderType, folderName:newFolder.folderName});
             msg = results;
         }
