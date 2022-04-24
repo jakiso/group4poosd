@@ -787,7 +787,7 @@ exports.setApp = function ( app, client )
             await axios.get(searchUrl)
             .then(function (searchResponse)
             {
-                if(searchResponse.status != "OK")
+                if(searchResponse.status != "200")
                 {
                     isError = 1;
                     errorMsg = {error: ret.status};
@@ -808,7 +808,7 @@ exports.setApp = function ( app, client )
             await axios.get(searchUrl)
             .then(function (searchResponse)
             {
-                if(searchResponse.status != "OK")
+                if(searchResponse.status != "200")
                 {
                     isError = 1;
                     errorMsg = {error: ret.status};
