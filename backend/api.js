@@ -599,6 +599,29 @@ exports.setApp = function ( app, client )
                 errorMsg = {error:"Search Error"};
                 isError = 1;
             });
+            
+            for (let i = 0; i < ret.results.length; i++)
+            {
+                var placeDetailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + ret.results[i].place_id + '&fields=website%2Cphotos%2Cformatted_phone_number%2Creviews%2Copening_hours&key=' + process.env.GOOGLE_API_KEY;
+                await axios.get(placeDetailsUrl)
+                .then(function (placeDetailsRes)
+                {
+                    console.log(i);
+                    ret.results[i]["opening_hours"] = placeDetailsRes.data.result.opening_hours;
+                    ret.results[i]["website"] = placeDetailsRes.data.result.website;
+                    ret.results[i]["reviews"] = placeDetailsRes.data.result.reviews;
+                    ret.results[i]["formatted_phone_number"] = placeDetailsRes.data.result.formatted_phone_number;
+                    if (placeDetailsRes.data.result.hasOwnProperty('photos') && ret.results[i].hasOwnProperty('photos'))
+                        placeDetailsRes.data.result.photos.unshift(ret.results[i].photos[0]);
+                    ret.results[i]["photos"] = placeDetailsRes.data.result.photos;
+                    
+                })
+                .catch(function()
+                {
+                    console.log("place details error");
+                    errorMsg = {error:"place details Error"};
+                }); 
+            }
         }
 
         if (jwToken != '')
@@ -744,6 +767,29 @@ exports.setApp = function ( app, client )
             if (ret.hasOwnProperty('next_page_token'))
             {
                 delete ret['next_page_token'];
+            }
+
+            for (let i = 0; i < ret.results.length; i++)
+            {
+                var placeDetailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + ret.results[i].place_id + '&fields=website%2Cphotos%2Cformatted_phone_number%2Creviews%2Copening_hours&key=' + process.env.GOOGLE_API_KEY;
+                await axios.get(placeDetailsUrl)
+                .then(function (placeDetailsRes)
+                {
+                    console.log(i);
+                    ret.results[i]["opening_hours"] = placeDetailsRes.data.result.opening_hours;
+                    ret.results[i]["website"] = placeDetailsRes.data.result.website;
+                    ret.results[i]["reviews"] = placeDetailsRes.data.result.reviews;
+                    ret.results[i]["formatted_phone_number"] = placeDetailsRes.data.result.formatted_phone_number;
+                    if (placeDetailsRes.data.result.hasOwnProperty('photos') && ret.results[i].hasOwnProperty('photos'))
+                        placeDetailsRes.data.result.photos.unshift(ret.results[i].photos[0]);
+                    ret.results[i]["photos"] = placeDetailsRes.data.result.photos;
+                    
+                })
+                .catch(function()
+                {
+                    console.log("place details error");
+                    errorMsg = {error:"place details Error"};
+                }); 
             }
         }
 
