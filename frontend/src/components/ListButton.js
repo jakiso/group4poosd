@@ -63,18 +63,17 @@ columnGap: 1rem;
 `
 
 function ListButton(props){
-    var [isDisabled, setIsDisabled] = useState(true)
     
-    // console.log(props)
+    console.log(props)
 
     // in the case that this is a new list 
     return (props.newListMode===true) ? (
         <div onClick={props.onClick}>
         <List key={props.button_id} type="button" id={props.button_id} className={props.className}>
             <br/>
-            <RenameInput id="new_list" placeholder="new list" maxLength="10" disabled={props.tempEnableFix} 
+            <RenameInput id="new_list" placeholder="new list" maxLength="10" disabled={props.isDisabled} 
                 onChange={e => props.setNewFolder(e.target.value)} setTempEnableFix={props.setTempEnableFix}/>
-            <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} newListMode={props.newListMode} 
+            <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} newListMode={props.newListMode} setIsDisabled={props.setIsDisabled}
              setNewListMode={props.setNewListMode} setEditMode={props.setEditMode} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icon==true */}
         </List>
         </div>
@@ -84,9 +83,9 @@ function ListButton(props){
         <div onClick={props.onClick}>
         <List key={props.button_id} type="button" id={props.button_id} className={props.className}>
             <br/>
-            <RenameInput placeholder={props.button_text} maxLength="10" disabled={isDisabled} onChange={e => props.setNewFolderName(e.target.value)}/>
-            <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} isDisabled={isDisabled} setThisFolderId={props.setThisFolderId}
-             setIsDisabled={setIsDisabled} newFolderName={props.newFolderName} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icons==true */}
+            <RenameInput placeholder={props.button_text} maxLength="10" disabled={props.isDisabled} onChange={e => props.setNewFolderName(e.target.value)}/>
+            <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} isDisabled={props.isDisabled} setThisFolderId={props.setThisFolderId}
+             setIsDisabled={props.setIsDisabled} newFolderName={props.newFolderName} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icons==true */}
         </List>
         </div>
     );

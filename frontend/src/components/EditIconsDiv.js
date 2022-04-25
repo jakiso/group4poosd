@@ -43,7 +43,7 @@ function EditIconsDiv(props){
         }
     };
 
-    // console.log(props)
+    console.log(props)
 
     //return div with cross and pen inside folder button (only if edit_icons==true)
     return (props.edit_icons) ? (
@@ -72,7 +72,7 @@ function EditIconsDiv(props){
         <div style={{"display":"30px", "width":"30px", "overflow":"hidden", "objectFit":"contain", "paddingTop":"1px"}}>
             <input type="image" src={rename} alt="rename" id="rename" style={{"width":"90%", "height":"90%"}} onClick={() => {
                 // this is for disabling the edit after adding the folder.
-                props.setTempEnableFix(false)
+                props.setIsDisabled(false)
             }}/>
         </div>  
     </div>
