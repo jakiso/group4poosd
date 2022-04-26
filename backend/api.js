@@ -4,7 +4,7 @@ var axios = require('axios');
 const User = require('./models/newUser.js');
 const Folder = require('./models/folder.js');
 const Place = require('./models/place.js');
-const { getMaxListeners } = require('./models/newUser.js');
+const { getMaxListeners, db } = require('./models/newUser.js');
 const { response } = require('express');
 
 // wait function to prevent needed info from getting grabbed by next query before its ready
@@ -232,7 +232,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var r = {error:'The JWT is no longer valid', jwToken:''};
-                res.status(200).json(r);
+                res.status(500).json(r);
                 return;
             }
         }
@@ -241,10 +241,23 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
+        const db = client.db();
+        const folderExist = await db.collection('Folders').find({userId: uid,folderId:fid}).toArray();
+      
 
+        if (folderExist.length === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "no folder with given userId and folderId";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
         try
         {
-            const db = client.db();
+
             // adds an object with placeName and placeAddress IF both are not duplicates.
             // if didn't add because of duplicate: message.modifiedCount = 0 and message.matchedCount = 1.
             const result = await db.collection('Folders').updateOne
@@ -304,7 +317,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var r = {error:'The JWT is no longer valid', jwToken:''};
-                res.status(200).json(r);
+                res.status(500).json(r);
                 return;
             }
         }
@@ -313,10 +326,10 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-
+        const db = client.db();
         try
         {
-            const db = client.db();
+            
             // $pull removes all matches, even duplicates. to avoid this, prevents duplicates when adding to folder.
             const result = await db.collection('Folders').updateOne({"folderId" : folderId},{
                 "$pull" : {"placeList":{"placeName" : placeName, "placeAddress" : placeAddress}}});
@@ -325,6 +338,17 @@ exports.setApp = function ( app, client )
         catch(e)
         {
             console.log(e.message);
+        }
+
+        if (msg.modifiedCount === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "Place doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
         }
 
         // Now refresh the token to update the amount of time it is active
@@ -364,7 +388,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var r = {error:'The JWT is no longer valid', jwToken:''};
-                res.status(200).json(r);
+                res.status(500).json(r);
                 return;
             }
         }
@@ -373,11 +397,24 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
+        const db = client.db();
+        const folderExist = await db.collection('Folders').find({folderId:thisFolder}).toArray();
+      
 
+        if (folderExist.length === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "folder doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
         // Actual folder deletion
         try
         {
-            const db = client.db();
+           
             const result = await db.collection('Folders').deleteOne({folderId: thisFolder});
             msg = result;
         }
@@ -469,7 +506,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var err = {error:'The JWT is no longer valid', jwToken:''};
-                res.status(200).json(err);
+                res.status(500).json(err);
                 return;
             }
         }
@@ -490,13 +527,13 @@ exports.setApp = function ( app, client )
             // Send an error that the username already exists
             error = "Username already exists";
             ret = { error: error };
-            res.status(200).json(ret);
+            res.status(500).json(ret);
 
             // Exit the api call
             return;
         }
 
-        await db.collection('Users').updateOne({userId : userId}, {$set : {firstName: newFirstName, lastName : newLastName, password : newPassword, username: newUsername}});
+        const result = await db.collection('Users').updateOne({userId : userId}, {$set : {firstName: newFirstName, lastName : newLastName, password : newPassword, username: newUsername}});
 
         // Now refresh the token to update the amount of time it is active
         var refreshedToken = null;
@@ -510,7 +547,7 @@ exports.setApp = function ( app, client )
         }
 
         ret = Object.assign({}, refreshedToken);
-
+        
         res.status(200).json(ret);
     });
 
@@ -538,7 +575,7 @@ exports.setApp = function ( app, client )
                 if( token.isExpired(jwToken))
                 {
                     var r = {error:'The JWT is no longer valid', jwToken:''};
-                    res.status(200).json(r);
+                    res.status(500).json(r);
                     return;
                 }
             }
@@ -593,12 +630,39 @@ exports.setApp = function ( app, client )
             .then(function (response)
             {
                 ret = response.data;
+                if(ret.status != "OK")
+                {
+                    isError = 1;
+                    errorMsg = {error: ret.status};
+                }
             })
             .catch(function()
             {
                 errorMsg = {error:"Search Error"};
                 isError = 1;
             });
+            
+            for (let i = 0; i < ret.results.length; i++)
+            {
+                var placeDetailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + ret.results[i].place_id + '&fields=website%2Cphotos%2Cformatted_phone_number%2Creviews%2Copening_hours&key=' + process.env.GOOGLE_API_KEY;
+                await axios.get(placeDetailsUrl)
+                .then(function (placeDetailsRes)
+                {
+                    ret.results[i]["opening_hours"] = placeDetailsRes.data.result.opening_hours;
+                    ret.results[i]["website"] = placeDetailsRes.data.result.website;
+                    ret.results[i]["reviews"] = placeDetailsRes.data.result.reviews;
+                    ret.results[i]["formatted_phone_number"] = placeDetailsRes.data.result.formatted_phone_number;
+                    if (placeDetailsRes.data.result.hasOwnProperty('photos') && ret.results[i].hasOwnProperty('photos'))
+                        placeDetailsRes.data.result.photos.unshift(ret.results[i].photos[0]);
+                    ret.results[i]["photos"] = placeDetailsRes.data.result.photos;
+                    
+                })
+                .catch(function()
+                {
+                    console.log("place details error");
+                    errorMsg = {error:"place details Error"};
+                }); 
+            }
         }
 
         if (jwToken != '')
@@ -617,11 +681,13 @@ exports.setApp = function ( app, client )
         }
         
         if (isError)
+        {
             ret = Object.assign({}, ret, errorMsg);
-
-            
-        res.status(200).json(ret);
-        console.log(res)
+            res.status(500).json(ret);
+        }
+        else
+            res.status(200).json(ret);
+        
     });
 
     app.post('/nearbyActivitySearch', async (req, res, next) => 
@@ -648,7 +714,7 @@ exports.setApp = function ( app, client )
                 if( token.isExpired(jwToken))
                 {
                     var r = {error:'The JWT is no longer valid', jwToken:''};
-                    res.status(200).json(r);
+                    res.status(500).json(r);
                     return;
                 }
             }
@@ -701,6 +767,11 @@ exports.setApp = function ( app, client )
             .then(function (searchResponse)
             {
                 ret = searchResponse.data;
+                if(ret.status != "OK")
+                {
+                    isError = 1;
+                    errorMsg = {error: ret.status};
+                }
             })
             .catch(function()
             {
@@ -716,6 +787,11 @@ exports.setApp = function ( app, client )
             await axios.get(searchUrl)
             .then(function (searchResponse)
             {
+                if(searchResponse.status != "200")
+                {
+                    isError = 1;
+                    errorMsg = {error: ret.status};
+                }
                 ret['results'].push(...searchResponse.data.results);
             })
             .catch(function()
@@ -732,6 +808,11 @@ exports.setApp = function ( app, client )
             await axios.get(searchUrl)
             .then(function (searchResponse)
             {
+                if(searchResponse.status != "200")
+                {
+                    isError = 1;
+                    errorMsg = {error: ret.status};
+                }
                 ret['results'].push(...searchResponse.data.results);
             })
             .catch(function()
@@ -744,6 +825,28 @@ exports.setApp = function ( app, client )
             if (ret.hasOwnProperty('next_page_token'))
             {
                 delete ret['next_page_token'];
+            }
+
+            for (let i = 0; i < ret.results.length; i++)
+            {
+                var placeDetailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + ret.results[i].place_id + '&fields=website%2Cphotos%2Cformatted_phone_number%2Creviews%2Copening_hours&key=' + process.env.GOOGLE_API_KEY;
+                await axios.get(placeDetailsUrl)
+                .then(function (placeDetailsRes)
+                {
+                    ret.results[i]["opening_hours"] = placeDetailsRes.data.result.opening_hours;
+                    ret.results[i]["website"] = placeDetailsRes.data.result.website;
+                    ret.results[i]["reviews"] = placeDetailsRes.data.result.reviews;
+                    ret.results[i]["formatted_phone_number"] = placeDetailsRes.data.result.formatted_phone_number;
+                    if (placeDetailsRes.data.result.hasOwnProperty('photos') && ret.results[i].hasOwnProperty('photos'))
+                        placeDetailsRes.data.result.photos.unshift(ret.results[i].photos[0]);
+                    ret.results[i]["photos"] = placeDetailsRes.data.result.photos;
+                    
+                })
+                .catch(function()
+                {
+                    console.log("place details error");
+                    errorMsg = {error:"place details Error"};
+                }); 
             }
         }
 
@@ -763,10 +866,12 @@ exports.setApp = function ( app, client )
         }
         
         if (isError)
+        {
             ret = Object.assign({}, ret, errorMsg);
-
-            
-        res.status(200).json(ret);
+            res.status(500).json(ret);
+        }
+        else
+            res.status(200).json(ret);
 
     });
 
@@ -805,7 +910,7 @@ exports.setApp = function ( app, client )
             // Send an error that the username already exists
             error = "Username already exists";
             ret = { error: error };
-            res.status(200).json(ret);
+            res.status(500).json(ret);
 
             // Exit the api call
             return;
@@ -816,7 +921,7 @@ exports.setApp = function ( app, client )
             // Send an error that the email already exists
             error = "Email already exists";
             ret = { error: error };
-            res.status(200).json(ret);
+            res.status(500).json(ret);
 
             // Exit the api call
             return;
@@ -934,10 +1039,18 @@ exports.setApp = function ( app, client )
                 errMsg = 'Login/Password incorrect';
                 ret = token.createToken( fn, ln, -1 );
             }
+
+            ret = Object.assign(ret, {error:errMsg})
+            res.status(200).json( ret );
         }
-        ret = Object.assign(ret, {error:errMsg});
-        console.log(ret);
-        res.status(200).json( ret );
+        else
+        {
+            const token = require("./createJWT.js");
+            errMsg = 'Login/Password incorrect';
+            ret = token.createToken( fn, ln, id );
+            ret = Object.assign(ret, {error:errMsg})
+            res.status(500).json( ret );
+        }
     });
 
     // needs jwToken, userId, folderId. 
@@ -945,7 +1058,7 @@ exports.setApp = function ( app, client )
     {
         // jwToken holds the token needed to give access to this api.
         const jwToken = req.body.jwToken;
-        var error = ''; var msg = '';
+        var error = ''; var msg = ''; var ret;
         var token = require('./createJWT.js');
 
         // new folder construction.
@@ -961,7 +1074,7 @@ exports.setApp = function ( app, client )
             if( token.isExpired(jwToken))
             {
                 var r = {error:'The JWT is no longer valid', jwToken: ''};
-                res.status(200).json(r);
+                res.status(500).json(r);
                 return;
             }
         }
@@ -969,10 +1082,25 @@ exports.setApp = function ( app, client )
         {
             console.log(e.message);
         }
+        const db = client.db();
+        const userIdExist = await db.collection('Users').find({userId:newFolder.userId}).toArray();
+      
+
+        if (userIdExist.length === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "userId doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
+
+        
 
         try
         {
-            const db = client.db();
             const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderType:newFolder.folderType, folderName:newFolder.folderName});
             msg = results;
         }
@@ -1265,28 +1393,15 @@ exports.setApp = function ( app, client )
         var responseMsg = '';
 
         // Show what gets sent from front-end
-        console.log(req.body);
+        // console.log(req.body);
 
         // Variable to store the response to be sent back to front-end
         const r = 
         {
             error: error,
-            jwToken: req.body.jwToken,
-            response: responseMsg
+            response: responseMsg,
+            jwToken: null
         };
-
-        // Make a new token and store it in the message to be sent back
-        var refreshedToken = null;
-        try
-        {
-            refreshedToken = token.refresh(r.jwToken);
-            r.jwToken = refreshedToken;
-        }
-        catch(e)
-        {
-            console.log("token refresh catch");
-            console.log(e.message);
-        }
 
         // SEND EMAIL STUFF
 
@@ -1295,6 +1410,20 @@ exports.setApp = function ( app, client )
         // Search the database for the account tied to the email
         const resetUser = await db.collection('Users').findOne({email:req.body.email});
         console.log(resetUser);
+
+        // Make a new token and store it in the message to be sent back
+        var emailToken = null;
+        try
+        {
+            emailToken = token.createToken( resetUser.id, resetUser.email );
+            r.jwToken = emailToken;
+        }
+        catch(e)
+        {
+            console.log("token generation catch");
+            console.log(e.message);
+            console.log(r);
+        }
         
         // checks if account of email exists before sending email
         if(resetUser == null) {
@@ -1319,7 +1448,7 @@ exports.setApp = function ( app, client )
                 substitutionWrappers: ['{{', '}}'],
                 dynamicTemplateData: {
                     username: `${resetUser.username}`,
-                    url: encodeURI(`http://${req.headers.host}/confirmReset?token=${hash.accessToken}&email=${resetUser.email}`)
+                    url: encodeURI(`http://${req.headers.host}/confirmReset?token=${hash.accessToken}&email=${resetUser.email}&redirect=${req.headers.origin}`)
                 },
                 templateId: 'd-7e5ebc6daf174a4882b1b6b8b0df631e',
             }
@@ -1390,12 +1519,14 @@ exports.setApp = function ( app, client )
         // Connect to the database
         const db = client.db();
         const checkedUser = await db.collection('Users').findOne({email: req.query.email});
-        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$unset: {confirmToken: ''}});
+        const confirmUser = await db.collection('Users').findOne({userId: checkedUser.userId});
+        console.log("reset user:");
         console.log(confirmUser);
 
- 
+        // Send token and redirect to PasswordChange
+        
         // NEEDS TO REDIRECT TO REACT SERVER
-        res.redirect(`http://${req.headers.host}/reset`);
+        res.redirect(`${req.query.redirect}/PasswordChange`);
         //////
         return;
     });
@@ -1407,6 +1538,9 @@ exports.setApp = function ( app, client )
 
         // Error message to be sent
         var error = '';
+
+        // Response message to be sent
+        var responseMsg = '';
 
         // Variable to store the response to be sent back to front-end
         const r = 

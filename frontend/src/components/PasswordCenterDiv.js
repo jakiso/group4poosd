@@ -9,7 +9,7 @@ function CenterDiv(){
     var confirmPassword;
 
     const navigate = useHistory();
-    const redirectToLogin = useCallback(() => navigate.push('/Login'), [navigate]);
+    // const redirectToLogin = useCallback(() => navigate.push('/Login'), [navigate]);
 
     const [message,setMessage] = useState('');
 
@@ -74,10 +74,10 @@ function CenterDiv(){
                 return;
             }
 
-            // Account has been created go to verification page
+            // Account has been reset go to verification page
             setMessage('Your password has been successfully reset!');
 
-            redirectToLogin();
+            // redirectToLogin();
             // window.location.href = '/Login'; // does not work in deployed
         }
         catch(e)
@@ -99,7 +99,7 @@ function CenterDiv(){
                     <span id="resetResult" style={{"marginTop": "10px"}}>{message}</span>
                 </div>
                 <div className="buttons" style={{"display": "flex"}}>
-                    <input type="submit" id="resetButton" className="buttons" value = "Reset Password"
+                    <input type="submit" id="resetButton" className="buttons" value = "Confirm"
                         onClick={doReset} />
                 </div>
             </form>

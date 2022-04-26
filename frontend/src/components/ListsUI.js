@@ -15,7 +15,7 @@ var res, res_food, res_activity;
 
 function ListsUI(props)
 {
-    // console.log(props)
+    console.log(props)
     // Use state for a message if needed
     const [message, setMessage] = useState('');
 
@@ -27,6 +27,9 @@ function ListsUI(props)
 
     // useState for any updates to the folders in edit mode.
     var [update, setUpdate] = useState(false)
+
+    // disabling input to folder name.
+    var [isDisabled, setIsDisabled] = useState(true)
 
     // this use effect updates Lists being displayed depending on what tab you are in
     useEffect(() => {
@@ -140,6 +143,7 @@ function ListsUI(props)
 
     useEffect(() => {
         RetrieveFolders();
+        if (props.editMode === false) setIsDisabled(true)
     }, [folderType, props.editMode, update]);
 
     return(
@@ -147,7 +151,7 @@ function ListsUI(props)
              {/* this EditButton triggers editMode==true */}
             <EditButton button_text="Edit" onClick={()=>{props.setEditMode(true);}}/>
              {/* only if EditButton was clicked does EditMode display*/}
-            <EditMode editMode={props.editMode} setEditMode={props.setEditMode} folderType={folderType} arr_food={res_food} 
+            <EditMode editMode={props.editMode} setEditMode={props.setEditMode} folderType={folderType} arr_food={res_food} isDisabled={isDisabled} setIsDisabled={setIsDisabled}  
                 arr_activity={res_activity} setSaveToListMode={props.setSaveToListMode} update={update} setUpdate={setUpdate}/>
          </div>        
     );

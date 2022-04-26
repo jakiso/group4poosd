@@ -47,13 +47,13 @@ function EditMode(props){
     // to fix edit enable for new lists
     var [tempEnableFix, setTempEnableFix] = useState(false)
 
-    // console.log(props)
+    console.log(props)
 
     // this is for the new folder.
     var [newFolder, setNewFolder] = useState('');
 
     async function changeName(){
-
+        console.log('rename')
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
         
@@ -92,7 +92,7 @@ function EditMode(props){
 
     // creating a folder. the value is read dont listen to vscode.
     async function createFolder(){
-
+        console.log('create')
         // prevents new folder from having an empty name.
         if (newFolder === '') return;
         // Storage to access the locally stored JWT
@@ -153,18 +153,18 @@ function EditMode(props){
         <AddButton button_text="Add" onClick={()=>{setNewListMode(true);}}/>
 
         <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode} tempEnableFix={tempEnableFix}
-            setTempEnableFix={setTempEnableFix} setThisFolderId={setThisFolderId}
+            setTempEnableFix={setTempEnableFix} setThisFolderId={setThisFolderId} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}
             update={props.update} setUpdate={props.setUpdate} newFolder={newFolder} setNewFolder={setNewFolder} setNewFolderName={setNewFolderName}/>
 
         <ListType key={props.folderType} edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} 
-        folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} 
+        folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled} 
             setUpdate={props.setUpdate} setNewFolderName={setNewFolderName} setThisFolderId={setThisFolderId}/>
 
         </div>
     ) :(     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)
         <div> 
         
-        <ListType key={props.folderType} edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} 
+        <ListType key={props.folderType} edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}
         folderType={props.folderType} setThisFolderId={setThisFolderId} setSaveToListMode={props.setSaveToListMode} setNewFolderName={setNewFolderName}/>
 
         </div>
