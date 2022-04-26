@@ -157,7 +157,7 @@ function EditMode(props){
             update={props.update} setUpdate={props.setUpdate} newFolder={newFolder} setNewFolder={setNewFolder} setNewFolderName={setNewFolderName}/>
 
         <ListType key={props.folderType} edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} 
-        folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled} 
+        folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} saveToListMode={props.saveToListMode} update={props.update} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled} 
             setUpdate={props.setUpdate} setNewFolderName={setNewFolderName} setThisFolderId={setThisFolderId}/>
 
         </div>
@@ -165,7 +165,7 @@ function EditMode(props){
         <div> 
         
         <ListType key={props.folderType} edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}
-        folderType={props.folderType} setThisFolderId={setThisFolderId} setSaveToListMode={props.setSaveToListMode} setNewFolderName={setNewFolderName}/>
+        folderType={props.folderType} setThisFolderId={setThisFolderId} setSaveToListMode={props.setSaveToListMode} saveToListMode={props.saveToListMode} setNewFolderName={setNewFolderName}/>
 
         </div>
     );

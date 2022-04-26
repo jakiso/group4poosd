@@ -8,6 +8,9 @@ import food_pic from '../images/LG_food.png';
 import event_pic from '../images/LG_event.png';
 import friend_pic from '../images/LG_friend.png';
 
+import { useUpdateList } from './ListContext';
+import { useList } from "./ListContext";
+
 const InfoCard = styled(Carda)`
 
 `
@@ -96,7 +99,6 @@ function CardsUI(props)
                             <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
-
             }
 
         } else {
@@ -107,6 +109,18 @@ function CardsUI(props)
     useEffect(() => {
         RetrievePlaces();
     }, [search]);
+
+    // const updateList = useUpdateList();
+    // const userList = useList();
+  
+    // const [newList, setNewList] = useState();
+
+    // const onUpdateList = (e) => {
+    //     e.preventDefault();
+    //     updateList(newList);
+    //   };
+    // }
+
 
     return(props.selectTab==="food")?(
         // Use:

@@ -77,7 +77,8 @@ exports.setApp = function ( app, client )
     {
         var token = require('./createJWT.js'); var msg = ''; var error = '';
 
-        const jwToken = req.body.jwToken; const uid = req.body.userId;
+        const jwToken = req.body.jwToken; 
+        const uid = req.body.userId;
         const fid = req.body.folderId;
 
         // Checks if the JWT is expired

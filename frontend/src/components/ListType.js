@@ -12,7 +12,7 @@ function ListType(props){
             {
             props.arr_food.folders.map(({ folderId, folderName, folderType }) => (
                 <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={props.edit_icons} setThisFolderId={props.setThisFolderId}
-                onClick={()=>{props.setSaveToListMode(false);}} setNewFolderName={props.setNewFolderName} update={props.update} setUpdate={props.setUpdate}
+                onClick={()=>{props.setSaveToListMode(false);}} saveToListMode={props.saveToListMode} setNewFolderName={props.setNewFolderName} update={props.update} setUpdate={props.setUpdate}
                 isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}/>
             ))
             }
@@ -23,7 +23,7 @@ function ListType(props){
             props.arr_activity.folders.map(
             ({ folderId, folderName, folderType }) => (
                 <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={props.edit_icons} setThisFolderId={props.setThisFolderId}
-                    onClick={()=>{props.setSaveToListMode(false);}} setNewFolderName={props.setNewFolderName} update={props.update} setUpdate={props.setUpdate}
+                    onClick={()=>{props.setSaveToListMode(false);}} saveToListMode={props.saveToListMode} setNewFolderName={props.setNewFolderName} update={props.update} setUpdate={props.setUpdate}
                     isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}/>
                 // the onClick here is for when a user is attempts to save specific place to this List
                 // in the case that placeSaveMode==true (the grey div and pop-up), this onClick can turn placeSaveMode off

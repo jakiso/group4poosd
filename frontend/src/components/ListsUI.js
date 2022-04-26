@@ -152,7 +152,7 @@ function ListsUI(props)
             <EditButton button_text="Edit" onClick={()=>{props.setEditMode(true);}}/>
              {/* only if EditButton was clicked does EditMode display*/}
             <EditMode editMode={props.editMode} setEditMode={props.setEditMode} folderType={folderType} arr_food={res_food} isDisabled={isDisabled} setIsDisabled={setIsDisabled}  
-                arr_activity={res_activity} setSaveToListMode={props.setSaveToListMode} update={update} setUpdate={setUpdate}/>
+                arr_activity={res_activity} setSaveToListMode={props.setSaveToListMode} saveToListMode={props.saveToListMode} update={update} setUpdate={setUpdate}/>
          </div>        
     );
 };

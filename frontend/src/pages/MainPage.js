@@ -12,6 +12,9 @@ import {GreyOutSearchTabs} from '../components/GreyOutSearchTabs';
 import { GreyOutCardUI } from '../components/GreyOutCardUI';
 import { AddPlacePopUp } from '../components/AddPalcePopUp';
 
+// For context
+import { ListProvider } from '../components/ListContext';
+
 const Buttona = styled(Buttonb)`
     background: #000000;
 `
@@ -40,30 +43,32 @@ function MainPage() {
         <div className="background">
             <div style={{"margin":"5%", "marginTop":"0px"}}>
                 <TopMarginMain/>
-                <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr", "columnGap":"1rem", "height":"100vh"}}>
-                    <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                        <ListsTab children="Lists"/>
-                        <div>
-                            <CenterDivList className='main_pane'>
-                                <ListsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab} editMode={editMode} setEditMode={setEditMode} />
-                            </CenterDivList>
+                <ListProvider>
+                    <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr", "columnGap":"1rem", "height":"100vh"}}>
+                        <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
+                            <ListsTab children="Lists"/>
+                            <div>
+                                <CenterDivList className='main_pane'>
+                                    <ListsUI setSaveToListMode={setSaveToListMode} saveToListMode={saveToListMode} selectTab={selectTab} editMode={editMode} setEditMode={setEditMode} />
+                                </CenterDivList>
+                            </div>
+                        </div>
+                        <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
+                            <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
+                                <GreyOutSearchTabs saveToListMode={saveToListMode} editMode={editMode}/>  {/* only shows when saveToListMode is true */}
+                                <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab}/>
+                            </div>
+                            <div>
+                            <CenterDivMain className='main_pane'>
+                                <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
+                                <GreyOutCardUI saveToListMode={saveToListMode} editMode={editMode}> {/* only shows when saveToListMode is true */}
+                                    <AddPlacePopUp setSaveToListMode={setSaveToListMode} editMode={editMode}/>
+                            </GreyOutCardUI>
+                            </CenterDivMain>
+                            </div>
                         </div>
                     </div>
-                    <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                        <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
-                            <GreyOutSearchTabs saveToListMode={saveToListMode} editMode={editMode}/>  {/* only shows when saveToListMode is true */}
-                            <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab}/>
-                        </div>
-                        <div>
-                        <CenterDivMain className='main_pane'>
-                            <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
-                            <GreyOutCardUI saveToListMode={saveToListMode} editMode={editMode}> {/* only shows when saveToListMode is true */}
-                                <AddPlacePopUp setSaveToListMode={setSaveToListMode} editMode={editMode}/>
-                        </GreyOutCardUI>
-                        </CenterDivMain>
-                        </div>
-                    </div>
-                </div>
+                </ListProvider>
             </div>
         </div>
 
