@@ -41,7 +41,7 @@ exports.setApp = function ( app, client )
 
         try
         {
-            const db = client.db();
+            const db = await client.db();
 
             // grabs folder based on folderId.
             const result = await db.collection('Folders').findOne
@@ -99,7 +99,7 @@ exports.setApp = function ( app, client )
 
         try
         {
-            const db = client.db();
+            const db = await client.db();
             // array of folders matching the userId.
             const result = await db.collection('Folders').aggregate([
                 {
@@ -169,7 +169,7 @@ exports.setApp = function ( app, client )
         console.log({jwToken, newFolderName, fid})
         try
         {
-            const db = client.db();
+            const db = await client.db();
 
             // edits name of folder that matches userId and folderId.
             const result = await db.collection('Folders').updateOne
@@ -241,7 +241,7 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        const db = client.db();
+        const db = await client.db();
         const folderExist = await db.collection('Folders').find({userId: uid,folderId:fid}).toArray();
       
 
@@ -326,7 +326,7 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        const db = client.db();
+        const db = await client.db();
         try
         {
             
@@ -397,26 +397,13 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        const db = client.db();
-        const folderExist = await db.collection('Folders').find({folderId:thisFolder}).toArray();
-      
-
-        if (folderExist.length === 0)
-        {
-            // Send an error that the userId doesn't exist
-            error = "folder doesn't exist";
-            ret = { error: error };
-            res.status(500).json(ret);
-
-            // Exit the api call
-            return;
-        }
         // Actual folder deletion
         try
         {
-           
+            const db = await client.db()
             const result = await db.collection('Folders').deleteOne({folderId: thisFolder});
             msg = result;
+            
         }
         catch(e)
         {
@@ -469,7 +456,7 @@ exports.setApp = function ( app, client )
 
         try
         {
-            const db = client.db();
+            const db = await client.db();
             const result = await db.collection('Users').deleteOne({userId: thisUserId, password: thisUserPass});
             msg = result;
         }
@@ -516,7 +503,7 @@ exports.setApp = function ( app, client )
             return;
         }
 
-        const db = client.db();
+        const db = await client.db();
 
         // Search the database for the username and email
         const usernameExist = await db.collection('Users').find({username:newUsername}).toArray();
@@ -898,7 +885,7 @@ exports.setApp = function ( app, client )
         var ret;
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
 
         // Search the database for the username and email
         const userExist = await db.collection('Users').find({username:newUser.username}).toArray();
@@ -983,7 +970,7 @@ exports.setApp = function ( app, client )
 
         const { username, password } = req.body;
 
-        const db = client.db();
+        const db = await client.db();
         const results = await db.collection('Users').findOne({username:username,password:password});
 
         var id = -1;
@@ -1055,7 +1042,7 @@ exports.setApp = function ( app, client )
         {
             console.log(e.message);
         }
-        const db = client.db();
+        const db = await client.db();
         const userIdExist = await db.collection('Users').find({userId:newFolder.userId}).toArray();
       
 
@@ -1167,7 +1154,7 @@ exports.setApp = function ( app, client )
         const userId = req.body.userId;
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         // Search the database for the userId
         const userEmail = await db.collection('Users').findOne({userId:userId});
 
@@ -1260,7 +1247,7 @@ exports.setApp = function ( app, client )
         console.log(req.query);
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         const checkedUser = await db.collection('Users').findOne({email: req.query.email});
         const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$set: {emailConfirm: 1}, $unset: {confirmToken: ''}});
         console.log(confirmUser);
@@ -1324,7 +1311,7 @@ exports.setApp = function ( app, client )
         try
         {
             // Connect to the database
-            const db = client.db();
+            const db = await client.db();
             // Search the database for the userId
             const userConfirm = await db.collection('Users').findOne({userId:userId});
 
@@ -1379,7 +1366,7 @@ exports.setApp = function ( app, client )
         // SEND EMAIL STUFF
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         // Search the database for the account tied to the email
         const resetUser = await db.collection('Users').findOne({email:req.body.email});
         console.log(resetUser);
@@ -1490,7 +1477,7 @@ exports.setApp = function ( app, client )
         console.log(req.query);
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         const checkedUser = await db.collection('Users').findOne({email: req.query.email});
         const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$unset: {confirmToken: ''}});
         console.log(confirmUser);
@@ -1555,7 +1542,7 @@ exports.setApp = function ( app, client )
         const userId = req.body.userId;
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         // Search the database for the userId and update password
         const resetUser = await db.collection('Users').findOne({userId:userId});
         const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
@@ -1600,7 +1587,7 @@ exports.setApp = function ( app, client )
     var results;
     try
     {
-        const db = client.db();
+        const db = await client.db();
         results = await db.collection('Folders').find({userId:userId, folderType:folderType}).toArray();
 
     }
