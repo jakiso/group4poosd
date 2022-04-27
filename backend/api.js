@@ -355,6 +355,45 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
+    app.post('/addFriend', async (req, res, next) =>
+    {
+        var token = require('./createJWT.js');
+        const {userId, name, phone, address, email, notes, jwToken} = req.body;
+
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(500).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+        const db = client.db();
+
+        const results = await db.collection('Friends').insertOne({userId:userId, name:name, phone:phone, address:address, email:email, notes:notes});
+
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = Object.assign({}, refreshedToken);
+        
+        res.status(200).json(ret);
+
+    })
+
     // deletes a folder using folderId.
     app.post('/deleteFolder', async (req, res, next) =>
     {
