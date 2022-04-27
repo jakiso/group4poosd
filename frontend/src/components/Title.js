@@ -5,7 +5,7 @@ import '../App.css';
 // This makes Title component reusable
 export const Title = ({className}) =>{
     return (
-        <div className={className} style={{"height":"150px", "overflowX":"auto"}}>LetsDoThings
+        <div className={className} style={{"height":"150px", "overflowX":"visible"}}>LetsDoThings
             <img className="logo" src={logo} alt="Logo"></img>
         </div>  
     )

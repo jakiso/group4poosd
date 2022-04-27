@@ -51,10 +51,12 @@ function MainPage() {
       });
 
     return ( loggedInState ) ?( // This is the logged in version of main page
-        <div className="background">
-            <div style={{"margin":"5%", "marginTop":"0px"}}>
-                <TopMarginMain loggedInState={loggedInState}/>
-                <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr", "columnGap":"1rem", "height":"100vh"}}>
+        <body className="background">
+            <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%", "justify-content":"center", "width":"150rem", "height":"auto", "marginLeft":"auto", "marginRight":"auto"}}>
+            <TopMarginMain loggedInState={loggedInState}/>
+
+                {/* <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr 100%", "columnGap":"1rem", "height":"100vh"}}> */}
+                <div className="wrapper" style={{"display":"flex", "columnGap":"1rem"}}>
                     <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
                         <ListsTab children="Lists"/>
                         <div>
@@ -79,11 +81,11 @@ function MainPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </body>
 
     ):( // This is the guest version of main page
         <div className="background">
-            <div style={{"margin":"5%", "marginTop":"0px"}}>
+            <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%", "justify-content":"center", "width":"150rem", "height":"auto", "marginLeft":"auto", "marginRight":"auto"}}>
                 <TopMarginMain loggedInState={loggedInState}/>
                 <div className="wrapper" style={{"display":"grid", "height":"100vh"}}>
 

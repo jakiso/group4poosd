@@ -138,10 +138,10 @@ function CardsUI(props)
         <InfoCard Name="Cory Bartson" Address="888 Rosemont Avenue" PhoneNumber="321-885-2673" MoreInfo="..." DescriptionText="Travel" Rating="4.9" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
     </div>
     ): (
-        <div style={{"height":"50vh","width":"100vh", "margin":"auto"}}>
-            <div style={{"height":"50vh","width":"100vh", "display":"grid", "gridTemplateColumns":"1fr 1fr", "columnGap":"1rem", "margin":"10% auto 5% auto"}}>
+        <div style={{"height":"auto","width":"100%"}}>
+            <div style={{"height":"auto","width":"100rem", "display":"flex", "margin":"5% auto"}}>
                 
-                <div>
+                <div style={{"width":"100%"}}>
                     <br/>
                     <p className="welcome">
                         Want to do something<br/>
@@ -152,8 +152,8 @@ function CardsUI(props)
                     <br/><br/><br/><br/>
                 </div>
 
-                <div style={{"height":"50rem","width":"20rem", "overflow":"hidden", "margin":"0% auto 0% auto"}}>
-                    <img width={"300rem"} height={"auto"} src={globe} alt="Event"/><br/><br/>
+                <div style={{"height":"100%","width":"100%", "overflow":"auto"}}>
+                    <img width={"600rem"} height={"auto"} src={globe} alt="Event"/><br/><br/>
                 </div>
 
             </div>

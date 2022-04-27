@@ -10,7 +10,7 @@ function SelectSearchTab(props){
     // try catch is needed for when page intially loads
     try{
     return (props.selectTab==="food" && props.loggedInState) ? (
-        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
+        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"200px", "marginRight":"200px"}}>
             <SearchTab children="Food" selected={true} customOnClick={()=>{props.setSelectTab("food");}}/>
             <SearchTab children="Activities" selected={false} customOnClick={()=>{props.setSelectTab("activity");}}/>
             <SearchTab children="Friends" selected={false} customOnClick={()=>{props.setSelectTab("friends");}}/>
@@ -24,7 +24,7 @@ function SelectSearchTab(props){
             })()}
         </div>
     ) : (props.selectTab==="activity" && props.loggedInState) ? ( 
-        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
+        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"200px", "marginRight":"200px"}}>
             <SearchTab children="Food"  selected={false}  customOnClick={()=>{props.setSelectTab("food");}}/>
             <SearchTab children="Activities" selected={true} customOnClick={()=>{props.setSelectTab("activity");}}/>
             <SearchTab children="Friends" selected={false} customOnClick={()=>{props.setSelectTab("friends");}}/>
@@ -38,7 +38,7 @@ function SelectSearchTab(props){
             })()}
         </div>
     ): (props.selectTab==="friends" && props.loggedInState) ? (
-        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
+        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"200px", "marginRight":"200px"}}>
             <SearchTab children="Food" selected={false}  customOnClick={()=>{props.setSelectTab("food");}}/>
             <SearchTab children="Activities" selected={false}  customOnClick={()=>{props.setSelectTab("activity");}}/>
             <SearchTab children="Friends" selected={true} customOnClick={()=>{props.setSelectTab("friends");}}/>
@@ -52,13 +52,13 @@ function SelectSearchTab(props){
             })()}
         </div>
     ) : (props.loggedInState) ? (
-        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
+        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"200px", "marginRight":"200px"}}>
         <SearchTab children="Food" selected={false} customOnClick={()=>{props.setSelectTab("food");}}/>
         <SearchTab children="Activities" selected={false} customOnClick={()=>{props.setSelectTab("activity");}}/>
         <SearchTab children="Friends" selected={false} customOnClick={()=>{props.setSelectTab("friends");}}/>
         </div>
     ) : (props.selectTab==="food" && !props.loggedInState) ? (
-        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
+        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"400px", "marginRight":"400px"}}>
             <SearchTab children="Food" selected={true} customOnClick={()=>{props.setSelectTab("food");}}/>
             <SearchTab children="Activities" selected={false} customOnClick={()=>{props.setSelectTab("activity");}}/>
             {(() => {
@@ -71,7 +71,7 @@ function SelectSearchTab(props){
             })()}
         </div>
     ) : (props.selectTab==="activity" && !props.loggedInState) ? ( 
-        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
+        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"400px", "marginRight":"400px"}}>
             <SearchTab children="Food"  selected={false}  customOnClick={()=>{props.setSelectTab("food");}}/>
             <SearchTab children="Activities" selected={true} customOnClick={()=>{props.setSelectTab("activity");}}/>
             {(() => {
@@ -84,7 +84,7 @@ function SelectSearchTab(props){
             })()}
         </div>
     ) : (!props.loggedInState) ? (
-        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"50px", "marginRight":"50px"}}>
+        <div style= {{"display":"flex", "gap":"20vh", "justifyContent":"center", "marginLeft":"400px", "marginRight":"400px"}}>
         <SearchTab children="Food" selected={false} customOnClick={()=>{props.setSelectTab("food");}}/>
         <SearchTab children="Activities" selected={false} customOnClick={()=>{props.setSelectTab("activity");}}/>
         </div>

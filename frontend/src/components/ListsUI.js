@@ -9,6 +9,7 @@ import ListButton from './ListButton';
 const EditButton = styled(Buttonb)`
     width: 100%;
     height: 50px;
+    min-width: 200px;
     margin-top:0px;
 `
 var res, res_food, res_activity;
