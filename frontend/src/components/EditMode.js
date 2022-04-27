@@ -41,17 +41,21 @@ function EditMode(props){
     var [thisFolderId, setThisFolderId] = useState();
 
     // to fix edit enable for new lists
-    var [tempEnableFix, setTempEnableFix] = useState(false)
+    var [tempEnableFix, setTempEnableFix] = useState(false);
 
-    var [newFolder, setNewFolder] = useState('')
+    var [newFolder, setNewFolder] = useState('');
+
+    var [newName, setNewName] = useState('');
 
     async function changeName(){
+        if (thisFolderId === undefined || newName === '') return;
+        console.log('changing name')
 
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
         
         // The object to be sent to the api, must contain folderId and jwToken field
-        var obj = {folderId:thisFolderId, jwToken:storage.retrieveToken(), newFolderName: newFolder};
+        var obj = {folderId:thisFolderId, jwToken:storage.retrieveToken(), newFolderName: newName};
         var js = JSON.stringify(obj);        
     
         // Path to send the api call
@@ -81,10 +85,14 @@ function EditMode(props){
         {
             console.log(e.toString());
         }
+        setNewName('');
+        let opposite = !(props.update)
+        props.setUpdate(opposite)
     }
 
     async function createFolder(){
         if (newFolder === '') return;
+        console.log(newFolder)
 
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
@@ -143,18 +151,19 @@ function EditMode(props){
 
         <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode} tempEnableFix={tempEnableFix}
             setTempEnableFix={setTempEnableFix} setThisFolderId={setThisFolderId} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}
-            update={props.update} setUpdate={props.setUpdate} setNewFolder={setNewFolder}/>
+            update={props.update} setUpdate={props.setUpdate} setNewFolder={setNewFolder} setNewName={setNewName}/>
 
-        <ListType key={props.folderType} edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} 
+        <ListType key={props.folderType} edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} setNewName={setNewName}
         folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} isDisabled={props.isDisabled} 
-            setUpdate={props.setUpdate} setThisFolderId={setThisFolderId} setIsDisabled={props.setIsDisabled}/>
+        setUpdate={props.setUpdate} setThisFolderId={setThisFolderId} setIsDisabled={props.setIsDisabled} setNewFolder={setNewFolder}/>
 
         </div>
     ) :(     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)
         <div> 
         
-        <ListType key={props.folderType} edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}
-        folderType={props.folderType} setThisFolderId={setThisFolderId} setSaveToListMode={props.setSaveToListMode}/>
+        <ListType key={props.folderType} edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity}
+        isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled} setNewName={setNewName}
+        folderType={props.folderType} setThisFolderId={setThisFolderId} setNewFolder={setNewFolder} setSaveToListMode={props.setSaveToListMode}/>
 
         </div>
     );
