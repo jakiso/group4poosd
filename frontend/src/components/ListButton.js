@@ -73,52 +73,52 @@ function ListButton(props){
 
         e.preventDefault();
 
-        console.log("RetrievingFromList");
+        // console.log("RetrievingFromList");
 
-        // // Storage to access the locally stored JWT
-        // var storage = require('../tokenStorage.js');
+        // Storage to access the locally stored JWT
+        var storage = require('../tokenStorage.js');
 
-        // // The user data is stored as text and needs to be turned into an object
-        // var data = JSON.parse(localStorage.user_data);
+        // The user data is stored as text and needs to be turned into an object
+        var data = JSON.parse(localStorage.user_data);
 
-        // // The object to be sent to the api, must contain userId and jwToken field
-        // var listReq = {uid:data.id, fid:e.target.id, jwToken:storage.retrieveToken()};
-        // var sendReq = JSON.stringify(listReq);
+        // The object to be sent to the api, must contain userId and jwToken field
+        var listReq = {userId:data.id, folderId:parseInt(e.target.id), jwToken:storage.retrieveToken()};
+        var sendReq = JSON.stringify(listReq);
 
         // console.log(listReq);
 
-        // // Path to send the api call
-        // var bp = require('./Path.js');
+        // Path to send the api call
+        var bp = require('./Path.js');
 
-        // try
-        // {
-        //     const responseList = await fetch(bp.buildPath('placesFromFolder'), {method:'POST',body:sendReq,headers:{'Content-Type':'application/json'}});
+        try
+        {
+            const responseList = await fetch(bp.buildPath('placesFromFolder'), {method:'POST',body:sendReq,headers:{'Content-Type':'application/json'}});
 
-        //     console.log("retrieving lists");
+            // console.log("retrieving lists");
 
-        //     // Wait for response and parse json
-        //     const folderList = JSON.parse(await responseList.text());
+            // Wait for response and parse json
+            const folderList = JSON.parse(await responseList.text());
 
-        //     // Check the error field. empty error is good
-        //     if( folderList.error && folderList.error.length > 0 )
-        //     {
-        //         // setMessage( "API Error:" + folderList.error);
-        //         console.log( "API Error:" + folderList.error);
-        //     }
-        //     else
-        //     {
-        //         // Store the received refreshed JWT
-        //         storage.storeToken( folderList.jwToken );
+            // Check the error field. empty error is good
+            if( folderList.error && folderList.error.length > 0 )
+            {
+                // setMessage( "API Error:" + folderList.error);
+                console.log( "API Error:" + folderList.error);
+            }
+            else
+            {
+                // Store the received refreshed JWT
+                storage.storeToken( folderList.jwToken );
 
-        //         // Now we have the list of places from each individual folder
-        //         console.log(folderList.message);
-        //     }
-        // }
-        // catch(e)
-        // {
-        //     // setMessage(e.toString());
-        //     console.log(e.toString());
-        // }
+                // Now we have the list of places from each individual folder
+                console.log(folderList.message);
+            }
+        }
+        catch(e)
+        {
+            // setMessage(e.toString());
+            console.log(e.toString());
+        }
     }
 
     // Inserting to List from folder when clicked

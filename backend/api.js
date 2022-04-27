@@ -105,19 +105,19 @@ exports.setApp = function ( app, client )
             const result = await db.collection('Folders').aggregate([
                 {
                   $match: {
-                    "userId": 3,
-                    "folderId": 53
+                    "userId": uid,
+                    "folderId": fid
                   }
                 },
                 {
-                  "$project": {
-                    "placeList": 1,
+                  $project: {
+                    placeList: 1,
                     _id: 0
                   }
                 }
               ]).toArray();
-
-            msg = result;
+              
+            msg = result[0].placeList;
         }
         catch(e)
         {
