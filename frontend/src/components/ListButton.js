@@ -81,7 +81,7 @@ function ListButton(props){
         <div onClick={props.onClick}>
         <List key={props.button_id} type="button" id={props.button_id} className={props.className}>
             <br/>
-            <RenameInput placeholder={props.button_text} maxLength="10" disabled={props.isDisabled} onChange={e => props.setNewFolderName(e.target.value)}/>
+            <RenameInput placeholder={props.button_text} maxLength="10" disabled={props.isDisabled} onChange={e => props.setNewFolder(e.target.value)}/>
             <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} isDisabled={props.isDisabled} setThisFolderId={props.setThisFolderId}
              setIsDisabled={props.setIsDisabled} newFolderName={props.newFolderName} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icons==true */}
         </List>

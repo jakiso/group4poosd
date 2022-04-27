@@ -36,16 +36,14 @@ function getUserId() {
 function EditMode(props){
     // console.log(props)
     var [newListMode, setNewListMode] = useState(false);
-    // this is for renaming the folder.
-    var [newFolderName, setNewFolderName] = useState(props.button_text);
+
     // for grabbing the folderId from ListButton
     var [thisFolderId, setThisFolderId] = useState();
 
     // to fix edit enable for new lists
     var [tempEnableFix, setTempEnableFix] = useState(false)
 
-    // this is for the new folder.
-    var [newFolder, setNewFolder] = useState('');
+    var [newFolder, setNewFolder] = useState('')
 
     async function changeName(){
 
@@ -53,7 +51,7 @@ function EditMode(props){
         var storage = require('../tokenStorage.js');
         
         // The object to be sent to the api, must contain folderId and jwToken field
-        var obj = {folderId:thisFolderId, jwToken:storage.retrieveToken(), newFolderName: newFolderName};
+        var obj = {folderId:thisFolderId, jwToken:storage.retrieveToken(), newFolderName: newFolder};
         var js = JSON.stringify(obj);        
     
         // Path to send the api call
@@ -87,7 +85,7 @@ function EditMode(props){
 
     // creating a folder. the value is read dont listen to vscode.
     async function createFolder(){
-        console.log('create')
+        if (newFolder === '') return;
 
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
@@ -96,7 +94,7 @@ function EditMode(props){
         userId = jsonId.id;
     
         // The object to be sent to the api, must contain folderId and jwToken field
-        var obj = {userId: userId, folderType: props.folderType, folderName: newFolder, jwToken:storage.retrieveToken(), newFolderName: newFolder};
+        var obj = {userId: userId, folderType: props.folderType, folderName: newFolder, jwToken:storage.retrieveToken()};
         var js = JSON.stringify(obj);
     
         // Path to send the api call
@@ -125,9 +123,7 @@ function EditMode(props){
         {
             console.log(e.toString());
         }
-
-        // setting newFolder back to empty
-        setNewFolder('');
+        setNewFolder('')
     }
 
     // try catch is needed for when page intially loads
@@ -137,7 +133,7 @@ function EditMode(props){
         <div>
         {/* if editMode==true, this SaveButton can turn set editMode back to false */}
         <SaveButton button_text="Save" onClick={()=>{
-            if (props.newListMode === true) createFolder();
+            createFolder();
             props.setUpdate(!props.update)
             setNewListMode(false);
             changeName();
@@ -148,18 +144,18 @@ function EditMode(props){
 
         <ListButton button_text={"_________"} newListMode={newListMode} setNewListMode={setNewListMode} tempEnableFix={tempEnableFix}
             setTempEnableFix={setTempEnableFix} setThisFolderId={setThisFolderId} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}
-            update={props.update} setUpdate={props.setUpdate} newFolder={newFolder} setNewFolder={setNewFolder} setNewFolderName={setNewFolderName}/>
+            update={props.update} setUpdate={props.setUpdate} setNewFolder={setNewFolder}/>
 
         <ListType key={props.folderType} edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} 
-        folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled} 
-            setUpdate={props.setUpdate} setNewFolderName={setNewFolderName} setThisFolderId={setThisFolderId}/>
+        folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} update={props.update} isDisabled={props.isDisabled} 
+            setUpdate={props.setUpdate} setThisFolderId={setThisFolderId} setIsDisabled={props.setIsDisabled}/>
 
         </div>
     ) :(     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)
         <div> 
         
         <ListType key={props.folderType} edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled}
-        folderType={props.folderType} setThisFolderId={setThisFolderId} setSaveToListMode={props.setSaveToListMode} setNewFolderName={setNewFolderName}/>
+        folderType={props.folderType} setThisFolderId={setThisFolderId} setSaveToListMode={props.setSaveToListMode}/>
 
         </div>
     );

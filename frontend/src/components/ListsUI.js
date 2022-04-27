@@ -16,7 +16,7 @@ var res, res_food, res_activity;
 
 function ListsUI(props)
 {
-
+    // console.log(props)
     // Use state for a message if needed
     const [message, setMessage] = useState('');
 
@@ -37,9 +37,6 @@ function ListsUI(props)
     useEffect(() => {
         setFolderType(props.selectTab);
     },[props.selectTab]);
-
-    // // useState for setting the editMode
-    // var [editMode, setEditMode] = useState(false);
 
     // Function to retrieve the folders, gets run with useState after page loads
     const RetrieveFolders = async () => {
@@ -125,6 +122,7 @@ function ListsUI(props)
     useEffect(() => {
         RetrieveFolders();
         if (props.editMode === false) setIsDisabled(true)
+        
     }, [folderType, props.editMode, update]);
 
     return(
