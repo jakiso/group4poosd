@@ -29,7 +29,7 @@ height: 50px;
 `
 const Description = styled(Buttonc)`
 width: 50%;
-height: 50%;
+height: auto;
 padding: 10%;
 `
 
@@ -48,7 +48,7 @@ export const Carda = (props) =>{
             <ListButton button_text={props.PhoneNumber}/>
             <ListButton button_text={props.MoreInfo}/> 
         </div> 
-        <div style={{"width":"40%", "overflow":"auto"}}>
+        <div style={{"width":"40%", "overflow":"auto", "margin":"auto"}}>
             <Description button_text={props.DescriptionText}/>
         </div>  
         </div></Card>
