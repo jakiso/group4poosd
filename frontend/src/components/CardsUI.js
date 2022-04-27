@@ -7,6 +7,7 @@ import { SearchBar } from './SearchBar';
 import food_pic from '../images/LG_food.png';
 import event_pic from '../images/LG_event.png';
 import friend_pic from '../images/LG_friend.png';
+import globe from '../images/LG_globe.png';
 
 const InfoCard = styled(Carda)`
 
@@ -137,9 +138,25 @@ function CardsUI(props)
         <InfoCard Name="Cory Bartson" Address="888 Rosemont Avenue" PhoneNumber="321-885-2673" MoreInfo="..." DescriptionText="Travel" Rating="4.9" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
     </div>
     ): (
-        <div>
-            <br/><br/><br/><br/>
-            <p>Select a tab NOW!</p>   
+        <div style={{"height":"50vh","width":"100vh", "margin":"auto"}}>
+            <div style={{"height":"50vh","width":"100vh", "display":"grid", "gridTemplateColumns":"1fr 1fr", "columnGap":"1rem", "margin":"10% auto 5% auto"}}>
+                
+                <div>
+                    <br/>
+                    <p className="welcome">
+                        Want to do something<br/>
+                        but don't know what?<br/>
+                        Let's find that thing!<br/><br/>
+                        choose a tab to start
+                    </p>  
+                    <br/><br/><br/><br/>
+                </div>
+
+                <div style={{"height":"50rem","width":"20rem", "overflow":"hidden", "margin":"0% auto 0% auto"}}>
+                    <img width={"300rem"} height={"auto"} src={globe} alt="Event"/><br/><br/>
+                </div>
+
+            </div>
         </div>    
     );
 };
