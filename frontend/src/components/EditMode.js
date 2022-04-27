@@ -83,7 +83,6 @@ function EditMode(props){
         }
     }
 
-    // creating a folder. the value is read dont listen to vscode.
     async function createFolder(){
         if (newFolder === '') return;
 
@@ -124,6 +123,8 @@ function EditMode(props){
             console.log(e.toString());
         }
         setNewFolder('')
+        let opposite = !(props.update)
+        props.setUpdate(opposite)
     }
 
     // try catch is needed for when page intially loads
@@ -133,11 +134,9 @@ function EditMode(props){
         <div>
         {/* if editMode==true, this SaveButton can turn set editMode back to false */}
         <SaveButton button_text="Save" onClick={()=>{
-            createFolder();
-            props.setUpdate(!props.update)
+            createFolder(); // goes into function but only executes if new folder to be added.
+            changeName();   // same logic as above.
             setNewListMode(false);
-            changeName();
-            // maybe need to wait here before showing the lists again?
             props.setEditMode(false);
         }}/>
         <AddButton button_text="Add" onClick={()=>{setNewListMode(true);}}/>
