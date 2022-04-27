@@ -63,8 +63,6 @@ columnGap: 1rem;
 `
 
 function ListButton(props){
-    
-    console.log(props)
 
     // in the case that this is a new list 
     return (props.newListMode===true) ? (

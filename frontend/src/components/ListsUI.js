@@ -16,12 +16,13 @@ var res, res_food, res_activity;
 
 function ListsUI(props)
 {
-    console.log(props)
+
     // Use state for a message if needed
     const [message, setMessage] = useState('');
 
     // useState for setting the list of folders after its been loaded
-    var [folderList, setFolders] = useState([]);
+    var [foodFolders, setFoodFolders] = useState([]);
+    var [activityFolders, setActivityFolders] = useState([]);
 
     // useState for setting the list of folders after its been loaded
     var [folderType, setFolderType] = useState("activity");
@@ -77,21 +78,14 @@ function ListsUI(props)
                 }
                 else
                 {
-                    // Set a message for the user
-                    // setMessage('Got the folders');
                     
                     // Store the received refreshed JWT
                     storage.storeToken( res_food.jwToken );
-
-                    // Turns the response field into an array of elements
-                    // { folderId, name} -> fields of each array object
-                    // const storedFolders = res.folders.map(({ folderId, name }) => (
-                    //                     <MarginButton key={folderId} button_text={name} />
-                    // ));
+                    // console.log(res_food)
 
                     // uses the useState to change the value of storedFolders
-                    setFolders(res_food.folders.map(({ folderId, folderName, folderType }) => (
-                                <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
+                    setFoodFolders(res_food.folders.map(({ folderId, folderName, folderType }) => (
+                        {folderId: folderId, folderName: folderName, folderType: folderType}
                             ))
                     );
 
@@ -109,21 +103,12 @@ function ListsUI(props)
                 }
                 else
                 {
-                    // Set a message for the user
-                    // setMessage('Got the folders');
-                    
                     // Store the received refreshed JWT
                     storage.storeToken( res_activity.jwToken );
 
-                    // Turns the response field into an array of elements
-                    // { folderId, name} -> fields of each array object
-                    // const storedFolders = res.folders.map(({ folderId, name }) => (
-                    //                     <MarginButton key={folderId} button_text={name} />
-                    // ));
-
                     // uses the useState to change the value of storedFolders
-                    setFolders(res_activity.folders.map(({ folderId, folderName, folderType }) => (
-                                <ListButton key={folderId} button_id={folderId} button_text={folderName} trigger_bool={false}/>
+                    setActivityFolders(res_activity.folders.map(({ folderId, folderName, folderType }) => (
+                        {folderId: folderId, folderName: folderName, folderType: folderType}
                             ))
                     );
                 }
@@ -132,15 +117,10 @@ function ListsUI(props)
         }
         catch(e)
         {
-            setMessage(e.toString());
+            setMessage(e)
         }
+        console.log(foodFolders)
     }
-
-    // // useEffect runs only once after the page has loaded
-    // useEffect(() => {
-    //     RetrieveFolders();
-    // }, []);
-
 
     useEffect(() => {
         RetrieveFolders();
@@ -152,8 +132,8 @@ function ListsUI(props)
              {/* this EditButton triggers editMode==true */}
             <EditButton button_text="Edit" onClick={()=>{props.setEditMode(true);}}/>
              {/* only if EditButton was clicked does EditMode display*/}
-            <EditMode editMode={props.editMode} setEditMode={props.setEditMode} folderType={folderType} arr_food={res_food} isDisabled={isDisabled} setIsDisabled={setIsDisabled}  
-                arr_activity={res_activity} setSaveToListMode={props.setSaveToListMode} update={update} setUpdate={setUpdate}/>
+            <EditMode editMode={props.editMode} setEditMode={props.setEditMode} folderType={folderType} arr_food={foodFolders} isDisabled={isDisabled} setIsDisabled={setIsDisabled}  
+                arr_activity={activityFolders} setSaveToListMode={props.setSaveToListMode} update={update} setUpdate={setUpdate}/>
          </div>        
     );
 };

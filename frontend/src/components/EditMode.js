@@ -33,11 +33,8 @@ function getUserId() {
     return user;
 }
 
-function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 function EditMode(props){
+    console.log(props)
     var [newListMode, setNewListMode] = useState(false);
     // this is for renaming the folder.
     var [newFolderName, setNewFolderName] = useState(props.button_text);
@@ -47,13 +44,11 @@ function EditMode(props){
     // to fix edit enable for new lists
     var [tempEnableFix, setTempEnableFix] = useState(false)
 
-    console.log(props)
-
     // this is for the new folder.
     var [newFolder, setNewFolder] = useState('');
 
     async function changeName(){
-        console.log('rename')
+
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
         
@@ -93,8 +88,7 @@ function EditMode(props){
     // creating a folder. the value is read dont listen to vscode.
     async function createFolder(){
         console.log('create')
-        // prevents new folder from having an empty name.
-        if (newFolder === '') return;
+
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
         var userId = getUserId();
@@ -143,7 +137,7 @@ function EditMode(props){
         <div>
         {/* if editMode==true, this SaveButton can turn set editMode back to false */}
         <SaveButton button_text="Save" onClick={()=>{
-            createFolder();
+            if (props.newListMode === true) createFolder();
             props.setUpdate(!props.update)
             setNewListMode(false);
             changeName();
