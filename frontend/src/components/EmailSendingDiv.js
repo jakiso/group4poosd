@@ -56,7 +56,7 @@ function CenterDiv(){
             // Account has been created go to verification page
             setMessage('An email has been successfully sent to your email address!');
 
-            redirectToLogin();
+            // redirectToLogin();
             // window.location.href = '/Login'; // does not work in deployed
         }
         catch(e)

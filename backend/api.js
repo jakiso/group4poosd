@@ -1479,10 +1479,12 @@ exports.setApp = function ( app, client )
         // Connect to the database
         const db = await client.db();
         const checkedUser = await db.collection('Users').findOne({email: req.query.email});
-        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$unset: {confirmToken: ''}});
+        const confirmUser = await db.collection('Users').findOne({userId: checkedUser.userId});
+        console.log("reset user:");
         console.log(confirmUser);
 
- 
+        // Send token and redirect to PasswordChange
+        
         // NEEDS TO REDIRECT TO REACT SERVER
         res.redirect(`${req.query.redirect}/PasswordChange`);
         //////
@@ -1496,6 +1498,9 @@ exports.setApp = function ( app, client )
 
         // Error message to be sent
         var error = '';
+
+        // Response message to be sent
+        var responseMsg = '';
 
         // Variable to store the response to be sent back to front-end
         const r = 
