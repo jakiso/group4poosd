@@ -119,7 +119,7 @@ function ListsUI(props)
         {
             setMessage(e)
         }
-        console.log(foodFolders)
+        // console.log(foodFolders)
     }
 
     useEffect(() => {

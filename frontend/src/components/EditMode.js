@@ -34,7 +34,7 @@ function getUserId() {
 }
 
 function EditMode(props){
-    console.log(props)
+    // console.log(props)
     var [newListMode, setNewListMode] = useState(false);
     // this is for renaming the folder.
     var [newFolderName, setNewFolderName] = useState(props.button_text);
