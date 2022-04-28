@@ -217,7 +217,9 @@ exports.setApp = function ( app, client )
         const newPlace = new Place
         ({
             placeName: req.body.placeName,
-            placeAddress: req.body.placeAddress
+            placeAddress: req.body.placeAddress,
+            placePhone: req.body.placePhone, 
+            placeRating: req.body.placeRating
         });
 
         var msg = '';
@@ -253,7 +255,9 @@ exports.setApp = function ( app, client )
                     {placeList: 
                         {
                             placeName: newPlace.placeName,
-                            placeAddress: newPlace.placeAddress
+                            placeAddress: newPlace.placeAddress,
+                            placePhone: newPlace.placePhone, 
+                            placeRating: newPlace.placeRating
                         }
                     }
                 }
