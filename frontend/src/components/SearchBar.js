@@ -56,13 +56,13 @@ export const SearchBar = ({className, button_id, button_text, setSearch, search}
         <Input id="searchBar" placeholder=" Search" style={{"zIndex":"0"}}/>
 
         <div style={{"height":"39px", "width":"42px",  "margin":"auto", "paddingLeft":"20px"}}>
-            <img src={searchGlass} alt="search" style={{"width":"100%", "height":"100%"}} onClick={getInputValue}></img>
+            <img src={searchGlass} alt="search" style={{"width":"100%", "height":"100%", "cursor":"pointer"}} onClick={getInputValue}></img>
         </div>  
         <div style={{"height":"40px", "width":"25px", "margin":"auto"}}>
-            <img src={location} alt="location" style={{"width":"100%", "height":"100%"}}></img>
+            <img src={location} alt="location" style={{"width":"100%", "height":"100%", "cursor":"pointer"}}></img>
         </div>  
         <div style={{"height":"35px", "width":"35px",  "margin":"auto", "paddingRight":"20px"}}>
-            <img src={filter} alt="search" style={{"width":"100%", "height":"100%"}}></img>
+            <img src={filter} alt="search" style={{"width":"100%", "height":"100%", "cursor":"pointer"}}></img>
         </div>  
         </Bar>
     )

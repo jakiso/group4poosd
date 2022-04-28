@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import '../App.css';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import jwt_decode from "jwt-decode";
 
 
 function CenterDiv(){
@@ -9,7 +10,7 @@ function CenterDiv(){
     var confirmPassword;
 
     const navigate = useHistory();
-    const redirectToLogin = useCallback(() => navigate.push('/Login'), [navigate]);
+    // const redirectToLogin = useCallback(() => navigate.push('/Login'), [navigate]);
 
     const [message,setMessage] = useState('');
 
@@ -17,28 +18,12 @@ function CenterDiv(){
     {
         event.preventDefault();
 
-        // Used to store token
-        var storage = require('../tokenStorage.js');
-
         // Retrieve userId and token
-        var userId = JSON.parse(localStorage.getItem('user_data')).id;
         var token = localStorage.getItem('token_data');
+        var decode = jwt_decode(token);
 
         // Creates object for all form fields
-        var obj = {userId: userId, jwToken: token, password:password.value, confirmPassword:confirmPassword.value};
-
-        // Loop through the object and check to make sure the value are not empty
-        for(const [key, value] of Object.entries(obj)) 
-        {
-            // Use string trim function to remove leading and trailing whitespace
-            obj[key] = value.trim();
-
-            // Check if any entry field is empty and stop the submission and let the user know
-            if (obj[key] == "") {
-                setMessage(`${key} is empty`);
-                return;
-            }
-        }
+        var obj = {userData:decode, password:password.value, confirmPassword:confirmPassword.value};
 
         // Check if passwords match
         if(obj.password != obj.confirmPassword)
@@ -64,9 +49,6 @@ function CenterDiv(){
             // Response
             var res = JSON.parse(await response.text());
 
-            // Store the JWT in local storage
-            storage.storeToken(res.jwToken);
-
             // Check if error is not empty
             if(res.error != '')
             {
@@ -74,10 +56,10 @@ function CenterDiv(){
                 return;
             }
 
-            // Account has been created go to verification page
+            // Account has been reset go to verification page
             setMessage('Your password has been successfully reset!');
 
-            redirectToLogin();
+            // redirectToLogin();
             // window.location.href = '/Login'; // does not work in deployed
         }
         catch(e)
@@ -99,7 +81,7 @@ function CenterDiv(){
                     <span id="resetResult" style={{"marginTop": "10px"}}>{message}</span>
                 </div>
                 <div className="buttons" style={{"display": "flex"}}>
-                    <input type="submit" id="resetButton" className="buttons" value = "Reset Password"
+                    <input type="submit" id="resetButton" className="buttons" value = "Confirm"
                         onClick={doReset} />
                 </div>
             </form>

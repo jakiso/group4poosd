@@ -121,6 +121,21 @@ input[type=submit]{
   margin-right:auto;
 }
 
+.welcome{ 
+  color:#001A5E;
+  font-family: Denk One;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 50px;
+  line-height:80px;
+
+  display: flex;
+  justify-content: left;
+  z-index: 4;
+  margin-left:20%; 
+  margin-right:auto;
+}
+
 .link{
   color:#001A5E;
   font-family: Denk One;

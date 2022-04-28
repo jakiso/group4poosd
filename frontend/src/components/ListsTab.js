@@ -19,7 +19,7 @@ export const ListsTab = ({children, className}) =>{
     return (
         <div className="tab">
             <img className="lists_tab" src={tab_list} alt="Lists" style={{"width":"auto", "height":"100%"
-            ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto", "paddingLeft":"20px", "paddingRight":"20px"}}></img>
+            ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto", "paddingLeft":"100px", "paddingRight":"100px"}}></img>
              <Text className={className}>{children}</Text>
         </div>  
     )
