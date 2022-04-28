@@ -211,7 +211,6 @@ function SearchBar (props) {
             <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"25px"}}></img>
         </div>  
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
-            {/* // TODO: OnClick filter button save keywordArray (into useState from CardUI?) */}
             <img src={plus} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}}  onClick={()=>setOpen(!open)}></img>
         </div>  
         </Bar>

@@ -77,7 +77,7 @@ exports.setApp = function ( app, client )
     {
         var token = require('./createJWT.js'); var msg = ''; var error = '';
 
-        const jwToken = req.body.jwToken; const uid = req.body.userId;
+        const jwToken = req.body.jwToken; 
         const fid = req.body.folderId;
 
         // Checks if the JWT is expired
@@ -104,19 +104,19 @@ exports.setApp = function ( app, client )
             const result = await db.collection('Folders').aggregate([
                 {
                   $match: {
-                    "userId": 3,
-                    "folderId": 53
+                    "folderId": fid
                   }
                 },
                 {
-                  "$project": {
-                    "placeList": 1,
+                  $project: {
+                    placeList: 1,
                     _id: 0
                   }
                 }
               ]).toArray();
-
-            msg = result;
+              
+            msg = result[0];
+            console.log(msg)
         }
         catch(e)
         {
@@ -144,11 +144,9 @@ exports.setApp = function ( app, client )
     {
         var token = require('./createJWT.js'); var msg = ''; var error = '';
         
-        const jwToken = req.body.jwToken; 
+        const jwToken = req.body.jwToken;
         const newFolderName = req.body.newFolderName;
-        const fid = req.body.folderId;
-
-        
+        const fid = req.body.folderId;        
 
         // Checks if the JWT is expired
         // Sets the error and returns
@@ -166,7 +164,7 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        console.log({jwToken, newFolderName, fid})
+
         try
         {
             const db = await client.db();
@@ -213,7 +211,6 @@ exports.setApp = function ( app, client )
 
         // no need for folder schema since we are just inserting into an existing folder. 
         const fid = req.body.folderId;
-        const uid = req.body.userId;
 
         // using place schema.
         const newPlace = new Place
@@ -224,6 +221,7 @@ exports.setApp = function ( app, client )
 
         var msg = '';
         var error = '';
+
 
         // Checks if the JWT is expired
         // Sets the error and returns
@@ -242,19 +240,6 @@ exports.setApp = function ( app, client )
             return;
         }
         const db = await client.db();
-        const folderExist = await db.collection('Folders').find({userId: uid,folderId:fid}).toArray();
-      
-
-        if (folderExist.length === 0)
-        {
-            // Send an error that the userId doesn't exist
-            error = "no folder with given userId and folderId";
-            ret = { error: error };
-            res.status(500).json(ret);
-
-            // Exit the api call
-            return;
-        }
         try
         {
 
@@ -262,7 +247,7 @@ exports.setApp = function ( app, client )
             // if didn't add because of duplicate: message.modifiedCount = 0 and message.matchedCount = 1.
             const result = await db.collection('Folders').updateOne
             (
-                {userId: uid, folderId: fid},
+                {folderId: fid},
                 {$addToSet: 
                     {placeList: 
                         {
@@ -367,6 +352,45 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
+    app.post('/addFriend', async (req, res, next) =>
+    {
+        var token = require('./createJWT.js');
+        const {userId, name, phone, address, email, notes, jwToken} = req.body;
+
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(500).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+        const db = client.db();
+
+        const results = await db.collection('Friends').insertOne({userId:userId, name:name, phone:phone, address:address, email:email, notes:notes});
+
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = Object.assign({}, refreshedToken);
+        
+        res.status(200).json(ret);
+
+    })
+
     // deletes a folder using folderId.
     app.post('/deleteFolder', async (req, res, next) =>
     {
@@ -397,13 +421,26 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
+        const db = await client.db();
+        const folderExist = await db.collection('Folders').find({folderId:thisFolder}).toArray();
+      
+
+        if (folderExist.length === 0)
+        {
+            // Send an error that the userId doesn't exist
+            error = "folder doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
         // Actual folder deletion
         try
         {
-            const db = await client.db()
+           
             const result = await db.collection('Folders').deleteOne({folderId: thisFolder});
             msg = result;
-            
         }
         catch(e)
         {
@@ -1353,6 +1390,7 @@ exports.setApp = function ( app, client )
         var responseMsg = '';
 
         // Show what gets sent from front-end
+        // console.log("req body:");
         // console.log(req.body);
 
         // Variable to store the response to be sent back to front-end
@@ -1369,6 +1407,7 @@ exports.setApp = function ( app, client )
         const db = await client.db();
         // Search the database for the account tied to the email
         const resetUser = await db.collection('Users').findOne({email:req.body.email});
+        console.log("reset user:");
         console.log(resetUser);
 
         // Make a new token and store it in the message to be sent back
@@ -1394,12 +1433,12 @@ exports.setApp = function ( app, client )
             res.status(200).json(r);
 
         } else {
-            
+
             // Create token for confirmation
             const hash = token.createConfirmToken(resetUser.email);
-            console.log("password reset token");
+            console.log("email token");
             console.log(hash.accessToken);
-
+            
             const placeToken = await db.collection('Users').updateOne({userId: resetUser.userId}, {$set: {confirmToken: hash.accessToken}});
             
             const msg = {
@@ -1449,11 +1488,8 @@ exports.setApp = function ( app, client )
     {   
         // Token for checking and refreshing
         var token = require('./createJWT.js');
-    
-        // Error message to be sent
-        var error = '';
 
-        // Get userId from sent
+        // Get token from sent
         const receivedToken = req.query.token;
 
         // Check if token is expired
@@ -1476,16 +1512,6 @@ exports.setApp = function ( app, client )
         console.log("request");
         console.log(req.query);
 
-        // Connect to the database
-        const db = await client.db();
-        const checkedUser = await db.collection('Users').findOne({email: req.query.email});
-        const confirmUser = await db.collection('Users').findOne({userId: checkedUser.userId});
-        console.log("reset user:");
-        console.log(confirmUser);
-
-        // Send token and redirect to PasswordChange
-        
-        // NEEDS TO REDIRECT TO REACT SERVER
         res.redirect(`${req.query.redirect}/PasswordChange`);
         //////
         return;
@@ -1499,63 +1525,37 @@ exports.setApp = function ( app, client )
         // Error message to be sent
         var error = '';
 
-        // Response message to be sent
         var responseMsg = '';
 
         // Variable to store the response to be sent back to front-end
         const r = 
         {
             error: error,
-            jwToken: req.body.jwToken,
             response: responseMsg
         };
 
-        // Check if token is expired
-        try
-        {
-            if( token.isExpired(req.body.jwToken))
-            {
-                r.error = 'The JWT is no longer valid';
-                r.jwToken = '';
-                r.response = responseMsg;
-
-                res.status(200).json(r);
-                return;
-            }
-        }
-        catch(e)
-        {
-            console.log("token expired catch");
-            console.log(e.message);
-
-        }
-
-        // Make a new token and store it in the message to be sent back
-        var refreshedToken = null;
-        try
-        {
-            refreshedToken = token.refresh(r.jwToken);
-            r.jwToken = refreshedToken;
-        }
-        catch(e)
-        {
-            console.log("token refresh catch");
-            console.log(e.message);
-        }
-
-        // Get usedId from front-end
-        const userId = req.body.userId;
+        console.log("user data:");
+        console.log(req.body.userData);
+        var resetEmail = req.body.userData.lastName; 
 
         // Connect to the database
         const db = await client.db();
         // Search the database for the userId and update password
-        const resetUser = await db.collection('Users').findOne({userId:userId});
-        const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
-            {$set: {password: req.body.password}});
+        const resetUser = await db.collection('Users').findOne({email:resetEmail});
+
+        console.log("user to be reset:");
+        console.log(resetUser);
+
+        if(resetUser.confirmToken == null) {
+            responseMsg = "An error has occured with the verification link. Please try again."
+        } else {
         
-        responseMsg = "Password successfully updated!"
-        ret = Object.assign(refreshedToken, {error:error})
-        res.status(200).json(ret);
+            const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
+            {$set: {password: req.body.password}}, {$unset: {confirmToken: ''}});
+            responseMsg = "Password successfully updated!"
+        }
+
+        res.status(200).json(r);
     });
 
     app.post('/retrieveFolders', async (req, res, next) =>
