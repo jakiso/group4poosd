@@ -47,7 +47,7 @@ function EditMode(props){
     // to fix edit enable for new lists
     var [tempEnableFix, setTempEnableFix] = useState(false)
 
-    console.log(props)
+    // console.log(props)
 
     // this is for the new folder.
     var [newFolder, setNewFolder] = useState('');

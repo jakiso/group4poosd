@@ -15,7 +15,7 @@ var res, res_food, res_activity;
 
 function ListsUI(props)
 {
-    console.log(props)
+    // console.log(props)
     // Use state for a message if needed
     const [message, setMessage] = useState('');
 

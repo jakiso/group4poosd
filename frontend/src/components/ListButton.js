@@ -1,6 +1,6 @@
 import { useUpdateList } from './ListContext';
 import { useList } from "./ListContext";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import '../App.css';
 import EditIconsDiv from './EditIconsDiv';
@@ -66,10 +66,23 @@ columnGap: 1rem;
 
 function ListButton(props){
     
-    console.log(props);
+    // console.log(props);
+    const [tempList, setTempList] = useState([]);
+
+    const updateList = useUpdateList();
+    // updateList(tempList);
+
+    useEffect(() => {
+
+        console.log("list update in button");
+        console.log(tempList);
+
+        updateList(tempList);
+
+    }, [tempList]);
 
     // Retrive List from folder when clicked
-    const retrieveList = async (e) => {
+    const RetrieveList = async (e) => {
 
         e.preventDefault();
 
@@ -111,7 +124,9 @@ function ListButton(props){
                 storage.storeToken( folderList.jwToken );
 
                 // Now we have the list of places from each individual folder
-                console.log(folderList.message);
+                setTempList(folderList.message);
+                // console.log(folderList.message);
+                // console.log(List);
             }
         }
         catch(e)
@@ -174,7 +189,6 @@ function ListButton(props){
         // }
     }
 
-
     // in the case that this is a new list 
     return (props.newListMode===true) ? (
         <div onClick={props.onClick}>
@@ -193,7 +207,7 @@ function ListButton(props){
     
     : (
         <div onClick={props.onClick}>
-        <List key={props.button_id} type="button" id={props.button_id} className={props.className} onClick={(props.saveToListMode) ? (e) => insertList(e) : (e) => retrieveList(e)}>
+        <List key={props.button_id} type="button" id={props.button_id} className={props.className} onClick={(props.saveToListMode) ? (e) => insertList(e) : (e) => RetrieveList(e)}>
             <br/>
             <RenameInput placeholder={props.button_text} maxLength="10" disabled={props.isDisabled} onChange={e => props.setNewFolderName(e.target.value)}/>
             <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} isDisabled={props.isDisabled} setThisFolderId={props.setThisFolderId}

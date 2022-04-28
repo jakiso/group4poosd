@@ -21,3 +21,5 @@ export const ListProvider = ({ value, children }) => {
     </ListContext.Provider>
   );
 };
+
+export default ListProvider;
