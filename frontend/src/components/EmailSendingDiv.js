@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import '../App.css';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import jwt_decode from "jwt-decode";
 
 function CenterDiv(){
     var email;

@@ -74,10 +74,6 @@ function MainPage() {
                             <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab} loggedInState={loggedInState}/>
                         </div>
                         <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                            <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
-                                <GreyOutSearchTabs saveToListMode={saveToListMode} editMode={editMode}/>  {/* only shows when saveToListMode is true */}
-                                <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab}/>
-                            </div>
                             <div>
                             <CenterDivMain className='main_pane'>
                                 <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>

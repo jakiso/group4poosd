@@ -154,14 +154,14 @@ function EditMode(props){
             update={props.update} setUpdate={props.setUpdate} setNewFolder={setNewFolder} setNewName={setNewName}/> 
         <ListType key={props.folderType} edit_icons={true} arr_food={props.arr_food} arr_activity={props.arr_activity} setNewName={setNewName}
         folderType={props.folderType} setSaveToListMode={props.setSaveToListMode} saveToListMode={props.saveToListMode} update={props.update} isDisabled={props.isDisabled}
-        setUpdate={props.setUpdate} setNewFolderName={setNewFolderName} setThisFolderId={setThisFolderId} setIsDisabled={props.setIsDisabled} setNewFolder={setNewFolder}/>
+        setUpdate={props.setUpdate} setThisFolderId={setThisFolderId} setIsDisabled={props.setIsDisabled} setNewFolder={setNewFolder}/>
 
         </div>
     ) :(     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)
         <div> 
         <ListType key={props.folderType} edit_icons={false} arr_food={props.arr_food} arr_activity={props.arr_activity} 
         isDisabled={props.isDisabled} setIsDisabled={props.setIsDisabled} setNewName={setNewName} update={props.update} setUpdate={props.setUpdate}
-        folderType={props.folderType} setThisFolderId={setThisFolderId} setNewFolder={setNewFolder} setNewFolderName={setNewFolderName} setSaveToListMode={props.setSaveToListMode} saveToListMode={props.saveToListMode}/>
+        folderType={props.folderType} setThisFolderId={setThisFolderId} setNewFolder={setNewFolder} setSaveToListMode={props.setSaveToListMode} saveToListMode={props.saveToListMode}/>
 
         </div>
     );
