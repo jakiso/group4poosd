@@ -150,6 +150,41 @@ input[type=submit]{
   z-index: 4;
 }
 
+.search_bar_button:hover{
+  background-color: #20CEF2;
+  border-radius: 14px;
+
+}
+
+.dropdown{
+  position: absolute;
+  top: 58px;
+  width: 300px;
+  transform: translateX(-45%);
+  background-color: white;
+  border: white;
+  border-radius: 10px;
+  padding:1rem;
+  overflow: hidden;
+  display: grid;
+  z-index: 1000;
+}
+
+.menu-item{
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  transition: background-color 500ms;
+  padding: 0.5 rem;
+  color: #001A5E;
+}
+
+.menu-item:hover{
+  background-color: #001A5E;
+  color: white;
+}
+
 #loginResult{
   color:#001A5E;
   font-family: Denk One;
@@ -180,6 +215,11 @@ input[type=text]{
   font-size: 24px;
   line-height: 50px;
 
+}
+
+input[type=checkbox]{
+  width: 30px;
+  height: 30px;
 }
 
 input[type=password]{
