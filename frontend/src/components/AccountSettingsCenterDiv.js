@@ -3,30 +3,40 @@ import '../App.css';
 import { isExpired, decodeToken } from "react-jwt";
 import { useHistory } from 'react-router-dom';
 
+function getUserId() {
+    var user;
+    var userId;
+    try {
+        user = localStorage.getItem('user_data')
+        userId = user.id
+    }
+    catch (e) {
+        console.log(e.message);
+    }
+
+    return user;
+}
+
 function CenterDiv(){
     var NewfirstName;
     var NewlastName;
     var Newusername;
     var Newpassword;
     var NewconfirmPassword;
+    var userID = getUserId();
 
     const navigate = useHistory();
-    const redirectToVerify = useCallback(() => navigate.push('/Verify'), [navigate]);
 
     const [message,setMessage] = useState('');
-
-    // RegEx for checking email
-    // Valid email must have: (1char)@(2char).(2char)
-    const validEmail = new RegExp(
-        '(.+)@((.+){2,})\.((.+){2,})'
-    );
-
     const doChangeAccount = async event => 
     {
         event.preventDefault();
+        // retrive userID
+        var token = localStorage.getItem('token_data');
+        var decode = jwt_decode(token);
 
         // Creates object for all form fields
-        var obj = {firstName:NewfirstName.value, lastName:NewlastName.value, username:Newusername.value, 
+        var obj = {userID:userID, firstName:NewfirstName.value, lastName:NewlastName.value, username:Newusername.value, 
                      password:Newpassword.value, confirmPassword:NewconfirmPassword.value};
 
         // Loop through the object and check to make sure the value are not empty
