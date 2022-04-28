@@ -34,13 +34,38 @@ padding: 10%;
 `
 
 export const Carda = (props) =>{
+
+    // Save the place to be put in a folder
+    const SavePlace = async (e) => {
+
+        e.preventDefault();
+
+        // Used to set the mode to save a place.
+        props.setSaveToListMode(true);
+
+        console.log("Saving Place");
+
+
+        // Store the place info locally
+        var placeToSave = { 
+                            placeName: props.Name, 
+                            placeAddress: props.Address, 
+                            placePhone: props.PhoneNumber, 
+                            placeRating: props.Rating
+                        };
+        localStorage.setItem('place_data', JSON.stringify(placeToSave));
+
+        console.log(placeToSave);
+    }
+
+
     return(                                                     // margin: top right bottom left
         <Card style={{"display":"flex", "gap": "0vh", "overflow":"hidden"}}>            
         <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>    
         <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
             <img width={"100rem"} height={"auto"} src={props.src} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
-            <img width={"20rem"} height={"auto"} src={cross} alt="Event" onClick={()=>{props.setSaveToListMode(true);}}/>
+            <img width={"20rem"} height={"auto"} src={cross} alt="Event" onClick={(e) => SavePlace(e)}/>
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
             <ListButton button_text={props.Name}/>

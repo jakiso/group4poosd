@@ -126,49 +126,62 @@ function ListButton(props){
         console.log("InsertingToList");
 
         // // Storage to access the locally stored JWT
-        // var storage = require('../tokenStorage.js');
+        var storage = require('../tokenStorage.js');
 
-        // // The user data is stored as text and needs to be turned into an object
-        // var data = JSON.parse(localStorage.user_data);
+        // The place data is stored as text and needs to be turned into an object
+        var placeData = JSON.parse(localStorage.place_data);
 
-        // // The object to be sent to the api, must contain userId and jwToken field
-        // var listReq = {uid:data.id, fid:e.target.id, jwToken:storage.retrieveToken()};
-        // var sendReq = JSON.stringify(listReq);
+        // The object to be sent to the api, must contain folderId, jwToken, and place fields
+        var savePlaceReq = {
+                                folderId: parseInt(e.target.id), 
+                                jwToken: storage.retrieveToken(),
+                                placeName: placeData.placeName, 
+                                placeAddress: placeData.placeAddress, 
+                                placePhone: placeData.placePhone, 
+                                placeRating: placeData.placeRating
+                            };
+        var sendReq = JSON.stringify(savePlaceReq);
 
-        // console.log(listReq);
+        // console.log(savePlaceReq);
+        // console.log(sendReq);
 
-        // // Path to send the api call
-        // var bp = require('./Path.js');
+        // Delete the place_data local storage
+        localStorage.removeItem('place_data');
+        sessionStorage.removeItem('place_data');
 
-        // try
-        // {
-        //     const responseList = await fetch(bp.buildPath('placesFromFolder'), {method:'POST',body:sendReq,headers:{'Content-Type':'application/json'}});
+        // Path to send the api call
+        var bp = require('./Path.js');
 
-        //     console.log("retrieving lists");
+        try
+        {
+            const responseSave = await fetch(bp.buildPath('savePlace'), {method:'POST',body:sendReq,headers:{'Content-Type':'application/json'}});
 
-        //     // Wait for response and parse json
-        //     const folderList = JSON.parse(await responseList.text());
+            console.log("saving place");
 
-        //     // Check the error field. empty error is good
-        //     if( folderList.error && folderList.error.length > 0 )
-        //     {
-        //         // setMessage( "API Error:" + folderList.error);
-        //         console.log( "API Error:" + folderList.error);
-        //     }
-        //     else
-        //     {
-        //         // Store the received refreshed JWT
-        //         storage.storeToken( folderList.jwToken );
+            // Wait for response and parse json
+            const saveRes = JSON.parse(await responseSave.text());
 
-        //         // Now we have the list of places from each individual folder
-        //         console.log(folderList.message);
-        //     }
-        // }
-        // catch(e)
-        // {
-        //     // setMessage(e.toString());
-        //     console.log(e.toString());
-        // }
+            // Check the error field. empty error is good
+            if( saveRes.error && saveRes.error.length > 0 )
+            {
+                // setMessage( "API Error:" + saveRes.error);
+                console.log( "API Error:" + saveRes.error);
+            }
+            else
+            {
+                // Store the received refreshed JWT
+                storage.storeToken( saveRes.jwToken );
+
+                // Now we have the list of places from each individual folder
+                // console.log(saveRes);
+                // console.log(saveRes.message);
+            }
+        }
+        catch(e)
+        {
+            // setMessage(e.toString());
+            console.log(e.toString());
+        }
     }
 
     // in the case that this is a new list 
