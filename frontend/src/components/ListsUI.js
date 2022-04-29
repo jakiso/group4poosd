@@ -14,6 +14,14 @@ const EditButton = styled(Buttonb)`
 `
 var res, res_food, res_activity;
 
+function delay(milliseconds)
+{
+    return new Promise(resolve=> 
+        {
+            setTimeout(resolve, milliseconds);
+        });
+}
+
 function ListsUI(props)
 {
     // console.log(props)
@@ -60,6 +68,7 @@ function ListsUI(props)
 
         try
         {
+            await delay(300);
 
             if(folderType==="food"){
 

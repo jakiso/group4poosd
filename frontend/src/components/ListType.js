@@ -3,7 +3,7 @@ import '../App.css';
 import ListButton from './ListButton';
 
 function ListType(props){
-    // console.log(props)
+    console.log(props.arr_food);
     // try catch is needed for when page intially loads
     try{
     // when editMode==true return a SaveButton, AddButton and ListButtons (with edit_icons)

@@ -187,7 +187,7 @@ function ListButton(props){
     // in the case that this is a new list 
     return (props.newListMode===true) ? (
         <div onClick={props.onClick}>
-        <List key={props.button_id} type="button" id={props.button_id} className={props.className} >
+        <List key={props.button_id} type="button" id={props.button_id} className={props.className} onClick={(props.saveToListMode) ? (e) => insertList(e) : (e) => RetrieveList(e)} >
             <br/>
             <RenameInput id="new_list" placeholder="new list" maxLength="10" disabled={props.isDisabled} 
                 onChange={e => props.setNewFolder(e.target.value)} setTempEnableFix={props.setTempEnableFix}/>
