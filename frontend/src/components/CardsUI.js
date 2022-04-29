@@ -128,14 +128,14 @@ function CardsUI(props)
 
         console.log(props.selectTab);
         console.log(List);
-        if (props.selectTab === "food" && List != null)
+        if (props.selectTab === "food" && List != undefined && List.length !== 0)
         {
             setPlaceListFood(List.map(({ placeName, placeAddress, placeRating, types, index }) => (
                 <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={placeRating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                 ))
             );
         }
-        if (props.selectTab === "activity" && List != null)
+        if (props.selectTab === "activity" && List != undefined && List.length !== 0)
         {
             setPlaceListActivity(List.map(({ placeName, placeAddress, placeRating, types, index }) => (
                 <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={placeRating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>

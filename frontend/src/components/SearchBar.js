@@ -117,9 +117,9 @@ function SearchBar (props) {
         .then((response) => {
             console.log(response.data);
             setResponseData(response.data.name);
-        })
+        }).catch((e) => {console.log(e)})
 
-    }, [props])
+    }, [props.latitude, props.longitude])
     
     function setCityNameFood(){
         document.getElementById("searchBarFood").value=responseData;

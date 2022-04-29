@@ -111,17 +111,16 @@ exports.setApp = function ( app, client )
                 },
                 {
                   $project: {
-                    placeList: 1,
-                    _id: 0
+                    placeList: 1
                   }
                 }
               ]).toArray();
-              
+            console.log(result[0].placeList)
             msg = result[0].placeList;
         }
         catch(e)
         {
-            console.log(e.message);
+            console.log(e.message + ':/placesFromFolder endpoint.');
         }
 
         // Now refresh the token to update the amount of time it is active
@@ -1029,6 +1028,7 @@ exports.setApp = function ( app, client )
             userId: req.body.userId,
             folderType: req.body.folderType.toLowerCase(),
             folderName: req.body.folderName,
+            placeList: [{placeName: "Add a place!", placeAddress: ""}]
         });
 
         try
@@ -1063,7 +1063,7 @@ exports.setApp = function ( app, client )
 
         try
         {
-            const results = await db.collection('Folders').insertOne({userId:newFolder.userId, folderType:newFolder.folderType, folderName:newFolder.folderName});
+            const results = await db.collection('Folders').insertOne(newFolder);
             msg = results;
         }
         catch(e)
