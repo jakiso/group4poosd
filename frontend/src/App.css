@@ -242,6 +242,6 @@ input[type=password]{
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color:#20CEF2;
+  color:#FEFFDC;
   opacity: 1; /* Firefox */
 }

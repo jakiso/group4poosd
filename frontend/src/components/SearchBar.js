@@ -4,7 +4,7 @@ import searchGlass from '../images/LG_search.png'
 import location from '../images/LG_location.png'
 import filter from '../images/LG_filter.png'
 import plus from '../images/cross_add.png'
-
+import axios from 'axios';
 
 const Input = styled.input`
 width: 100%;
@@ -56,7 +56,6 @@ function DropdownItem(props){
 
         updatedList[objIndex].checked = !updatedList[objIndex].checked;
 
-
         props.setChecked([...updatedList]); // this spread operator make react notice that the original array has been modified
         // this way the drop-down component will instantly rerender upon any change in check boxes
     }
@@ -94,10 +93,41 @@ function DropdownActivity(props){
     );
 }
 
-
+const geolocation_API = `https://api.openweathermap.org/data/2.5/weather?`;
+const geolocation_API_key = `67a1733798613cf5dec01437cfd3faca`;
 
 // This ternary picks which Search bar will be loaded depending on the tab that is selected
 function SearchBar (props) {
+
+    const [responseData, setResponseData] = useState("");
+
+    // uses weather API to get geographic coordinates and city name
+    useEffect(()=>{
+        navigator.geolocation.getCurrentPosition((position)=>{
+            console.log(position.coords);
+            props.setLatitude(position.coords.latitude);
+            props.setLongitude(position.coords.longitude);
+        })
+
+        let formattedEndpoint = `${geolocation_API}lat=${props.latitude}&lon=${props.longitude}&exclude=hourly,daily&appid=${geolocation_API_key}`;
+
+        console.log(formattedEndpoint);
+
+        axios.get(formattedEndpoint)
+        .then((response) => {
+            console.log(response.data);
+            setResponseData(response.data.name);
+        })
+
+    }, [props])
+    
+    function setCityNameFood(){
+        document.getElementById("searchBarFood").value=responseData;
+    }
+
+    function setCityNameActivity(){
+        document.getElementById("searchBarActivity").value=responseData;
+    }
 
     const [open, setOpen] = useState(false);
     const [checkedFood, setCheckedFood] = useState([{keyword: "restaurant", checked: false},
@@ -174,7 +204,7 @@ function SearchBar (props) {
             <img src={searchGlass} alt="search" style={{"margin":"auto", "height":"39px", "width":"42px"}} onClick={getInputValueFood}></img>
         </div>  
         <div class="search_bar_button" style={{ "display":"flex", "justifyContent":"center"}}>
-            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"25px"}}></img>
+            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"25px"}}  onClick={setCityNameFood}></img>
         </div>  
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
             <img src={filter} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}}  onClick={()=>setOpen(!open)}></img>
@@ -191,7 +221,7 @@ function SearchBar (props) {
             <img src={searchGlass} alt="search" style={{"margin":"auto", "height":"39px", "width":"42px"}} onClick={getInputValueActivity}></img>
         </div>  
         <div class="search_bar_button" style={{ "display":"flex", "justifyContent":"center"}}>
-            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"25px"}}></img>
+            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"25px"}}  onClick={setCityNameActivity}></img>
         </div>  
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
             <img src={filter} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}}  onClick={()=>setOpen(!open)}></img>

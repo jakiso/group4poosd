@@ -43,6 +43,10 @@ function CardsUI(props)
     var [keywordsFood, setKeywordsFood] = useState([]);
     var [keywordsActivity, setKeywordsActivity] = useState([]);
 
+    const [latitude, setLatitude] = useState("");
+    const [longitude, setLongitude] = useState("");
+    const [city, setCity] = useState("");
+
     var body;
 
     // API call function
@@ -50,12 +54,12 @@ function CardsUI(props)
         
         // Later this should grab values from the filter radius button, address from location button, etc.
         // keyword: search will return the same places each time regardless of the keyword since address is UCF.
-        var searchObj = {address:"UCF", latitude:"", longitude:"", radius: 8000, jwToken: "", pageToken:"", keyword:""};
+        var searchObj = {address:"UCF", latitude:"", longitude:"", radius: 10000, jwToken: "", pageToken:"", keyword:""};
         searchObj = JSON.stringify(searchObj);
 
         if(props.selectTab==="food") {
 
-            body = "{"+"\"address\""+":"+"\""+searchFood+"\""+","+"\"latitude\""+":"+"\"\","+"\"longitude\""+":"+"\"\","+"\"radius\""+":"+"8000"+","
+            body = "{"+"\"address\""+":"+"\""+searchFood+"\""+","+"\"latitude\""+":"+"\""+latitude+"\","+"\"longitude\""+":"+"\""+longitude+"\","+"\"radius\""+":"+"10000"+","
             +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\""+keywordsFood+"\"}";
 
             const response_food = await fetch(bp.buildPath('nearbyFoodSearch'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
@@ -82,7 +86,7 @@ function CardsUI(props)
         }
         else if (props.selectTab==="activity") {
 
-            body = "{"+"\"address\""+":"+"\""+searchActivity+"\""+","+"\"latitude\""+":"+"\"\","+"\"longitude\""+":"+"\"\","+"\"radius\""+":"+"8000"+","
+            body = "{"+"\"address\""+":"+"\""+searchActivity+"\""+","+"\"latitude\""+":"+"\""+latitude+"\","+"\"longitude\""+":"+"\""+longitude+"\","+"\"radius\""+":"+"10000"+","
             +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\""+keywordsActivity+"\"}";
 
             const response_activity = await fetch(bp.buildPath('nearbyActivitySearch'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
@@ -120,12 +124,14 @@ function CardsUI(props)
         // Name="" Address="" PhoneNumber="" MoreInfo="" Description="" Rating=""
         // To define Info per card
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
-        <SearchBar setSearchFood={setSearchFood} setKeywordsFood={setKeywordsFood} selectTab={props.selectTab}/>
+        <SearchBar setSearchFood={setSearchFood} setKeywordsFood={setKeywordsFood} selectTab={props.selectTab} setLatitude={setLatitude} 
+        setLongitude={setLongitude} latitude={latitude} longitude={longitude} setCity={setCity} city={city}/>
         {placeListFood}
         </div>
     ): (props.selectTab==="activity")?(
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
-        <SearchBar setSearchActivity={setSearchActivity}  setKeywordsActivity={setKeywordsActivity} selectTab={props.selectTab}/>
+        <SearchBar setSearchActivity={setSearchActivity}  setKeywordsActivity={setKeywordsActivity} selectTab={props.selectTab} setLatitude={setLatitude} 
+        setLongitude={setLongitude} latitude={latitude} longitude={longitude} setCity={setCity} city={city}/>
         {placeListActivity}
     </div>
     ):(props.selectTab==="friends")?(
