@@ -41,7 +41,7 @@ exports.setApp = function ( app, client )
 
         try
         {
-            const db = client.db();
+            const db = await client.db();
 
             // grabs folder based on folderId.
             const result = await db.collection('Folders').findOne
@@ -100,7 +100,7 @@ exports.setApp = function ( app, client )
 
         try
         {
-            const db = client.db();
+            const db = await client.db();
             // array of folders matching the userId.
             const result = await db.collection('Folders').aggregate([
                 {
@@ -145,11 +145,9 @@ exports.setApp = function ( app, client )
     {
         var token = require('./createJWT.js'); var msg = ''; var error = '';
         
-        const jwToken = req.body.jwToken; 
+        const jwToken = req.body.jwToken;
         const newFolderName = req.body.newFolderName;
-        const fid = req.body.folderId;
-
-        
+        const fid = req.body.folderId;        
 
         // Checks if the JWT is expired
         // Sets the error and returns
@@ -167,10 +165,10 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        console.log({jwToken, newFolderName, fid})
+
         try
         {
-            const db = client.db();
+            const db = await client.db();
 
             // edits name of folder that matches userId and folderId.
             const result = await db.collection('Folders').updateOne
@@ -219,7 +217,9 @@ exports.setApp = function ( app, client )
         const newPlace = new Place
         ({
             placeName: req.body.placeName,
-            placeAddress: req.body.placeAddress
+            placeAddress: req.body.placeAddress,
+            placePhone: req.body.placePhone, 
+            placeRating: req.body.placeRating
         });
 
         var msg = '';
@@ -255,7 +255,9 @@ exports.setApp = function ( app, client )
                     {placeList: 
                         {
                             placeName: newPlace.placeName,
-                            placeAddress: newPlace.placeAddress
+                            placeAddress: newPlace.placeAddress,
+                            placePhone: newPlace.placePhone, 
+                            placeRating: newPlace.placeRating
                         }
                     }
                 }
@@ -314,7 +316,7 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        const db = client.db();
+        const db = await client.db();
         try
         {
             
@@ -424,7 +426,7 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        const db = client.db();
+        const db = await client.db();
         const folderExist = await db.collection('Folders').find({folderId:thisFolder}).toArray();
       
 
@@ -496,7 +498,7 @@ exports.setApp = function ( app, client )
 
         try
         {
-            const db = client.db();
+            const db = await client.db();
             const result = await db.collection('Users').deleteOne({userId: thisUserId, password: thisUserPass});
             msg = result;
         }
@@ -543,7 +545,7 @@ exports.setApp = function ( app, client )
             return;
         }
 
-        const db = client.db();
+        const db = await client.db();
 
         // Search the database for the username and email
         const usernameExist = await db.collection('Users').find({username:newUsername}).toArray();
@@ -885,7 +887,7 @@ exports.setApp = function ( app, client )
         var ret;
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
 
         // Search the database for the username and email
         const userExist = await db.collection('Users').find({username:newUser.username}).toArray();
@@ -970,7 +972,7 @@ exports.setApp = function ( app, client )
 
         const { username, password } = req.body;
 
-        const db = client.db();
+        const db = await client.db();
         const results = await db.collection('Users').findOne({username:username,password:password});
 
         var id = -1;
@@ -1042,7 +1044,7 @@ exports.setApp = function ( app, client )
         {
             console.log(e.message);
         }
-        const db = client.db();
+        const db = await client.db();
         const userIdExist = await db.collection('Users').find({userId:newFolder.userId}).toArray();
       
 
@@ -1154,7 +1156,7 @@ exports.setApp = function ( app, client )
         const userId = req.body.userId;
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         // Search the database for the userId
         const userEmail = await db.collection('Users').findOne({userId:userId});
 
@@ -1247,7 +1249,7 @@ exports.setApp = function ( app, client )
         console.log(req.query);
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         const checkedUser = await db.collection('Users').findOne({email: req.query.email});
         const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$set: {emailConfirm: 1}, $unset: {confirmToken: ''}});
         console.log(confirmUser);
@@ -1311,7 +1313,7 @@ exports.setApp = function ( app, client )
         try
         {
             // Connect to the database
-            const db = client.db();
+            const db = await client.db();
             // Search the database for the userId
             const userConfirm = await db.collection('Users').findOne({userId:userId});
 
@@ -1353,6 +1355,7 @@ exports.setApp = function ( app, client )
         var responseMsg = '';
 
         // Show what gets sent from front-end
+        // console.log("req body:");
         // console.log(req.body);
 
         // Variable to store the response to be sent back to front-end
@@ -1366,9 +1369,10 @@ exports.setApp = function ( app, client )
         // SEND EMAIL STUFF
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         // Search the database for the account tied to the email
         const resetUser = await db.collection('Users').findOne({email:req.body.email});
+        console.log("reset user:");
         console.log(resetUser);
 
         // Make a new token and store it in the message to be sent back
@@ -1394,12 +1398,12 @@ exports.setApp = function ( app, client )
             res.status(200).json(r);
 
         } else {
-            
+
             // Create token for confirmation
             const hash = token.createConfirmToken(resetUser.email);
-            console.log("password reset token");
+            console.log("email token");
             console.log(hash.accessToken);
-
+            
             const placeToken = await db.collection('Users').updateOne({userId: resetUser.userId}, {$set: {confirmToken: hash.accessToken}});
             
             const msg = {
@@ -1449,11 +1453,8 @@ exports.setApp = function ( app, client )
     {   
         // Token for checking and refreshing
         var token = require('./createJWT.js');
-    
-        // Error message to be sent
-        var error = '';
 
-        // Get userId from sent
+        // Get token from sent
         const receivedToken = req.query.token;
 
         // Check if token is expired
@@ -1476,14 +1477,6 @@ exports.setApp = function ( app, client )
         console.log("request");
         console.log(req.query);
 
-        // Connect to the database
-        const db = client.db();
-        const checkedUser = await db.collection('Users').findOne({email: req.query.email});
-        const confirmUser = await db.collection('Users').updateOne({userId: checkedUser.userId}, {$unset: {confirmToken: ''}});
-        console.log(confirmUser);
-
- 
-        // NEEDS TO REDIRECT TO REACT SERVER
         res.redirect(`${req.query.redirect}/PasswordChange`);
         //////
         return;
@@ -1497,60 +1490,37 @@ exports.setApp = function ( app, client )
         // Error message to be sent
         var error = '';
 
+        var responseMsg = '';
+
         // Variable to store the response to be sent back to front-end
         const r = 
         {
             error: error,
-            jwToken: req.body.jwToken,
             response: responseMsg
         };
 
-        // Check if token is expired
-        try
-        {
-            if( token.isExpired(req.body.jwToken))
-            {
-                r.error = 'The JWT is no longer valid';
-                r.jwToken = '';
-                r.response = responseMsg;
-
-                res.status(200).json(r);
-                return;
-            }
-        }
-        catch(e)
-        {
-            console.log("token expired catch");
-            console.log(e.message);
-
-        }
-
-        // Make a new token and store it in the message to be sent back
-        var refreshedToken = null;
-        try
-        {
-            refreshedToken = token.refresh(r.jwToken);
-            r.jwToken = refreshedToken;
-        }
-        catch(e)
-        {
-            console.log("token refresh catch");
-            console.log(e.message);
-        }
-
-        // Get usedId from front-end
-        const userId = req.body.userId;
+        console.log("user data:");
+        console.log(req.body.userData);
+        var resetEmail = req.body.userData.lastName; 
 
         // Connect to the database
-        const db = client.db();
+        const db = await client.db();
         // Search the database for the userId and update password
-        const resetUser = await db.collection('Users').findOne({userId:userId});
-        const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
-            {$set: {password: req.body.password}});
+        const resetUser = await db.collection('Users').findOne({email:resetEmail});
+
+        console.log("user to be reset:");
+        console.log(resetUser);
+
+        if(resetUser.confirmToken == null) {
+            responseMsg = "An error has occured with the verification link. Please try again."
+        } else {
         
-        responseMsg = "Password successfully updated!"
-        ret = Object.assign(refreshedToken, {error:error})
-        res.status(200).json(ret);
+            const confirmUser = await db.collection('Users').updateOne({userId: resetUser.userId}, 
+            {$set: {password: req.body.password}}, {$unset: {confirmToken: ''}});
+            responseMsg = "Password successfully updated!"
+        }
+
+        res.status(200).json(r);
     });
 
     app.post('/retrieveFolders', async (req, res, next) =>
@@ -1587,7 +1557,7 @@ exports.setApp = function ( app, client )
     var results;
     try
     {
-        const db = client.db();
+        const db = await client.db();
         results = await db.collection('Folders').find({userId:userId, folderType:folderType}).toArray();
 
     }

@@ -49,7 +49,7 @@ function EditIconsDiv(props){
 
     //return div with cross and pen inside folder button (only if edit_icons==true)
     return (props.edit_icons) ? (
-    <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto"}}>
+    <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto", "marginLeft": "6vh"}}>
         <div style={{"height":"40px", "width":"40px", "overflow":"hidden"}}>
             <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={() => {
                 DeleteFolder()
@@ -66,7 +66,7 @@ function EditIconsDiv(props){
     </div>
     ) :(props.newListMode) ? (
         // this is the behavior of the edit icons in the case that we are adding a temporary listButton
-        <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto"}}>
+        <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto", "marginLeft": "6vh"}}>
         <div style={{"height":"40px", "width":"40px", "overflow":"hidden"}}>
             <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={()=>{props.setNewListMode(false)}}/>
         </div>  

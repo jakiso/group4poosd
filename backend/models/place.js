@@ -12,6 +12,14 @@ const Place = mongoose.model(
         type: String,
         required: true
     },
+    placePhone: {
+      type: String,
+      required: true
+    },
+    placeRating: {
+      type: String,
+      required: true
+    }
     // token: {
     //   type: String,
     //   required: true

@@ -13,6 +13,7 @@ const Text = styled.text`
     font-size: 32px;
     top: 0px;
     padding: 15px;
+    cursor: pointer;    
 
     // display: flex;
     justify-content: center;

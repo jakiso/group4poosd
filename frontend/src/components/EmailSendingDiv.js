@@ -3,7 +3,6 @@ import '../App.css';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
-
 function CenterDiv(){
     var email;
 
@@ -16,7 +15,11 @@ function CenterDiv(){
     {
         event.preventDefault();
 
-        // Creates object for all form fields
+        // Used to store token
+        var storage = require('../tokenStorage.js');
+        localStorage.clear();
+
+        // Creates object for form field
         var obj = {email: email.value};
 
         // Loop through the object and check to make sure the value are not empty
@@ -31,7 +34,7 @@ function CenterDiv(){
                 return;
             }
         }
-
+        
         // Turn object into JSON
         var js = JSON.stringify(obj);
 
@@ -52,12 +55,12 @@ function CenterDiv(){
                 setMessage(res.error);
                 return;
             }
+            
+            // store userId and email in local storage
+            storage.storeToken(res.jwToken);
 
             // Account has been created go to verification page
             setMessage('An email has been successfully sent to your email address!');
-
-            // redirectToLogin();
-            // window.location.href = '/Login'; // does not work in deployed
         }
         catch(e)
         {

@@ -81,7 +81,7 @@ function CenterDiv()
 
 
     return(
-        <div className="main_pane">
+        <div className="main_pane" style={{"overflow":"hidden"}}>
             <div style={{"display":"grid", "rowGap": "2rem"}}>
             <form onSubmit={DoLogin}>
                 <div className="fields" style={{"display": "flex", "display":"grid", "rowGap": "1rem"}}>
@@ -91,7 +91,7 @@ function CenterDiv()
                         ref={(c) => loginPassword = c} /><br />
                     <span id="loginResult">{message}</span>
                     <input type="submit" id="loginButton" value = "Login"
-                        onClick={DoLogin} style={{"marginTop":"40px"}}/>
+                        onClick={DoLogin} style={{"marginTop":"40px", "cursor":"pointer"}}/>
                 </div>
             </form>
             <div style={{"display":"grid", "rowGap": "2rem"}}>

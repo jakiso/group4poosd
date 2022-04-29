@@ -12,8 +12,10 @@ export const LogoutButton = (props) =>{
       // document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       localStorage.removeItem('token_data');
       localStorage.removeItem('user_data');
-      sessionStorage.removeItem('token_data')
+      localStorage.removeItem('place_data');
+      sessionStorage.removeItem('token_data');
       sessionStorage.removeItem('user_data');
+      sessionStorage.removeItem('place_data');
     }
 
     try{
