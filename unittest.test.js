@@ -8,7 +8,7 @@
     - Search place
 */
 
-const User = require('../api/');
+const app = require('../api/');
 const request = require('supertest');
 
 // Testing the login api
@@ -57,23 +57,17 @@ describe("Unit testing Create Folder...", () => {
 			res.body.status = 200;
 	     })
 	})
-
-})
-// Testing the Delete Folder
-describe("Unit testing Delete Folder...", () => {
-	test("Unit test deletion of dolder", async () => {
-		await request(app).post("localhost:5000/api/deletefolder")
+    test("Unit test creation of folder with invalid id", async () => {
+		await request(app).post("localhost:5000/api/createfolder")
 		.send({
-			userID: "4",
+			userID: "",
 			folderType: "food",
             folderName: "TEST"
 		})
 		.expect((res) => {
-			res.body.status = 200;
+			res.body.status = 500;
 	     })
 	})
-
-})
 // Testing add place to folder
 describe("Unit testing Add place to Folder...", () => {
 	test("Unit test add place to folder", async () => {
@@ -106,10 +100,35 @@ describe("Unit testing delete place from Folder...", () => {
 	})
 
 })
+
+})
+// Testing the Delete Folder
+describe("Unit testing Delete Folder...", () => {
+	test("Unit test deletion of dolder", async () => {
+		await request(app).post("localhost:5000/api/deletefolder")
+		.send({
+			folderId: "1",
+		})
+		.expect((res) => {
+			res.body.status = 200;
+	     })
+	})
+    test("Unit test deletion of folder with invalid folder ID", async () => {
+		await request(app).post("localhost:5000/api/createfolder")
+		.send({
+			folderId: "",
+		})
+		.expect((res) => {
+			res.body.status = 500;
+	     })
+	})
+
+})
+
 // Testing Edit user
 describe("Unit testing change user settings...", () => {
 	test("Unit test deletion of dolder", async () => {
-		await request(app).post("localhost:5000/api/deletefolder")
+		await request(app).post("localhost:5000/api/changeUserSettings")
 		.send({
             userId : "4", 
             newPassword: "changetest", 
