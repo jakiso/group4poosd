@@ -730,7 +730,14 @@ exports.setApp = function ( app, client )
         var isError = 0;
         var errorMsg;
 
-        const { address, latitude, longitude, keyword, radius, jwToken} = req.body;
+        const { address, latitude, longitude, radius, jwToken} = req.body;
+
+        var keyword = req.body.keyword;
+
+        if (keyword === '')
+        {
+            keyword = 'activities';
+        }
 
         var token = require('./createJWT.js');
 
@@ -786,7 +793,7 @@ exports.setApp = function ( app, client )
             var baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
 
   
-            searchUrl = baseUrl + 'location=' + lat + '%2C' + lng + '&radius=' + radius + '&type=tourist_attraction&key=' + process.env.GOOGLE_API_KEY;
+            searchUrl = baseUrl + 'location=' + lat + '%2C' + lng + '&radius=' + radius + '&type=establishment&keyword=' + keyword + '&key=' + process.env.GOOGLE_API_KEY;
     
 
             // Get all the data
@@ -806,53 +813,6 @@ exports.setApp = function ( app, client )
                 errorMsg = {error:"Search Error"};
                 isError = 1;
             });
-
-            searchUrl = baseUrl + 'location=' + lat + '%2C' + lng + '&radius=' + radius + '&type=bowling_alley&key=' + process.env.GOOGLE_API_KEY;
-    
-
-            // Get all the data and add results to previous search.
-            await axios.get(searchUrl)
-            .then(function (searchResponse)
-            {
-                if(searchResponse.status != "200")
-                {
-                    isError = 1;
-                    errorMsg = {error: ret.status};
-                }
-                ret['results'].push(...searchResponse.data.results);
-            })
-            .catch(function()
-            {
-                console.log("2");
-                errorMsg = {error:"Search Error"};
-                isError = 1;
-            });
-
-            searchUrl = baseUrl + 'location=' + lat + '%2C' + lng + '&radius=' + radius + '&type=movie_theater&key=' + process.env.GOOGLE_API_KEY;
-    
-
-            // Get all the data and add it to previous searches.
-            await axios.get(searchUrl)
-            .then(function (searchResponse)
-            {
-                if(searchResponse.status != "200")
-                {
-                    isError = 1;
-                    errorMsg = {error: ret.status};
-                }
-                ret['results'].push(...searchResponse.data.results);
-            })
-            .catch(function()
-            {
-                console.log("3");
-                errorMsg = {error:"Search Error"};
-                isError = 1;
-            });
-
-            if (ret.hasOwnProperty('next_page_token'))
-            {
-                delete ret['next_page_token'];
-            }
 
             for (let i = 0; i < ret.results.length; i++)
             {
