@@ -9,6 +9,9 @@ import event_pic from '../images/LG_event.png';
 import friend_pic from '../images/LG_friend.png';
 import globe from '../images/LG_globe.png';
 
+import { useUpdateList } from './ListContext';
+import { useList } from "./ListContext";
+
 const InfoCard = styled(Carda)`
 
 `
@@ -107,7 +110,6 @@ function CardsUI(props)
                             <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
-
             }
 
         } else {
@@ -118,6 +120,31 @@ function CardsUI(props)
     useEffect(() => {
         RetrievePlaces();
     }, [searchFood, searchActivity, searchFriend, keywordsFood, keywordsActivity]);
+
+    const List = useList();
+
+    useEffect(() => {
+        console.log("The list has changed");
+
+        console.log(props.selectTab);
+        console.log(List);
+        if (props.selectTab === "food" && List != null)
+        {
+            setPlaceListFood(List.map(({ placeName, placeAddress, placeRating, types, index }) => (
+                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={placeRating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                ))
+            );
+        }
+        if (props.selectTab === "activity" && List != null)
+        {
+            setPlaceListActivity(List.map(({ placeName, placeAddress, placeRating, types, index }) => (
+                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={placeRating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                ))
+            );
+        }
+        console.log("end");
+
+    }, [List]);
 
     return(props.selectTab==="food")?(
         // Use:

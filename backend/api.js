@@ -78,6 +78,7 @@ exports.setApp = function ( app, client )
         var token = require('./createJWT.js'); var msg = ''; var error = '';
 
         const jwToken = req.body.jwToken; 
+        const uid = req.body.userId;
         const fid = req.body.folderId;
 
         // Checks if the JWT is expired
@@ -104,6 +105,7 @@ exports.setApp = function ( app, client )
             const result = await db.collection('Folders').aggregate([
                 {
                   $match: {
+                    "userId": uid,
                     "folderId": fid
                   }
                 },
@@ -115,8 +117,7 @@ exports.setApp = function ( app, client )
                 }
               ]).toArray();
               
-            msg = result[0];
-            console.log(msg)
+            msg = result[0].placeList;
         }
         catch(e)
         {
@@ -216,7 +217,9 @@ exports.setApp = function ( app, client )
         const newPlace = new Place
         ({
             placeName: req.body.placeName,
-            placeAddress: req.body.placeAddress
+            placeAddress: req.body.placeAddress,
+            placePhone: req.body.placePhone, 
+            placeRating: req.body.placeRating
         });
 
         var msg = '';
@@ -252,7 +255,9 @@ exports.setApp = function ( app, client )
                     {placeList: 
                         {
                             placeName: newPlace.placeName,
-                            placeAddress: newPlace.placeAddress
+                            placeAddress: newPlace.placeAddress,
+                            placePhone: newPlace.placePhone, 
+                            placeRating: newPlace.placeRating
                         }
                     }
                 }
