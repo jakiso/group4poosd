@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { Buttonc } from './CardButton';
 import styled from 'styled-components';
 import '../App.css';
-import {Carda}  from './Card';
+import { Carda }  from './Card';
+import { Cardb } from './NewFriendCard';
 import SearchBar from './SearchBar';
 import food_pic from '../images/LG_food.png';
 import event_pic from '../images/LG_event.png';
@@ -49,6 +50,8 @@ function CardsUI(props)
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
     const [city, setCity] = useState("");
+
+    const [newFriendMode, setNewFriendMode] = useState(false);
 
     var body;
 
@@ -163,7 +166,13 @@ function CardsUI(props)
     </div>
     ):(props.selectTab==="friends")?(
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
-        <SearchBar setSearchFriend={setSearchFriend} selectTab={props.selectTab}/>
+        <SearchBar setSearchFriend={setSearchFriend} selectTab={props.selectTab}  newFriendMode={newFriendMode} setNewFriendMode={setNewFriendMode}/>
+
+        {/* add new friend */}
+        <Cardb className="tempFriend" src={friend_pic} setSaveToListMode={props.setSaveToListMode} newFriendMode={newFriendMode} setNewFriendMode={setNewFriendMode}/>
+
+        {/* {friendsList} */}
+
         <InfoCard Name="Anna Himenez" Address="3020 Pike Street" PhoneNumber="856-506-3605" MoreInfo="..." DescriptionText="Like 4 Like" Rating="3.1" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
         <InfoCard Name="Jeff Downey" Address="1015 Briarwood Drive" PhoneNumber="321-837-7259" MoreInfo="..." DescriptionText="Foodie" Rating="4.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
         <InfoCard Name="Cory Bartson" Address="888 Rosemont Avenue" PhoneNumber="321-885-2673" MoreInfo="..." DescriptionText="Travel" Rating="4.9" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>

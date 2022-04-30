@@ -9,17 +9,17 @@ const SaveFriend = async (e) => {
     e.preventDefault();
 
     // Used to set the mode to save a place.
-    props.setSaveToListMode(true);
+    // props.setSaveToListMode(true);
 
     console.log("Saving Friend");
 
 
     // Store the place info locally
     var friendToSave = { 
-                        friendName: props.Name, 
-                        friendAddress: props.Address, 
-                        friendPhone: props.PhoneNumber, 
-                        friendRating: props.Rating
+                        // friendName: props.Name, 
+                        // friendAddress: props.Address, 
+                        // friendPhone: props.PhoneNumber, 
+                        // friendRating: props.Rating
                     };
     localStorage.setItem('friend_data', JSON.stringify(friendToSave));
 
