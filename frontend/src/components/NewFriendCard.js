@@ -47,13 +47,13 @@ export const Cardb = (props) =>{
                     <p>Rating {props.Rating}</p><br/>
                 </div> 
                 <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
-                    <CardButton placeholder="Name"/>
-                    <CardButton placeholder="Address"/>
-                    <CardButton placeholder="Phone Number"/>
-                    <CardButton  placeholder="Email"/>
+                    <CardButton placeholder="Name" button_id="NewFriendName"/>
+                    <CardButton placeholder="Address" button_id="NewFriendAddress"/>
+                    <CardButton placeholder="Phone Number" button_id="NewFriendPhone"/>
+                    <CardButton  placeholder="Email" button_id="NewFriendEmail"/>
                 </div> 
                 <div style={{"width":"40%", "overflow":"auto", "margin":"auto"}}>
-                    <Description placeholder="Description"/> 
+                    <Description placeholder="Description" button_id="NewFriendDescription"/> 
                 </div>  
             </div>
         </Card>
