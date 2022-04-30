@@ -19,10 +19,10 @@ function getUserId() {
 }
 
 function CenterDiv(){
-    var Newfirstname;
-    var Newlastname;
-    var Newusername;
-    var Newpassword;
+    var newFirstName;
+    var newLastName;
+    var newUsername;
+    var newPassword;
     var Newconfirmpassword;
     var userId = getUserId();
     var jsonId = JSON.parse(userId);
@@ -37,8 +37,7 @@ function CenterDiv(){
         // retrive userID
         var storage = require('../tokenStorage.js');
         // Creates object for all form fields
-        var obj = {userId:userId, NewPassword:Newpassword.value, Newfirstname:Newfirstname.value, Newlastname:Newlastname.value, Newusername:Newusername.value, jwToken:storage.retrieveToken(), Newconfirmpassword:Newconfirmpassword.value};
-            console.log(userId.value, Newfirstname.value+"\n\n\n\n\n");
+        var obj = {userId:userId, newPassword:newPassword.value, newFirstName:newFirstName.value, newLastName:newLastName.value, newUsername:newUsername.value, jwToken:storage.retrieveToken(), Newconfirmpassword:Newconfirmpassword.value};
         // Loop through the object and check to make sure the value are not empty
        // for(const [key, value] of Object.entries(obj)) 
        // {
@@ -110,15 +109,15 @@ function CenterDiv(){
         <div className="main_pane">
             <form onSubmit={doChangeAccount}>
                 <div className="fields" style={{"display": "flex", "display":"grid"}}>
-                    <input type="text" id="NewfirstName" placeholder="New First Name?" 
-                        ref={(c) => Newfirstname = c} /> <br /> 
-                    <input type="text" id="NewlastName" placeholder="New Last Name?" 
-                        ref={(c) => Newlastname = c} /> <br /> 
-                    <input type="text" id="Newusername" placeholder="New Username?" 
-                        ref={(c) => Newusername = c} /> <br /> 
-                    <input type="password" id="Newpassword" placeholder="New Password?" 
-                        ref={(c) => Newpassword = c} /> <br /> 
-                    <input type="password" id="NewconfirmPassword" placeholder="Confirm New Password" 
+                    <input type="text" id="newFirstName" placeholder="New First Name?" 
+                        ref={(c) => newFirstName = c} /> <br /> 
+                    <input type="text" id="newLastName" placeholder="New Last Name?" 
+                        ref={(c) => newLastName = c} /> <br /> 
+                    <input type="text" id="newUsername" placeholder="New Username?" 
+                        ref={(c) => newUsername = c} /> <br /> 
+                    <input type="password" id="newPassword" placeholder="New Password?" 
+                        ref={(c) => newPassword = c} /> <br /> 
+                    <input type="password" id="Newconfirmpassword" placeholder="Confirm New Password" 
                         ref={(c) => Newconfirmpassword = c} /> <br /> 
                 </div>
                 <div className="buttons" style={{"display": "flex"}}>
@@ -131,4 +130,3 @@ function CenterDiv(){
 }
 
 export default CenterDiv;
-
