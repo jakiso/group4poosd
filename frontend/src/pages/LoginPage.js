@@ -17,7 +17,7 @@ function LoginPage() {
   return (
     <div className="background">
 
-<div style={{"display":"grid", "gridTemplateRows": "1fr", "alignContent":"center"}}>
+      <div style={{"display":"grid", "gridTemplateRows": "1fr", "alignContent":"center"}}>
 
       <TitleHeader className="title"/>
       <div className="wrapper" style={{"display":"grid", "gridTemplateRows": "1fr 100%"}}>
@@ -25,7 +25,6 @@ function LoginPage() {
       <LoginCenterDiv/>
       </div>
       </div>
-
     </div>
     
   );

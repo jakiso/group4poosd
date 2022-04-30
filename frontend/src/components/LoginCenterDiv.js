@@ -5,6 +5,7 @@ import { LinkStyled } from './LinkStyled';
 import styled from 'styled-components';
 import { isExpired, decodeToken } from "react-jwt";
 import { useHistory } from 'react-router-dom';
+import GoogleLogin from "react-google-login";
 
 
 function CenterDiv()
@@ -16,6 +17,69 @@ function CenterDiv()
     const redirectToVerify = useCallback(() => navigate.push('/Verify'), [navigate]);
 
     const [message,setMessage] = useState('');
+
+    const handleLogin = (googleData) => {
+        // console.log(JSON.stringify(googleData.Lu));
+
+        var obj = { token: googleData.tokenId, firstName: googleData.Lu.iY, lastName: googleData.Lu.wW, email: googleData.Lu.Bv };
+        var js = JSON.stringify(obj);
+        var storage = require('../tokenStorage.js');
+        var bp = require('./Path.js');
+
+        try
+        {  
+            // Retrieves token and error from server
+            const response = await fetch(bp.buildPath('googleLogin'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+
+            // Convert response to JSON
+            var res = JSON.parse(await response.text());
+
+            // Store the JWT in local storage
+            storage.storeToken(res);
+            
+            // Decode the token and store in tokenData
+            const tokenData = decodeToken(storage.retrieveToken());
+            
+            // Check if userId is valid
+            if( tokenData.userId <= 0)
+            {
+                // Let user know error and end
+                setMessage(res.error);
+                return;
+            }
+
+            // The user that is logging in is valid now check for errors
+            // Store the user info locally
+            var user = { firstName: tokenData.firstName, lastName: tokenData.lastName, id: tokenData.userId };
+            localStorage.setItem('user_data', JSON.stringify(user));
+
+            // Checks the error message from server.
+            // Lets the user know they must confirm their email before continuing
+            if (res.error == 'Please confirm your email before logging in.')
+            {
+                // Move to /Verify
+                setMessage('');
+                redirectToVerify();
+                // window.location.href = '/Verify'; // does not work in deployed
+            }
+            else
+            {
+                // Valid user move to /Main
+                setMessage('');
+                window.location.href = '/';
+            }
+        }
+        // JWT not received properly
+        catch(e)
+        {
+            console.log(e.toString());
+            return;
+        }        
+      };
+
+    const handleFailure = (result) => {
+        setMessage(result);
+    };
 
     // Login button push
     const DoLogin = async event => 
@@ -94,9 +158,16 @@ function CenterDiv()
                         onClick={DoLogin} style={{"marginTop":"40px"}}/>
                 </div>
             </form>
+            <div>
+                <GoogleLogin
+                    clientId='262782082880-itq8dfb84pcenbfne51uknb6k6ve0rn0.apps.googleusercontent.com'
+                    buttonText="Log in with Google"
+                    onSuccess={handleLogin}
+                    onFailure={handleFailure}
+                    cookiePolicy={'single_host_origin'}
+                ></GoogleLogin>
+            </div>
             <div style={{"display":"grid", "rowGap": "2rem"}}>
-                    <input type="submit" id="loginGButton" value = "Login with Google" 
-                    style={{"width":"30%"}}/>
                     {/* This routes back to login page just to avoid getting an unnecessary error. */}
                     <LinkStyled className="link" link_text="Forgot Password" route="/Reset"/>
                     <LinkStyled className="link" route="/Register" link_text="Create Account"/>

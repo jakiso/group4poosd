@@ -1630,4 +1630,71 @@ exports.setApp = function ( app, client )
     
     res.status(200).json(ret);
     });
+
+    app.post('/googleLogin', async (req, res, next) =>
+    {
+        // incoming: first name, last name, email
+        // outgoing: error
+
+        const newUser = new User
+        ({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            googleToken: req.body.token
+        });
+
+        // const {firstName, lastName, username, email, password} = req.body;
+
+        // const newUser = {firstName:firstName, lastName:lastName, username:username, 
+        //                 email:email, password:password, emailConfirm:-1};
+
+        var error = '';
+        var ret;
+
+        // Connect to the database
+        const db = client.db();
+
+        // Search the database for google account
+        const existingUser = await db.collection('Users').findOne({ email: newUser.email, googleToken : newUser.googleToken });
+
+        // account has already been added to db
+        if(existingUser) {
+            
+            // Login is successful send empty error
+            ret = Object.assign({error:error});
+            res.status(200).json(ret);
+
+            return;
+        }
+        // account has not yet been added to db
+        else {
+            
+            const emailUsed = await db.collection('Users').find({ email: newUser.email, googleToken : '' }).toArray();
+            
+            // If the returned array is not 0 then the gmail already used in a regular account
+            if (emailUsed.length != 0)
+            {
+                // Send an error that the email already exists
+                error = "This email has been already been used to create an account.";
+                ret = { error: error };
+                res.status(500).json(ret);
+            }
+            else {
+                
+                // insert user as a google account
+                try
+                {
+                    // Insert the new user to the database
+                    const result = await db.collection('Users').insertOne(newUser);
+                    console.log("db insertion result: ");
+                    console.log(result);
+                }
+                catch(e)
+                {
+                    error = e.toString();
+                }
+            }
+        }   
+    });    
 }
