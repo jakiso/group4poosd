@@ -2,6 +2,9 @@ import React from 'react';
 import styled from 'styled-components'
 import { Buttonc } from './CardButton';
 import cross from '../images/cross_add.png';
+import {Website} from './Website';
+import { LinkStyled } from './LinkStyled';
+import {Router, Route, Redirect, Switch, Link } from 'react-router-dom';
 
 const Card = styled.div`
 // margin-top: 50px;
@@ -26,14 +29,17 @@ height: 300px;
 const ListButton = styled(Buttonc)`
 width: 100%;
 height: 50px;
+cursor: default;
 `
 const Description = styled(Buttonc)`
 width: 50%;
 height: auto;
 padding: 10%;
+overflow:hidden;
 `
 
 export const Carda = (props) =>{
+    console.log(props)
 
     // Save the place to be put in a folder
     const SavePlace = async (e) => {
@@ -51,7 +57,8 @@ export const Carda = (props) =>{
                             placeName: props.Name, 
                             placeAddress: props.Address, 
                             placePhone: props.PhoneNumber, 
-                            placeRating: props.Rating
+                            placeRating: props.Rating,
+                            placeWebsite: props.placeWebsite
                         };
         localStorage.setItem('place_data', JSON.stringify(placeToSave));
 
@@ -65,15 +72,16 @@ export const Carda = (props) =>{
         <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
             <img width={"100rem"} height={"auto"} src={props.src} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
-            <img width={"20rem"} height={"auto"} src={cross} alt="Event" onClick={(e) => SavePlace(e)}/>
+            <img width={"20rem"} height={"auto"} src={cross} alt="Event" style={{"cursor":"pointer"}} onClick={(e) => SavePlace(e)}/>
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
             <ListButton button_text={props.Name}/>
             <ListButton button_text={props.Address}/>
             <ListButton button_text={props.PhoneNumber}/>
-            <ListButton button_text={props.MoreInfo}/> 
+            <Website url={props.placeWebsite} button_text='Website'/>
+            
         </div> 
-        <div style={{"width":"40%", "overflow":"auto", "margin":"auto"}}>
+        <div style={{"width":"40%", "overflow":"hidden", "margin":"auto"}}>
             <Description button_text={props.DescriptionText}/>
         </div>  
         </div></Card>

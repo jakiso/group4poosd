@@ -138,7 +138,8 @@ function ListButton(props){
                                 placeName: placeData.placeName, 
                                 placeAddress: placeData.placeAddress, 
                                 placePhone: placeData.placePhone, 
-                                placeRating: placeData.placeRating
+                                placeRating: placeData.placeRating,
+                                placeWebsite: placeData.placeWebsite
                             };
         var sendReq = JSON.stringify(savePlaceReq);
 

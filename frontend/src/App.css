@@ -241,7 +241,11 @@ input[type=password]{
 
 }
 
+#link::placeholder {color:blue}
+
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color:#FEFFDC;
   opacity: 1; /* Firefox */
 }
+
+

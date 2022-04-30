@@ -66,10 +66,10 @@ function CardsUI(props)
             +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\""+keywordsFood+"\"}";
 
             const response_food = await fetch(bp.buildPath('nearbyFoodSearch'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
-
+            
             // Wait for response and parse json
             res_food = JSON.parse(await response_food.text());
-            console.log(res_food.results)
+            console.log(res_food)
             // Check the error field. empty error is good
             if( res_food.error && res_food.error.length > 0 )
             {
@@ -79,8 +79,8 @@ function CardsUI(props)
             else
             {
                 // uses the useState to change the value of storedFolders
-                setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types }) => (
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website}) => (
+                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                         ))
                 );
 
@@ -106,8 +106,8 @@ function CardsUI(props)
             {
 
                 // uses the useState to change the value of storedFolders
-                setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types }) => (
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website}) => (
+                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
             }
@@ -130,15 +130,15 @@ function CardsUI(props)
         console.log(List);
         if (props.selectTab === "food" && List != undefined && List.length !== 0)
         {
-            setPlaceListFood(List.map(({ placeName, placeAddress, placeRating, types, index }) => (
-                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={placeRating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+            setPlaceListFood(List.map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite }) => (
+                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} DescriptionText={types} Rating={placeRating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                 ))
             );
         }
         if (props.selectTab === "activity" && List != undefined && List.length !== 0)
         {
-            setPlaceListActivity(List.map(({ placeName, placeAddress, placeRating, types, index }) => (
-                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={placeRating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+            setPlaceListActivity(List.map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite }) => (
+                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} DescriptionText={types} Rating={placeRating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                 ))
             );
         }

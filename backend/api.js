@@ -218,7 +218,8 @@ exports.setApp = function ( app, client )
             placeName: req.body.placeName,
             placeAddress: req.body.placeAddress,
             placePhone: req.body.placePhone, 
-            placeRating: req.body.placeRating
+            placeRating: req.body.placeRating,
+            placeWebsite: req.body.placeWebsite
         });
 
         var msg = '';
@@ -256,7 +257,8 @@ exports.setApp = function ( app, client )
                             placeName: newPlace.placeName,
                             placeAddress: newPlace.placeAddress,
                             placePhone: newPlace.placePhone, 
-                            placeRating: newPlace.placeRating
+                            placeRating: newPlace.placeRating,
+                            placeWebsite: newPlace.placeWebsite
                         }
                     }
                 }
@@ -646,6 +648,7 @@ exports.setApp = function ( app, client )
         {
             // Base url of nearby search endpoint.
             var baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+            var photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?';
 
             // If the pageToken is empty, do a normal search based on the input. If pageToken isn't blank, it will attempt to search using said pageToken. 
             if (pageToken == '')
@@ -658,6 +661,7 @@ exports.setApp = function ( app, client )
             .then(function (response)
             {
                 ret = response.data;
+                
                 if(ret.status != "OK")
                 {
                     isError = 1;
@@ -670,12 +674,14 @@ exports.setApp = function ( app, client )
                 isError = 1;
             });
             
+            
             for (let i = 0; i < ret.results.length; i++)
             {
                 var placeDetailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + ret.results[i].place_id + '&fields=website%2Cphotos%2Cformatted_phone_number%2Creviews%2Copening_hours&key=' + process.env.GOOGLE_API_KEY;
                 await axios.get(placeDetailsUrl)
                 .then(function (placeDetailsRes)
                 {
+                    console.log(ret.results[i])
                     ret.results[i]["opening_hours"] = placeDetailsRes.data.result.opening_hours;
                     ret.results[i]["website"] = placeDetailsRes.data.result.website;
                     ret.results[i]["reviews"] = placeDetailsRes.data.result.reviews;
@@ -1028,7 +1034,7 @@ exports.setApp = function ( app, client )
             userId: req.body.userId,
             folderType: req.body.folderType.toLowerCase(),
             folderName: req.body.folderName,
-            placeList: [{placeName: "Add a place!", placeAddress: ""}]
+            placeList: [new Place]
         });
 
         try
