@@ -22,7 +22,7 @@ const Text = styled.text`
 export const GreyOutTab = (props) =>{
     return (
         <div className="tab" onClick={props.customOnClick}>
-        <img className="search_tab" src={greyTab} alt="Lists" style={{"width":"auto", "height":"100%"
+        <img className="search_tab" src={greyTab} alt="Lists" style={{"width":"auto", "height":"105%"
         ,"objectFit":"cover", "display":"block","marginLeft": "auto","marginRight":"auto"}}></img>
         <Text className={props.className}>{props.children}</Text>
         </div>  
