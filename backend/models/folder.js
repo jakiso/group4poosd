@@ -7,7 +7,12 @@ const Folder = mongoose.model(
     userId: {type: Number, required: true},
     folderName: {type: String, required: true},
     folderType: {type: String, required: true},
-    placeList: [{placeName: String, placeAddress: String}]
+    placeList: [
+        {placeName: String,
+        placeAddress: String,
+        placeRating: String,
+        placeWebsite: String}
+    ]
   }) 
 );
 

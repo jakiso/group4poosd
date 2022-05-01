@@ -2,13 +2,23 @@ import React, {useState, useEffect} from 'react';
 import { Buttonc } from './CardButton';
 import styled from 'styled-components';
 import '../App.css';
-import {Carda}  from './Card';
-import { SearchBar } from './SearchBar';
+import { Carda }  from './Card';
+import { Cardb } from './NewFriendCard';
+import SearchBar from './SearchBar';
 import food_pic from '../images/LG_food.png';
 import event_pic from '../images/LG_event.png';
 import friend_pic from '../images/LG_friend.png';
+import globe from '../images/LG_globe.png';
+
+import { useUpdateList } from './ListContext';
+import { useList } from "./ListContext";
+import { Cardc } from './CardFriend';
 
 const InfoCard = styled(Carda)`
+
+`
+
+const FriendCard = styled(Cardc)`
 
 `
 
@@ -21,7 +31,7 @@ width: 100%;
 height: 100%;
 `
 
-var res_food, res_activity;
+var res_food, res_activity, res_friends;
 
 function CardsUI(props)
 {
@@ -34,39 +44,96 @@ function CardsUI(props)
     // useState for setting the list of folders after its been loaded
     var [placeListFood, setPlaceListFood] = useState([]);
     var [placeListActivity, setPlaceListActivity] = useState([]);
+    var [friendList, setFriendList] = useState([]);
 
-    var [search, setSearch] = useState("");
+    var [searchFood, setSearchFood] = useState("");
+    var [searchActivity, setSearchActivity] = useState("");
+    var [searchFriend, setSearchFriend] = useState("");
+
+    var [keywordsFood, setKeywordsFood] = useState([]);
+    var [keywordsActivity, setKeywordsActivity] = useState([]);
+
+    const [latitude, setLatitude] = useState("");
+    const [longitude, setLongitude] = useState("");
+    const [city, setCity] = useState("");
+
+    const [newFriendMode, setNewFriendMode] = useState(false);
+
     var body;
+
+    // for initial picture grab from google.
+    function pictureGrab(photos, tab) {
+
+        try {
+            let data = {}
+            let url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=80&photoreference="
+            let photoRef = photos[0].photo_reference
+            let imageUrl = url + photoRef + '&key=' + process.env.REACT_APP_GOOGLE;
+
+            return imageUrl;
+
+        } catch(e)
+        {
+            console.log(e)
+            if (tab === 'food')
+                return food_pic;
+            else if (tab === 'activity')
+                return event_pic;
+            else
+                return friend_pic;
+        }
+    }
+
+    // for retrieving picture from a place after we save it.
+    function savedPicture(placeImg, tab){
+        console.log(placeImg)
+        if (placeImg === '')
+        {
+            if (tab === 'food')
+                return food_pic;
+            else if (tab === 'activity')
+                return event_pic;
+            else
+                return friend_pic;
+        }
+        else{
+            return placeImg;
+        }
+    }
 
     // API call function
     const RetrievePlaces = async () => {
         
         // Later this should grab values from the filter radius button, address from location button, etc.
         // keyword: search will return the same places each time regardless of the keyword since address is UCF.
-        var searchObj = {address:"UCF", latitude:"", longitude:"", radius: 8000, jwToken: "", pageToken:"", keyword:""};
+        var searchObj = {address:"UCF", latitude:"", longitude:"", radius: 10000, jwToken: "", pageToken:"", keyword:""};
         searchObj = JSON.stringify(searchObj);
+
+        // Storage to access the locally stored JWT
+        var storage = require('../tokenStorage.js');
+        // The user data is stored as text and needs to be turned into an object
+        var data = JSON.parse(localStorage.user_data);
 
         if(props.selectTab==="food") {
 
-            body = "{"+"\"address\""+":"+"\""+search+"\""+","+"\"latitude\""+":"+"\"\","+"\"longitude\""+":"+"\"\","+"\"radius\""+":"+"8000"+","
-            +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\"\"}";
+            body = "{"+"\"address\""+":"+"\""+searchFood+"\""+","+"\"latitude\""+":"+"\""+latitude+"\","+"\"longitude\""+":"+"\""+longitude+"\","+"\"radius\""+":"+"10000"+","
+            +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\""+keywordsFood+"\"}";
 
             const response_food = await fetch(bp.buildPath('nearbyFoodSearch'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
-
+            
             // Wait for response and parse json
             res_food = JSON.parse(await response_food.text());
-            console.log(res_food.results)
+            console.log(res_food)
             // Check the error field. empty error is good
             if( res_food.error && res_food.error.length > 0 )
             {
                 setMessage( "API Error:" + res_food.error);
             }
-            
             else
             {
                 // uses the useState to change the value of storedFolders
-                setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types }) => (
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}) => (
+                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
                         ))
                 );
 
@@ -75,8 +142,8 @@ function CardsUI(props)
         }
         else if (props.selectTab==="activity") {
 
-            body = "{"+"\"address\""+":"+"\""+search+"\""+","+"\"latitude\""+":"+"\"\","+"\"longitude\""+":"+"\"\","+"\"radius\""+":"+"8000"+","
-            +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\"\"}";
+            body = "{"+"\"address\""+":"+"\""+searchActivity+"\""+","+"\"latitude\""+":"+"\""+latitude+"\","+"\"longitude\""+":"+"\""+longitude+"\","+"\"radius\""+":"+"10000"+","
+            +"\"jwToken\""+":"+"\"\","+"\"pageToken\""+":"+"\"\","+"\"keyword\""+":"+ "\""+keywordsActivity+"\"}";
 
             const response_activity = await fetch(bp.buildPath('nearbyActivitySearch'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
 
@@ -92,54 +159,121 @@ function CardsUI(props)
             {
 
                 // uses the useState to change the value of storedFolders
-                setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types }) => (
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}) => (
+                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
-
             }
 
-        } else {
+        } 
+        else if (props.selectTab==="friends") {
+
+            body = "{"+"\"userId\""+":"+"\""+searchActivity+"\""+","+"\"name\""+":"+"\""+latitude+"\","+"\"phone\""+":"+"\""+longitude+"\","+"\"address\""+":"+"10000"+","
+            +"\"email\""+":"+"\"\","+"\"notes\""+":"+"\"\","+"\"jwToken\""+":"+ "\""+keywordsActivity+"\"}";
+            // const {userId, name, phone, address, email, notes, jwToken} = req.body;
+
+
+            body = "{"+"\"userId\""+":"+data.id+","+"\"jwToken\""+":"+ "\""+storage.retrieveToken()+"\"}";
+
+
+            const response_friends = await fetch(bp.buildPath('retrieveFriends'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
+
+            // Wait for response and parse json
+            res_friends = JSON.parse(await response_friends.text());
+
+            // Check the error field. empty error is good
+            if( res_friends.error && res_friends.error.length > 0 )
+            {
+                setMessage( "API Error:" + res_friends.error);
+            }
+            else
+            {
+
+                // uses the useState to change the value of storedFolders
+                setFriendList(res_friends.friends.slice(0, Object.keys(res_friends.friends).length).map(({ name, address, email, phone, notes }) => (
+                            <FriendCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} Rating="5.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                            ))
+                );
+            }
+
+        } 
+        else {
             
         }
     }
 
     useEffect(() => {
         RetrievePlaces();
-    }, [search]);
+    }, [searchFood, searchActivity, searchFriend, keywordsFood, keywordsActivity, props.selectTab, newFriendMode]);
+
+    const List = useList();
+
+    useEffect(() => {
+        console.log("The list has changed");
+
+        console.log(props.selectTab);
+        console.log(List);
+        if (props.selectTab === "food" && List != undefined && List.length !== 0)
+        {
+            setPlaceListFood(List.map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite, placeImg }) => (
+                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} DescriptionText={types} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
+                ))
+            );
+        }
+        if (props.selectTab === "activity" && List != undefined && List.length !== 0)
+        {
+            setPlaceListActivity(List.map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite, placeImg }) => (
+                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} DescriptionText={types} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
+                ))
+            );
+        }
+        console.log("end");
+
+    }, [List]);
 
     return(props.selectTab==="food")?(
         // Use:
         // Name="" Address="" PhoneNumber="" MoreInfo="" Description="" Rating=""
         // To define Info per card
-        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%"}}>
-            <SearchBar setSearch={setSearch} search={search}/>
-            {placeListFood}
-
-            {/* <InfoCard Name="McDonalds" Address="3737 Pine Tree Lane" PhoneNumber="231-714-5572" MoreInfo="..." DescriptionText="Fast Convenient" Rating="3.1" src={food_pic} setSaveToListMode={props.setSaveToListMode}/>
-            <InfoCard Name="Comfort Food" Address="2055 Stanley Avenue" PhoneNumber="860-928-5548" MoreInfo="..." DescriptionText="Food you'll Love" Rating="4.0" src={food_pic} setSaveToListMode={props.setSaveToListMode}/>
-            <InfoCard Name="Coffee Shop" Address="3868 Holt Street" PhoneNumber="561-292-8638" MoreInfo="..." DescriptionText="Keep Calm and have some Coffee" Rating="4.9" src={food_pic} setSaveToListMode={props.setSaveToListMode}/> */}
+        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
+        <SearchBar setSearchFood={setSearchFood} setKeywordsFood={setKeywordsFood} selectTab={props.selectTab} setLatitude={setLatitude} 
+        setLongitude={setLongitude} latitude={latitude} longitude={longitude} setCity={setCity} city={city}/>
+        {placeListFood}
         </div>
     ): (props.selectTab==="activity")?(
-        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%"}}>
-        <SearchBar setSearch={setSearch} search={search}/>
+        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
+        <SearchBar setSearchActivity={setSearchActivity}  setKeywordsActivity={setKeywordsActivity} selectTab={props.selectTab} setLatitude={setLatitude} 
+        setLongitude={setLongitude} latitude={latitude} longitude={longitude} setCity={setCity} city={city}/>
         {placeListActivity}
-
-        {/* <InfoCard Name="Road Trip" Address="3865 Holt Street" PhoneNumber="305-714-5560" MoreInfo="..." DescriptionText="Sights like you've Never Seen" Rating="3.1" src={event_pic} setSaveToListMode={props.setSaveToListMode}/>
-        <InfoCard Name="Kyaking" Address="2229 Southside Lane" PhoneNumber="215-268-9864" MoreInfo="..." DescriptionText="Row your Boat" Rating="4.0" src={event_pic} setSaveToListMode={props.setSaveToListMode}/>
-        <InfoCard Name="Concert" Address="2852 Tinker Field" PhoneNumber="479-214-5874" MoreInfo="..." DescriptionText="Dance Dance Dance" Rating="4.9" src={event_pic} setSaveToListMode={props.setSaveToListMode}/> */}
     </div>
     ):(props.selectTab==="friends")?(
-        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%"}}>
-        <SearchBar setSearch={setSearch} search={search}/>
-        <InfoCard Name="Anna Himenez" Address="3020 Pike Street" PhoneNumber="856-506-3605" MoreInfo="..." DescriptionText="Like 4 Like" Rating="3.1" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
-        <InfoCard Name="Jeff Downey" Address="1015 Briarwood Drive" PhoneNumber="321-837-7259" MoreInfo="..." DescriptionText="Foodie" Rating="4.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
-        <InfoCard Name="Cory Bartson" Address="888 Rosemont Avenue" PhoneNumber="321-885-2673" MoreInfo="..." DescriptionText="Travel" Rating="4.9" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+        <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
+        <SearchBar setSearchFriend={setSearchFriend} selectTab={props.selectTab}  newFriendMode={newFriendMode} setNewFriendMode={setNewFriendMode}/>
+
+        {/* add new friend */}
+        <Cardb className="tempFriend" src={friend_pic} setSaveToListMode={props.setSaveToListMode} newFriendMode={newFriendMode} setNewFriendMode={setNewFriendMode}/>
+        {friendList}
     </div>
     ): (
-        <div>
-            <br/><br/><br/><br/>
-            <p>Select a tab NOW!</p>   
+        <div style={{"height":"auto","width":"100%"}}>
+            <div style={{"height":"auto","width":"100rem", "display":"flex", "margin":"5% auto"}}>
+                
+                <div style={{"width":"100%"}}>
+                    <br/>
+                    <p className="welcome">
+                        Want to do something<br/>
+                        but don't know what?<br/>
+                        Let's find that thing!<br/><br/>
+                        choose a tab to start
+                    </p>  
+                    <br/><br/><br/><br/>
+                </div>
+
+                <div style={{"height":"100%","width":"100%", "overflow":"auto"}}>
+                    <img width={"600rem"} height={"auto"} src={globe} alt="Event"/><br/><br/>
+                </div>
+
+            </div>
         </div>    
     );
 };
