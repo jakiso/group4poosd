@@ -45,6 +45,12 @@ function TopMarginMain(props) {
 
       console.log("Surprise!");
       console.log(List);
+
+      if (List.length != 0 && List.length != undefined) 
+      {
+        console.log(List.length);
+        // Window.alert(List(Math.random(List.length)));
+      }
     }
 
   return(props.loggedInState)?(

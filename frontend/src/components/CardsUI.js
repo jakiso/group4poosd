@@ -78,14 +78,15 @@ function CardsUI(props)
             
             else
             {
-
-                updateList(res_food.results);
-
                 // uses the useState to change the value of storedFolders
                 setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types }) => (
                             <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                         ))
                 );
+
+                // updateList(placeListFood);
+                updateList(placeListFood);
+                console.log(List);
 
 
             }
@@ -108,14 +109,14 @@ function CardsUI(props)
             }
             else
             {
-
-                updateList(res_activity);
-
                 // uses the useState to change the value of storedFolders
                 setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types }) => (
                             <InfoCard Name={name} Address={vicinity} PhoneNumber="..." MoreInfo="..." DescriptionText={types} Rating={rating} src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
+
+                updateList(placeListActivity);
+                console.log(List);
 
 
             }
