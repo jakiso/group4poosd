@@ -12,8 +12,13 @@ import globe from '../images/LG_globe.png';
 
 import { useUpdateList } from './ListContext';
 import { useList } from "./ListContext";
+import { Cardc } from './CardFriend';
 
 const InfoCard = styled(Carda)`
+
+`
+
+const FriendCard = styled(Cardc)`
 
 `
 
@@ -186,7 +191,7 @@ function CardsUI(props)
 
                 // uses the useState to change the value of storedFolders
                 setFriendList(res_friends.friends.slice(0, Object.keys(res_friends.friends).length).map(({ name, address, email, phone, notes }) => (
-                            <InfoCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} Rating="5.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                            <FriendCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} Rating="5.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
             }
@@ -248,10 +253,6 @@ function CardsUI(props)
         {/* add new friend */}
         <Cardb className="tempFriend" src={friend_pic} setSaveToListMode={props.setSaveToListMode} newFriendMode={newFriendMode} setNewFriendMode={setNewFriendMode}/>
         {friendList}
-
-        {/* <InfoCard Name="Anna Himenez" Address="3020 Pike Street" PhoneNumber="856-506-3605" MoreInfo="..." DescriptionText="Like 4 Like" Rating="3.1" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
-        <InfoCard Name="Jeff Downey" Address="1015 Briarwood Drive" PhoneNumber="321-837-7259" MoreInfo="..." DescriptionText="Foodie" Rating="4.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
-        <InfoCard Name="Cory Bartson" Address="888 Rosemont Avenue" PhoneNumber="321-885-2673" MoreInfo="..." DescriptionText="Travel" Rating="4.9" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/> */}
     </div>
     ): (
         <div style={{"height":"auto","width":"100%"}}>
