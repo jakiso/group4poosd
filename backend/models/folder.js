@@ -9,7 +9,9 @@ const Folder = mongoose.model(
     folderType: {type: String, required: true},
     placeList: [
         {placeName: String,
-        placeAddress: String}
+        placeAddress: String,
+        placeRating: String,
+        placeWebsite: String}
     ]
   }) 
 );

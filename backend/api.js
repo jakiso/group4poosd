@@ -218,7 +218,9 @@ exports.setApp = function ( app, client )
             placeName: req.body.placeName,
             placeAddress: req.body.placeAddress,
             placePhone: req.body.placePhone, 
-            placeRating: req.body.placeRating
+            placeRating: req.body.placeRating,
+            placeWebsite: req.body.placeWebsite,
+            placeImg: req.body.placeImg
         });
 
         var msg = '';
@@ -256,7 +258,9 @@ exports.setApp = function ( app, client )
                             placeName: newPlace.placeName,
                             placeAddress: newPlace.placeAddress,
                             placePhone: newPlace.placePhone, 
-                            placeRating: newPlace.placeRating
+                            placeRating: newPlace.placeRating,
+                            placeWebsite: newPlace.placeWebsite,
+                            placeImg: newPlace.placeImg
                         }
                     }
                 }
@@ -646,6 +650,7 @@ exports.setApp = function ( app, client )
         {
             // Base url of nearby search endpoint.
             var baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+            var photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?';
 
             // If the pageToken is empty, do a normal search based on the input. If pageToken isn't blank, it will attempt to search using said pageToken. 
             if (pageToken == '')
@@ -658,6 +663,7 @@ exports.setApp = function ( app, client )
             .then(function (response)
             {
                 ret = response.data;
+                
                 if(ret.status != "OK")
                 {
                     isError = 1;
@@ -669,6 +675,7 @@ exports.setApp = function ( app, client )
                 errorMsg = {error:"Search Error"};
                 isError = 1;
             });
+            
             
             for (let i = 0; i < ret.results.length; i++)
             {
@@ -1028,7 +1035,7 @@ exports.setApp = function ( app, client )
             userId: req.body.userId,
             folderType: req.body.folderType.toLowerCase(),
             folderName: req.body.folderName,
-            placeList: [{placeName: "Add a place!", placeAddress: ""}]
+            placeList: [new Place]
         });
 
         try
