@@ -79,7 +79,7 @@ export const Carda = (props) =>{
         <Card style={{"display":"flex", "gap": "0vh", "overflow":"hidden"}}>            
         <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>    
         <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
-            <img width={"150rem"} height={"100rem"} src={decidePic()} alt="Event"/><br/><br/>
+            <img width={"100rem"} height={"100rem"} src={decidePic()} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
             <img width={"20rem"} height={"auto"} src={cross} alt="Event" style={{"cursor":"pointer"}} onClick={(e) => SavePlace(e)}/>
         </div> 
