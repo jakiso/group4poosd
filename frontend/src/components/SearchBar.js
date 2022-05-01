@@ -4,6 +4,8 @@ import searchGlass from '../images/LG_search.png'
 import location from '../images/LG_location.png'
 import filter from '../images/LG_filter.png'
 import plus from '../images/cross_add.png'
+import save from '../images/LG_save_icon4.png'
+import { Buttonc } from './BarButtonFriends'; 
 import axios from 'axios';
 
 const Input = styled.input`
@@ -23,6 +25,7 @@ background: #001A5E;
 border-radius: 14px;
 align:right;
 columnGap: 1rem;
+padding-left: 5%;
 `
 
 const Bar = styled.div`
@@ -196,53 +199,48 @@ function SearchBar (props) {
     };
 
     return(props.selectTab==="food")?(
-        <Bar style={{"display":"grid", "gridTemplateColumns":"18fr 1fr 1fr 1fr", "columnGap":"1rem", "zIndex":"5", "position":"relative"}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative", "marginRight":"20px"}}>
 
         <Input id="searchBarFood" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
-        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
+        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
             <img src={searchGlass} alt="search" style={{"margin":"auto", "height":"39px", "width":"42px"}} onClick={getInputValueFood}></img>
         </div>  
-        <div class="search_bar_button" style={{ "display":"flex", "justifyContent":"center"}}>
-            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"25px"}}  onClick={setCityNameFood}></img>
+        <div class="search_bar_button" style={{ "display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
+            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"30px"}}  onClick={setCityNameFood}></img>
         </div>  
-        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
+        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto", "marginRight":"20px"}}>
             <img src={filter} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}}  onClick={()=>setOpen(!open)}></img>
             {/* this conitional toggles dropdown menu */}
             {open && <DropdownFood checkedFood={checkedFood} setCheckedFood={setCheckedFood}></DropdownFood>}
         </div>  
         </Bar>
     ):(props.selectTab==="activity")?(
-        <Bar style={{"display":"grid", "gridTemplateColumns":"18fr 1fr 1fr 1fr", "columnGap":"1rem", "zIndex":"5", "position":"relative"}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}}>
 
         <Input id="searchBarActivity" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
-        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
+        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
             <img src={searchGlass} alt="search" style={{"margin":"auto", "height":"39px", "width":"42px"}} onClick={getInputValueActivity}></img>
         </div>  
-        <div class="search_bar_button" style={{ "display":"flex", "justifyContent":"center"}}>
-            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"25px"}}  onClick={setCityNameActivity}></img>
+        <div class="search_bar_button" style={{ "display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
+            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"30px"}}  onClick={setCityNameActivity}></img>
         </div>  
-        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
+        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto", "marginRight":"20px"}}>
             <img src={filter} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}}  onClick={()=>setOpen(!open)}></img>
             {/* this conitional toggles dropdown menu */}
             {open && <DropdownActivity checkedActivity={checkedActivity} setCheckedActivity={setCheckedActivity}></DropdownActivity>}
         </div>  
         </Bar>
     ):(props.selectTab==="friends")?(
-        <Bar style={{"display":"grid", "gridTemplateColumns":"18fr 1fr 1fr 1fr", "columnGap":"1rem", "zIndex":"5", "position":"relative"}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}}>
 
         <Input id="searchBarFriend" placeholder="Enter your friend's name" style={{"zIndex":"0"}}/>
 
-        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
+        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
             <img src={searchGlass} alt="search" style={{"margin":"auto", "height":"39px", "width":"42px"}} onClick={getInputValueFriend}></img>
         </div>  
-        <div class="search_bar_button" style={{ "display":"flex", "justifyContent":"center"}}>
-            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"25px"}}></img>
-        </div>  
-        <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center"}}>
-            <img src={plus} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}}  onClick={()=>setOpen(!open)}></img>
-        </div>  
+        <Buttonc newFriendMode={props.newFriendMode} setNewFriendMode={props.setNewFriendMode}/>
         </Bar>
     ):("");
 }
