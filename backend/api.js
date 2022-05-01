@@ -219,7 +219,8 @@ exports.setApp = function ( app, client )
             placeAddress: req.body.placeAddress,
             placePhone: req.body.placePhone, 
             placeRating: req.body.placeRating,
-            placeWebsite: req.body.placeWebsite
+            placeWebsite: req.body.placeWebsite,
+            placeImg: req.body.placeImg
         });
 
         var msg = '';
@@ -258,7 +259,8 @@ exports.setApp = function ( app, client )
                             placeAddress: newPlace.placeAddress,
                             placePhone: newPlace.placePhone, 
                             placeRating: newPlace.placeRating,
-                            placeWebsite: newPlace.placeWebsite
+                            placeWebsite: newPlace.placeWebsite,
+                            placeImg: newPlace.placeImg
                         }
                     }
                 }
@@ -681,7 +683,6 @@ exports.setApp = function ( app, client )
                 await axios.get(placeDetailsUrl)
                 .then(function (placeDetailsRes)
                 {
-                    console.log(ret.results[i])
                     ret.results[i]["opening_hours"] = placeDetailsRes.data.result.opening_hours;
                     ret.results[i]["website"] = placeDetailsRes.data.result.website;
                     ret.results[i]["reviews"] = placeDetailsRes.data.result.reviews;

@@ -5,6 +5,7 @@ import cross from '../images/cross_add.png';
 import {Website} from './Website';
 import { LinkStyled } from './LinkStyled';
 import {Router, Route, Redirect, Switch, Link } from 'react-router-dom';
+import defaultPic from '../images/LG_globe.png'
 
 const Card = styled.div`
 // margin-top: 50px;
@@ -58,11 +59,19 @@ export const Carda = (props) =>{
                             placeAddress: props.Address, 
                             placePhone: props.PhoneNumber, 
                             placeRating: props.Rating,
-                            placeWebsite: props.placeWebsite
+                            placeWebsite: props.placeWebsite,
+                            placeImg: props.src
                         };
         localStorage.setItem('place_data', JSON.stringify(placeToSave));
 
         console.log(placeToSave);
+    }
+
+    function decidePic(){
+        if (props.src === undefined)
+            return defaultPic;
+        else
+            return props.src;
     }
 
 
@@ -70,7 +79,7 @@ export const Carda = (props) =>{
         <Card style={{"display":"flex", "gap": "0vh", "overflow":"hidden"}}>            
         <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>    
         <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
-            <img width={"100rem"} height={"auto"} src={props.src} alt="Event"/><br/><br/>
+            <img width={"150rem"} height={"100rem"} src={decidePic()} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
             <img width={"20rem"} height={"auto"} src={cross} alt="Event" style={{"cursor":"pointer"}} onClick={(e) => SavePlace(e)}/>
         </div> 

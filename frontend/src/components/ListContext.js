@@ -13,7 +13,7 @@ export const useUpdateList = () => {
 
 export const ListProvider = ({ value, children }) => {
   const [List, setList] = useState(value);
-  // console.log(children)
+  console.log(value)
   return (
     <ListContext.Provider value={List}>
       <UpdateListContext.Provider value={setList}>

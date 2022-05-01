@@ -23,6 +23,9 @@ const Place = mongoose.model(
     placeWebsite: {
       type: String,
       required: true
+    },
+    placeImg: {
+      type: String
     }
     // token: {
     //   type: String,
