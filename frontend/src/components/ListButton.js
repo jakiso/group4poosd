@@ -130,6 +130,12 @@ function ListButton(props){
 
         // The place data is stored as text and needs to be turned into an object
         var placeData = JSON.parse(localStorage.place_data);
+        var imgUrl = '';
+
+        if (placeData.placeImg !== undefined)
+        {
+            imgUrl = placeData.placeImg;
+        }
 
         // The object to be sent to the api, must contain folderId, jwToken, and place fields
         var savePlaceReq = {
@@ -138,7 +144,9 @@ function ListButton(props){
                                 placeName: placeData.placeName, 
                                 placeAddress: placeData.placeAddress, 
                                 placePhone: placeData.placePhone, 
-                                placeRating: placeData.placeRating
+                                placeRating: placeData.placeRating,
+                                placeWebsite: placeData.placeWebsite,
+                                placeImg: imgUrl
                             };
         var sendReq = JSON.stringify(savePlaceReq);
 

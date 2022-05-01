@@ -218,7 +218,9 @@ exports.setApp = function ( app, client )
             placeName: req.body.placeName,
             placeAddress: req.body.placeAddress,
             placePhone: req.body.placePhone, 
-            placeRating: req.body.placeRating
+            placeRating: req.body.placeRating,
+            placeWebsite: req.body.placeWebsite,
+            placeImg: req.body.placeImg
         });
 
         var msg = '';
@@ -256,7 +258,9 @@ exports.setApp = function ( app, client )
                             placeName: newPlace.placeName,
                             placeAddress: newPlace.placeAddress,
                             placePhone: newPlace.placePhone, 
-                            placeRating: newPlace.placeRating
+                            placeRating: newPlace.placeRating,
+                            placeWebsite: newPlace.placeWebsite,
+                            placeImg: newPlace.placeImg
                         }
                     }
                 }
@@ -646,6 +650,7 @@ exports.setApp = function ( app, client )
         {
             // Base url of nearby search endpoint.
             var baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+            var photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?';
 
             // If the pageToken is empty, do a normal search based on the input. If pageToken isn't blank, it will attempt to search using said pageToken. 
             if (pageToken == '')
@@ -658,6 +663,7 @@ exports.setApp = function ( app, client )
             .then(function (response)
             {
                 ret = response.data;
+                
                 if(ret.status != "OK")
                 {
                     isError = 1;
@@ -669,6 +675,7 @@ exports.setApp = function ( app, client )
                 errorMsg = {error:"Search Error"};
                 isError = 1;
             });
+            
             
             for (let i = 0; i < ret.results.length; i++)
             {
@@ -1028,7 +1035,7 @@ exports.setApp = function ( app, client )
             userId: req.body.userId,
             folderType: req.body.folderType.toLowerCase(),
             folderName: req.body.folderName,
-            placeList: [{placeName: "Add a place!", placeAddress: ""}]
+            placeList: [new Place]
         });
 
         try
@@ -1579,6 +1586,66 @@ exports.setApp = function ( app, client )
 
     // Sen the user back an error field and their refreshed token
     var ret = { error: error, jwToken: refreshedToken, folders: results };
+    
+    res.status(200).json(ret);
+    });
+
+    app.post('/retrieveFriends', async (req, res, next) =>
+    {
+        console.log("HEREEE")
+
+    // These variables are sent from front-end
+    // folderType needs to be made to lower in order to correctly match the folderType string.
+    const userId = req.body.userId;
+    const jwToken = req.body.jwToken;
+    var error = '';
+    var token = require('./createJWT.js');
+    
+
+    // Checks if the JWT is expired
+    // Sets the error and returns
+    try
+    {
+        if( token.isExpired(jwToken))
+        {
+            var r = {error:'The JWT is no longer valid', jwToken: ''};
+            
+            res.status(200).json(r);
+            return;
+        }
+    }
+    catch(e)
+    {
+        console.log(e.message);
+        return;
+    }
+
+    // JWT is not expired so add the Folder to the database
+    var results;
+    try
+    {
+        const db = await client.db();
+        results = await db.collection('Friends').find({userId:userId}).toArray();
+
+    }
+    catch(e)
+    {
+        error = e.toString();
+    }
+
+    // Now refresh the token to update the amount of time it is active
+    var refreshedToken = null;
+    try
+    {
+        refreshedToken = token.refresh(jwToken);
+    }
+    catch(e)
+    {
+        console.log(e.message);
+    }
+
+    // Sen the user back an error field and their refreshed token
+    var ret = { error: error, jwToken: refreshedToken, friends: results };
     
     res.status(200).json(ret);
     });

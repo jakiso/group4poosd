@@ -127,8 +127,8 @@ function CenterDiv(){
     return(
         <div className="main_pane"> <br/><br/><br/><br/>
             <span id="loginResult" style={{"marginTop": "0px"}}>{message}</span><br/><br/><br/>
-            <span id="userData" >{userData}</span><br/>
-            <span id="tokenData">{tokenData}</span>
+            {/* <span id="userData" >{userData}</span><br/>
+            <span id="tokenData">{tokenData}</span> */}
             <div className="buttons" style={{"marginTop": "100px"}}>
                 <span id="loginResult">{buttonMessage}</span><br/>
                 <input type="submit" id="verifyButton" className="buttons" value = "Verify"

@@ -3,7 +3,8 @@ import '../App.css';
 import { ListsTab } from '../components/ListsTab';
 import TopMarginMain from '../components/TopMarginMain';
 import { Buttonb } from '../components/Button';
-import { CenterDiv } from '../components/CenterDiv';
+import { CenterDivMain } from '../components/CenterDivMain';
+import { CenterDivList } from '../components/CenterDivList';
 import styled from 'styled-components'
 import ListsUI from '../components/ListsUI';
 import CardsUI from '../components/CardsUI';
@@ -18,18 +19,6 @@ import { ListProvider } from '../components/ListContext';
 
 const Buttona = styled(Buttonb)`
     background: #000000;
-`
-
-const CenterDivMain = styled(CenterDiv)`
-    height: 80%;
-    width: 100%;
-    margin-top: 0px;
-`
-
-const CenterDivList = styled(CenterDiv)`
-    height: 80%;
-    width: 100%;
-    margin-top: 0px;
 `
 
 function MainPage() {
@@ -57,34 +46,32 @@ function MainPage() {
         <body className="background">
             <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%", "justifyContent":"center", "width":"150rem", "height":"auto", "marginLeft":"auto", "marginRight":"auto"}}>
                 <ListProvider>
-                    <TopMarginMain loggedInState={loggedInState}/>
-                    {/* <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr 100%", "columnGap":"1rem", "height":"100vh"}}> */}
-                    <div className="wrapper" style={{"display":"flex", "columnGap":"1rem"}}>
-                        <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                            <ListsTab children="Lists"/>
-                            <div>
-                                <CenterDivList className='main_pane'>
-                                    <ListsUI setSaveToListMode={setSaveToListMode} saveToListMode={saveToListMode} selectTab={selectTab} editMode={editMode} setEditMode={setEditMode} />
-                                </CenterDivList>
-                            </div>
-                        </div>
-                        <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                            <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
-                                <GreyOutSearchTabs saveToListMode={saveToListMode} editMode={editMode}/>  {/* only shows when saveToListMode is true */}
-                                <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab} loggedInState={loggedInState}/>
-                            </div>
-                            <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
-                                <div>
-                                <CenterDivMain className='main_pane'>
-                                    <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
-                                    <GreyOutCardUI saveToListMode={saveToListMode} editMode={editMode}> {/* only shows when saveToListMode is true */}
-                                        <AddPlacePopUp setSaveToListMode={setSaveToListMode} editMode={editMode}/>
-                                </GreyOutCardUI>
-                                </CenterDivMain>
-                                </div>
-                            </div>
+                <TopMarginMain loggedInState={loggedInState}/>
+                {/* <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr 100%", "columnGap":"1rem", "height":"100vh"}}> */}
+                <div className="wrapper" style={{"display":"flex", "columnGap":"1rem"}}>
+                    <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
+                        <ListsTab children="Lists"/>
+                        <div>
+                            <CenterDivList className='main_pane'>
+                                <ListsUI setSaveToListMode={setSaveToListMode} saveToListMode={saveToListMode} selectTab={selectTab} editMode={editMode} setEditMode={setEditMode} />
+                            </CenterDivList>
                         </div>
                     </div>
+                    <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
+                        <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
+                            <GreyOutSearchTabs saveToListMode={saveToListMode} editMode={editMode}/>  {/* only shows when saveToListMode is true */}
+                            <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab} loggedInState={loggedInState}/>
+                        </div>
+                        <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%", "zIndex":"0", "position":"sticky"}}>
+                            <CenterDivMain className='main_pane'>
+                                <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
+                            </CenterDivMain>
+                            <GreyOutCardUI saveToListMode={saveToListMode} editMode={editMode}> {/* only shows when saveToListMode is true */}
+                                    <AddPlacePopUp setSaveToListMode={setSaveToListMode} editMode={editMode}/>
+                            </GreyOutCardUI>
+                        </div>
+                    </div>
+                </div>
                 </ListProvider>
             </div>
         </body>
@@ -100,7 +87,7 @@ function MainPage() {
                             <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab} loggedInState={loggedInState}/>
                         </div>
                         <div>
-                        <CenterDivMain className='main_pane'>
+                        <CenterDivMain className='main_pane' height={"100%"} width={"100%"}>
                             <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
                         </CenterDivMain>
                         </div>

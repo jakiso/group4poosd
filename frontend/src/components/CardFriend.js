@@ -39,7 +39,7 @@ padding: 10%;
 overflow:hidden;
 `
 
-export const Carda = (props) =>{
+export const Cardc = (props) =>{
     console.log(props)
 
     // Save the place to be put in a folder
@@ -87,7 +87,7 @@ export const Carda = (props) =>{
             <ListButton button_text={props.Name}/>
             <ListButton button_text={props.Address}/>
             <ListButton button_text={props.PhoneNumber}/>
-            <Website url={props.placeWebsite} button_text='Website'/>
+            <ListButton button_text={props.MoreInfo}/>
             
         </div> 
         <div style={{"width":"40%", "overflow":"hidden", "margin":"auto"}}>
