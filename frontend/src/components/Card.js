@@ -5,6 +5,8 @@ import cross from '../images/cross_add.png';
 import {Website} from './Website';
 import defaultPic from '../images/LG_globe.png';
 import redX from '../images/red_x.png';
+import { useUpdateList } from './ListContext';
+import { useList } from "./ListContext";
 
 const Card = styled.div`
 // margin-top: 50px;
@@ -90,6 +92,12 @@ export const Carda = (props) =>{
         var theSentPlace = {folderId:props.buttonId, placeName:props.Name, placeAddress:props.Address, jwToken:storage.retrieveToken()};
         var theFormatPlace = JSON.stringify(theSentPlace);
 
+        tempList = List;
+        // console.log(tempList);
+        // console.log(props);
+        // console.log(props.Name);
+        // console.log(tempList[1].placeName);
+
         try {
             const response = await fetch(bp.buildPath('deletePlace'), {method:'POST', body:theFormatPlace, headers:{'Content-Type':'application/json'}});
             ret = JSON.parse(await response.text());
@@ -100,7 +108,16 @@ export const Carda = (props) =>{
         }
         
         // need to update the list context around here after deleting the place.
+        List = tempList.filter(tempList => tempList.placeName !== props.Name);
+        
+        // console.log(List);
+        updateList(List);
+
     }
+
+    let List = useList();
+    let updateList = useUpdateList();
+    let tempList = useList();
 
     function showX() {
         if (props.buttonId === undefined || props.buttonId === 0)
