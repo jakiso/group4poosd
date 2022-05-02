@@ -240,7 +240,7 @@ function SearchBar (props) {
         <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}} onClick={()=>{var children = document.getElementById("listUI").children;
         for (var i = 0; i < children.length; i++) {
         children[i].style.backgroundColor="#001A5E";
-        }}}>
+        }} }>
 
         <Input id="searchBarActivity" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
