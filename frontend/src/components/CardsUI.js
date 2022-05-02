@@ -62,7 +62,7 @@ function CardsUI(props)
             let data = {}
             let url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=80&photoreference="
             let photoRef = photos[0].photo_reference
-            let imageUrl = url + photoRef + '&key=' + 'AIzaSyB1yyBh87O0jJdpFOvYqrBxXjIpFoJnLas';
+            let imageUrl = url + photoRef + '&key=' + 'AIzaSyCrrdE-dys1s1dgqJYWvCuLfbQEHN3sYag';
 
             return imageUrl;
 
