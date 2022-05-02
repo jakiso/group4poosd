@@ -87,7 +87,10 @@ function MainPage() {
                             <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab} loggedInState={loggedInState}/>
                         </div>
                         <div>
+<<<<<<< HEAD
                         {/* Using CenterDivList here for the Size measurements are not the same when logged in */}
+=======
+>>>>>>> 3ba5f5b2 (Guest Page Centering center div)
                         <CenterDivList className='main_pane' height={"100%"} width={"100%"}>
                             <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
                         </CenterDivList>
