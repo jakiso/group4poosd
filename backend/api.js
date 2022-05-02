@@ -471,6 +471,133 @@ exports.setApp = function ( app, client )
         res.status(200).json(ret);
     });
 
+    app.post('/deleteFriend', async (req, res, next) =>
+    {
+        const thisFriend = req.body.friendId;
+
+        // Used to create a token later
+        var token = require('./createJWT.js');
+        // Store JWT
+        const jwToken = req.body.jwToken;
+        // Error field
+        var error = '';
+
+        // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
+        var msg = '';
+
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(500).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+        const db = await client.db();
+        const friendExist = await db.collection('Friends').find({friendId:thisFriend}).toArray();
+      
+
+        if (friendExist.length === 0)
+        {
+            // Send an error that the friend doesn't exist
+            error = "friend doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
+        // Actual friend deletion
+        try
+        {
+           
+            const result = await db.collection('Friends').deleteOne({friendId: thisFriend});
+            msg = result;
+        }
+        catch(e)
+        {
+            msg = e;
+        }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
+    });
+
+    app.post('/searchFriends', async (req, res, next) =>
+    {
+        const search = req.body.search;
+        const userId = req.body.userId;
+
+        // Used to create a token later
+        var token = require('./createJWT.js');
+        // Store JWT
+        const jwToken = req.body.jwToken;
+        // Error field
+        var error = '';
+
+        var msg = '';
+
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(500).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+        const db = await client.db();
+    
+        try
+        {
+           
+            const result = await db.collection('Friends').find({$and: [{userId:userId},{$text : {$search : search}}]}).toArray();
+            msg = result;
+        }
+        catch(e)
+        {
+            msg = e;
+        }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
+    });
+
     // deletes user based on their userId and confirmation of password.
     app.post('/deleteUser', async (req, res, next) =>
     {
