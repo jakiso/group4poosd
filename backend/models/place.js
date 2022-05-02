@@ -26,6 +26,12 @@ const Place = mongoose.model(
     },
     placeImg: {
       type: String
+    },
+    placeDescription: {
+      type: String
+    },
+    folderId: {
+      type: Number
     }
     // token: {
     //   type: String,

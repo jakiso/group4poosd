@@ -11,7 +11,12 @@ const Folder = mongoose.model(
         {placeName: String,
         placeAddress: String,
         placeRating: String,
-        placeWebsite: String}
+        placeWebsite: String,
+        placeImg: String,
+        folderId: Number,
+        placeDescription: String,
+        placePhone: String
+      }
     ]
   }) 
 );

@@ -86,15 +86,15 @@ async function SaveFriend() {
 export const Buttonc = (props) =>{
     return(!props.newFriendMode)?(
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "marginRight":"20px", "width":"80px", "height":"auto"}}>
-            <img src={plus} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}}  onClick={()=>{props.setNewFriendMode(!props.newFriendMode)}}></img>
+            <img src={plus} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px", "cursor":"pointer"}}  onClick={()=>{props.setNewFriendMode(!props.newFriendMode)}}></img>
         </div>  
     ):(
         <div style={{"display":"flex", "justifyContent":"center", "columnGap":"10px","text-align": "center", "marginRight":"20px"}}>
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"80px", "height":"auto"}}>
-            <img src={save} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}} onClick={()=>{ SaveFriend();props.setNewFriendMode(!props.newFriendMode);}}></img> {/* (e) => SaveFriend(e) */}
+            <img src={save} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px", "cursor":"pointer"}} onClick={()=>{ SaveFriend();props.setNewFriendMode(!props.newFriendMode);}}></img> {/* (e) => SaveFriend(e) */}
         </div>  
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"80px", "height":"auto"}}>
-            <img src={cross} alt="search" style={{"margin":"auto", "height":"50px", "width":"50px"}} onClick={()=>{props.setNewFriendMode(!props.newFriendMode)}}></img> {/* (e) => SaveFriend(e) */}
+            <img src={cross} alt="search" style={{"margin":"auto", "height":"50px", "width":"50px", "cursor":"pointer"}} onClick={()=>{props.setNewFriendMode(!props.newFriendMode)}}></img> {/* (e) => SaveFriend(e) */}
         </div>  
         </div>
     );

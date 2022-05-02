@@ -6,6 +6,7 @@ function EditIconsDiv(props){
     var res;
 
     const DeleteFolder = async event => {
+        
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
 
@@ -15,6 +16,20 @@ function EditIconsDiv(props){
 
         // Path to send the api call
         var bp = require('./Path.js');
+
+        // grabbing folder name to display in window prompt.
+        try {
+            
+            const folder = await fetch(bp.buildPath('retrieveFolder'), {method:'POST', body:js, headers:{'Content-Type':'application/json'}});
+            res = JSON.parse(await folder.text());
+
+            // if cancel button is clicked on deleting a folder, return out of function and dont delete.
+            if (!window.confirm('Confirm deletion of ' + '\'' + res.message.folderName + '\'' + ' list.'))
+                return;
+        } 
+        catch(e) {
+            console.log(e.toString());
+        }
 
         try
         {
@@ -27,8 +42,6 @@ function EditIconsDiv(props){
             // Check the error field. empty error is good
             if( res.error && res.error.length > 0 )
             {
-                //setMessage( "API Error:" + res.error );
-                console.log('Line 37 FolderEditMode');
                 console.log(res.error);
             }
             else
@@ -49,7 +62,7 @@ function EditIconsDiv(props){
 
     //return div with cross and pen inside folder button (only if edit_icons==true)
     return (props.edit_icons) ? (
-    <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto", "marginLeft": "6vh"}}>
+    <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto", "marginLeft": "0vh"}}>
         <div style={{"height":"40px", "width":"40px", "overflow":"hidden"}}>
             <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={() => {
                 DeleteFolder()
@@ -66,7 +79,7 @@ function EditIconsDiv(props){
     </div>
     ) :(props.newListMode) ? (
         // this is the behavior of the edit icons in the case that we are adding a temporary listButton
-        <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto", "marginLeft": "6vh"}}>
+        <div style={{"display":"flex", "justifyContent":"center", "columnGap":"4vh", "marginTop":"1vh", "overflow":"auto", "marginLeft": "0.5vh"}}>
         <div style={{"height":"40px", "width":"40px", "overflow":"hidden"}}>
             <input type="image" src={del} alt="delete" id="delete" style={{"width":"100%", "height":"100%"}} onClick={()=>{props.setNewListMode(false)}}/>
         </div>  
