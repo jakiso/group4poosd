@@ -1034,7 +1034,7 @@ exports.setApp = function ( app, client )
             placeList: [{
                 placeName: 'Sample Place',
                 placeAddress: '123 Real Address',
-                placeRating: 5.0,
+                placeRating: '5.0',
                 placePhone: '(999) 999-9999',
                 placeWebsite: '',
                 placeDescription: 'Keywords',
