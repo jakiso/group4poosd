@@ -204,6 +204,8 @@ function ListButton(props){
             // setMessage(e.toString());
             console.log(e.toString());
         }
+
+        props.setSaveToListMode(false);
     }
 
     // in the case that this is a new list 

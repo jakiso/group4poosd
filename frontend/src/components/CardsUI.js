@@ -233,8 +233,6 @@ function CardsUI(props)
                     />
                 ))
             );
-        } else if ((List == undefined ||List.length == 1) && (placeListFood!=[])){
-            setPlaceListFood(<p>LIST IS EMPTY!</p>);
         }
 
         if (props.selectTab === "activity" && List !== undefined && List.length !== 0)
@@ -245,8 +243,6 @@ function CardsUI(props)
                     />
                 ))
             );
-        } else if ((List == undefined ||List.length == 1) && (placeListFood!=[])){
-            setPlaceListActivity(<p>LIST IS EMPTY!</p>);
         }
         console.log("end");
 
