@@ -139,6 +139,11 @@ function CardsUI(props)
                         ))
                 );
 
+                // updateList(placeListFood);
+                updateList(placeListFood);
+                console.log(List);
+
+
             }
 
             setLatitude("");
@@ -162,13 +167,17 @@ function CardsUI(props)
             }
             else
             {
-
                 // uses the useState to change the value of storedFolders
                 setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}) => (
                             <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} 
                                 src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
+
+                updateList(placeListActivity);
+                console.log(List);
+
+
             }
 
             setLatitude("");
@@ -215,6 +224,7 @@ function CardsUI(props)
     }, [searchFood, searchActivity, searchFriend, keywordsFood, keywordsActivity, props.selectTab, newFriendMode]);
 
     const List = useList();
+    const updateList = useUpdateList();
 
     useEffect(() => {
         console.log("The list has changed");
