@@ -102,21 +102,11 @@ exports.setApp = function ( app, client )
         {
             const db = await client.db();
             // array of folders matching the userId.
-            const result = await db.collection('Folders').aggregate([
-                {
-                  $match: {
-                    "userId": uid,
-                    "folderId": fid
-                  }
-                },
-                {
-                  $project: {
-                    placeList: 1
-                  }
-                }
-              ]).toArray();
-            console.log(result[0].placeList)
-            msg = result[0].placeList;
+            const result = await db.collection('Folders').findOne(
+                {userId: uid, folderId: fid}, {placeList: 1}
+              );
+            console.log(result)
+            msg = result.placeList;
         }
         catch(e)
         {
@@ -209,8 +199,10 @@ exports.setApp = function ( app, client )
         // in the future we could have an array of users stored for each place in the places collection. 
         // basically an array of userId's associated with each place.
 
-        // no need for folder schema since we are just inserting into an existing folder. 
+        // to grab first keyword given by google and replacing the underscore.
         const fid = req.body.folderId;
+        let firstKeyword = req.body.placeDescription[0].replace('_', ' ');
+        let secondKeyword = req.body.placeDescription[1].replace('_', ' ');
 
         // using place schema.
         const newPlace = new Place
@@ -220,7 +212,9 @@ exports.setApp = function ( app, client )
             placePhone: req.body.placePhone, 
             placeRating: req.body.placeRating,
             placeWebsite: req.body.placeWebsite,
-            placeImg: req.body.placeImg
+            placeImg: req.body.placeImg,
+            placeDescription: '• ' + firstKeyword + '\n' + '• ' + secondKeyword,
+            folderId: fid
         });
 
         var msg = '';
@@ -260,7 +254,9 @@ exports.setApp = function ( app, client )
                             placePhone: newPlace.placePhone, 
                             placeRating: newPlace.placeRating,
                             placeWebsite: newPlace.placeWebsite,
-                            placeImg: newPlace.placeImg
+                            placeImg: newPlace.placeImg,
+                            folderId: newPlace.folderId,
+                            placeDescription: newPlace.placeDescription
                         }
                     }
                 }
@@ -379,9 +375,16 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        const db = client.db();
+        try {
+            const db = await client.db();
 
-        const results = await db.collection('Friends').insertOne({userId:userId, name:name, phone:phone, address:address, email:email, notes:notes});
+            const insertFriend = await db.collection('Friends').insertOne({userId:userId, name:name, phone:phone, address:address, email:email, notes:notes});
+            var newFriend = await db.collection('Friends').findOne({userId: userId, name: name, email:email}, {friendId: 1})
+            
+        } catch(e)
+        {
+            console.log(e)
+        }
 
         var refreshedToken = null;
         try
@@ -392,8 +395,10 @@ exports.setApp = function ( app, client )
         {
             console.log(e.message);
         }
-
-        var ret = Object.assign({}, refreshedToken);
+        var friendId = newFriend.friendId;
+        var accessToken = refreshedToken.accessToken;
+        
+        var ret = Object.assign({}, {friendId, accessToken});
         
         res.status(200).json(ret);
 
@@ -454,6 +459,142 @@ exports.setApp = function ( app, client )
         {
             msg = e;
         }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
+    });
+
+    app.post('/deleteFriend', async (req, res, next) =>
+    {
+        const thisFriend = req.body.friendId;
+
+        // Used to create a token later
+        var token = require('./createJWT.js');
+        // Store JWT
+        const jwToken = req.body.jwToken;
+        // Error field
+        var error = '';
+
+        // even if nothing is deleted, the result in the try block will have a deletedCount of 0.
+        var msg = '';
+
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(500).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+        const db = await client.db();
+        const friendExist = await db.collection('Friends').find({friendId:thisFriend}).toArray();
+      
+
+        if (friendExist.length === 0)
+        {
+            // Send an error that the friend doesn't exist
+            error = "friend doesn't exist";
+            ret = { error: error };
+            res.status(500).json(ret);
+
+            // Exit the api call
+            return;
+        }
+        // Actual friend deletion
+        try
+        {
+           
+            const result = await db.collection('Friends').deleteOne({friendId: thisFriend});
+            msg = result;
+        }
+        catch(e)
+        {
+            msg = e;
+        }
+
+        // Now refresh the token to update the amount of time it is active
+        var refreshedToken = null;
+        try
+        {
+            refreshedToken = token.refresh(jwToken);
+        }
+        catch(e)
+        {
+            console.log(e.message);
+        }
+
+        var ret = {error: error, jwToken: refreshedToken, message: msg};
+
+        res.status(200).json(ret);
+    });
+
+    app.post('/searchFriends', async (req, res, next) =>
+    {
+        const search = req.body.search;
+        const userId = req.body.userId;
+
+        // Used to create a token later
+        var token = require('./createJWT.js');
+        // Store JWT
+        const jwToken = req.body.jwToken;
+        // Error field
+        var error = '';
+
+        var msg = '';
+
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(500).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+        const db = await client.db();
+    
+        if (search === '')
+        {
+            const result = await db.collection('Friends').find({}).toArray();
+            msg = result;
+        }
+        else
+        {
+            try
+            {
+               
+                const result = await db.collection('Friends').find({$and: [{userId:userId},{$text : {$search : search}}]}).toArray();
+                msg = result;
+            }
+            catch(e)
+            {
+                msg = e;
+            }
+        }
+
 
         // Now refresh the token to update the amount of time it is active
         var refreshedToken = null;
@@ -1062,7 +1203,15 @@ exports.setApp = function ( app, client )
             userId: req.body.userId,
             folderType: req.body.folderType.toLowerCase(),
             folderName: req.body.folderName,
-            placeList: [new Place]
+            placeList: [{
+                placeName: 'Sample Place',
+                placeAddress: '123 Real Address',
+                placeRating: '5.0',
+                placePhone: '(999) 999-9999',
+                placeWebsite: '',
+                placeDescription: 'Keywords',
+                folderId: 0
+            }]
         });
 
         try
