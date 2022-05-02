@@ -104,8 +104,10 @@ function SearchBar (props) {
 
     const [responseData, setResponseData] = useState("");
 
-    // uses weather API to get geographic coordinates and city name
-    useEffect(()=>{
+
+    
+    function setCityNameFood(){
+        // uses weather API to get geographic coordinates and city name
         navigator.geolocation.getCurrentPosition((position)=>{
             console.log(position.coords);
             props.setLatitude(position.coords.latitude);
@@ -122,13 +124,27 @@ function SearchBar (props) {
             setResponseData(response.data.name);
         }).catch((e) => {console.log(e)})
 
-    }, [props.latitude, props.longitude])
-    
-    function setCityNameFood(){
         document.getElementById("searchBarFood").value=responseData;
     }
 
     function setCityNameActivity(){
+        // uses weather API to get geographic coordinates and city name
+        navigator.geolocation.getCurrentPosition((position)=>{
+            console.log(position.coords);
+            props.setLatitude(position.coords.latitude);
+            props.setLongitude(position.coords.longitude);
+        })
+
+        let formattedEndpoint = `${geolocation_API}lat=${props.latitude}&lon=${props.longitude}&exclude=hourly,daily&appid=${geolocation_API_key}`;
+
+        console.log(formattedEndpoint);
+
+        axios.get(formattedEndpoint)
+        .then((response) => {
+            console.log(response.data);
+            setResponseData(response.data.name);
+        }).catch((e) => {console.log(e)})
+
         document.getElementById("searchBarActivity").value=responseData;
     }
 
@@ -199,7 +215,10 @@ function SearchBar (props) {
     };
 
     return(props.selectTab==="food")?(
-        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative", "marginRight":"20px"}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative", "marginRight":"20px"}} onClick={()=>{var children = document.getElementById("listUI").children;
+        for (var i = 0; i < children.length; i++) {
+        children[i].style.backgroundColor="#001A5E";
+        }}}>
 
         <Input id="searchBarFood" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
@@ -216,7 +235,10 @@ function SearchBar (props) {
         </div>  
         </Bar>
     ):(props.selectTab==="activity")?(
-        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}} onClick={()=>{var children = document.getElementById("listUI").children;
+        for (var i = 0; i < children.length; i++) {
+        children[i].style.backgroundColor="#001A5E";
+        }}}>
 
         <Input id="searchBarActivity" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
@@ -233,7 +255,10 @@ function SearchBar (props) {
         </div>  
         </Bar>
     ):(props.selectTab==="friends")?(
-        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}} onClick={()=>{var children = document.getElementById("listUI").children;
+            for (var i = 0; i < children.length; i++) {
+            children[i].style.backgroundColor="#001A5E";
+            }}}>
 
         <Input id="searchBarFriend" placeholder="Enter your friend's name" style={{"zIndex":"0"}}/>
 

@@ -85,6 +85,17 @@ function ListButton(props){
         // Path to send the api call
         var bp = require('./Path.js');
 
+        // document.getElementById(e.target.id).parentElement.children.backgroundColor="black";
+
+        var children = document.getElementById(e.target.id).parentElement.children;
+        for (var i = 0; i < children.length; i++) {
+        children[i].style.backgroundColor="#001A5E";
+        // Do stuff
+        }
+
+        document.getElementById(e.target.id).style.backgroundColor='#20CEF2';
+
+
         try
         {
             const responseList = await fetch(bp.buildPath('placesFromFolder'), {method:'POST',body:sendReq,headers:{'Content-Type':'application/json'}});
@@ -106,9 +117,10 @@ function ListButton(props){
                 storage.storeToken( folderList.jwToken );
 
                 // Now we have the list of places from each individual folder
-                setTempList(folderList.message);
                 // console.log(folderList.message);
                 // console.log(List);
+
+                    setTempList(folderList.message);
             }
         }
         catch(e)
@@ -194,7 +206,7 @@ function ListButton(props){
 
     // in the case that this is a new list 
     return (props.newListMode===true) ? (
-        <div onClick={props.onClick}>
+
         <List key={props.button_id} type="button" id={props.button_id} className={props.className} onClick={(props.saveToListMode) ? (e) => insertList(e) : (e) => RetrieveList(e)} >
             <br/>
             <RenameInput id="new_list" placeholder="new list" maxLength="10" disabled={props.isDisabled} 
@@ -202,21 +214,21 @@ function ListButton(props){
             <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} newListMode={props.newListMode} setIsDisabled={props.setIsDisabled}
              setNewListMode={props.setNewListMode} setEditMode={props.setEditMode} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icon==true */}
         </List>
-        </div>
+
     ) : (props.newListMode===false) ? (
         ""
     ) 
 
     
     : (
-        <div onClick={props.onClick}>
+
         <List key={props.button_id} type="button" id={props.button_id} className={props.className} onClick={(props.saveToListMode) ? (e) => insertList(e) : (e) => RetrieveList(e)}>
             <br/>
             <RenameInput placeholder={props.button_text} maxLength="10" disabled={props.isDisabled} onChange={e => props.setNewName(e.target.value)}/>
             <EditIconsDiv edit_icons={props.edit_icons} folderId={props.button_id} isDisabled={props.isDisabled} setThisFolderId={props.setThisFolderId}
              setIsDisabled={props.setIsDisabled} newFolderName={props.newFolderName} update={props.update} setUpdate={props.setUpdate}/> {/* only returns this div within button if props.edit_icons==true */}
         </List>
-        </div>
+
     );
 
 }
