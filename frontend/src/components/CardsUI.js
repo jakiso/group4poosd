@@ -139,6 +139,9 @@ function CardsUI(props)
 
             }
 
+            setLatitude("");
+            setLongitude("");
+
         }
         else if (props.selectTab==="activity") {
 
@@ -164,6 +167,9 @@ function CardsUI(props)
                             ))
                 );
             }
+
+            setLatitude("");
+            setLongitude("");
 
         } 
         else if (props.selectTab==="friends") {
@@ -213,19 +219,25 @@ function CardsUI(props)
 
         console.log(props.selectTab);
         console.log(List);
-        if (props.selectTab === "food" && List != undefined && List.length !== 0)
+        if (props.selectTab === "food" && List != undefined && List.length !== 0 && List.length !== 1)
         {
-            setPlaceListFood(List.map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite, placeImg }) => (
+            // slices to skip first place holder Place
+            setPlaceListFood(List.slice(1, Object.keys(List).length).map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite, placeImg }) => (
                 <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} DescriptionText={types} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
                 ))
             );
+        } else if ((List == undefined ||List.length == 1) && (placeListFood!=[])){
+            setPlaceListFood(<p>LIST IS EMPTY!</p>);
         }
-        if (props.selectTab === "activity" && List != undefined && List.length !== 0)
+        if (props.selectTab === "activity" && List != undefined && List.length !== 0 && List.length !== 1)
         {
-            setPlaceListActivity(List.map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite, placeImg }) => (
+            // slices to skip first place holder Place
+            setPlaceListActivity(List.slice(1, Object.keys(List).length).map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite, placeImg }) => (
                 <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} DescriptionText={types} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
-                ))
+                ))  
             );
+        } else if ((List == undefined ||List.length == 1) && (placeListFood!=[])){
+            setPlaceListActivity(<p>LIST IS EMPTY!</p>);
         }
         console.log("end");
 
