@@ -21,7 +21,7 @@ function TopMarginMain(props) {
   const navigate = useHistory();
   const AccountSettings = useCallback(() => navigate.push('/AccountSettings'), [navigate]);
 
-  const List = useList();
+  let List = useList();
 
     // Save the place to be put in a folder
     const Surprise = async (e) => {

@@ -139,8 +139,9 @@ function CardsUI(props)
                         ))
                 );
 
+                console.log(await placeListFood);
                 // updateList(placeListFood);
-                updateList(placeListFood);
+                List = placeListFood;
                 console.log(List);
 
 
@@ -223,7 +224,7 @@ function CardsUI(props)
         RetrievePlaces();
     }, [searchFood, searchActivity, searchFriend, keywordsFood, keywordsActivity, props.selectTab, newFriendMode]);
 
-    const List = useList();
+    let List = useList();
     const updateList = useUpdateList();
 
     useEffect(() => {
