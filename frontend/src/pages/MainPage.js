@@ -40,7 +40,7 @@ function MainPage() {
       
       useEffect(() => {
         checkLoggedIn();
-      });    
+      },[]);    
 
     return ( loggedInState ) ?( // This is the logged in version of main page
         <body className="background">
@@ -87,14 +87,49 @@ function MainPage() {
                             <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab} loggedInState={loggedInState}/>
                         </div>
                         <div>
-                        <CenterDivMain className='main_pane' height={"100%"} width={"100%"}>
+                        {/* Using CenterDivList here for the Size measurements are not the same when logged in */}
+                        <CenterDivList className='main_pane' height={"100%"} width={"100%"}>
                             <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
-                        </CenterDivMain>
+                        </CenterDivList>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>    );
+        </div>    
+        // <body className="background">
+        //     {console.log("Logged IN??? "+ loggedInState)}
+        //     <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%", "justifyContent":"center", "width":"150rem", "height":"auto", "marginLeft":"auto", "marginRight":"auto"}}>
+        //     <TopMarginMain loggedInState={loggedInState}/>
+        //         <ListProvider>
+        //         {/* <div className="wrapper" style={{"display":"grid", "gridTemplateColumns":"1fr 4fr 100%", "columnGap":"1rem", "height":"100vh"}}> */}
+        //         <div className="wrapper" style={{"display":"flex", "columnGap":"1rem"}}>
+        //             <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
+        //                 <ListsTab children="Lists"/>
+        //                 <div>
+        //                     <CenterDivList className='main_pane'>
+        //                         <ListsUI setSaveToListMode={setSaveToListMode} saveToListMode={saveToListMode} selectTab={selectTab} editMode={editMode} setEditMode={setEditMode} />
+        //                     </CenterDivList>
+        //                 </div>
+        //             </div>
+        //             <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%"}}>
+        //                 <div style={{"position":"relative", "marginLeft":"auto", "marginRight":"auto"}}>
+        //                     <GreyOutSearchTabs saveToListMode={saveToListMode} editMode={editMode}/>  {/* only shows when saveToListMode is true */}
+        //                     <SelectSearchTab selectTab={selectTab} setSelectTab={setSelectTab} loggedInState={loggedInState}/>
+        //                 </div>
+        //                 <div className="wrapper" style={{"display":"grid", "gridTemplateRows":"1fr 100%", "zIndex":"0", "position":"sticky"}}>
+        //                     <CenterDivMain className='main_pane'>
+        //                         <CardsUI setSaveToListMode={setSaveToListMode} selectTab={selectTab}/>
+        //                     </CenterDivMain>
+        //                     <GreyOutCardUI saveToListMode={saveToListMode} editMode={editMode}> {/* only shows when saveToListMode is true */}
+        //                             <AddPlacePopUp setSaveToListMode={setSaveToListMode} editMode={editMode}/>
+        //                     </GreyOutCardUI>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //         </ListProvider>
+        //     </div>
+        // </body>
+        );
 }
 
 export default MainPage;

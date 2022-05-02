@@ -114,8 +114,6 @@ function CardsUI(props)
 
         // Storage to access the locally stored JWT
         var storage = require('../tokenStorage.js');
-        // The user data is stored as text and needs to be turned into an object
-        var data = JSON.parse(localStorage.user_data);
 
         if(props.selectTab==="food") {
 
@@ -179,9 +177,8 @@ function CardsUI(props)
         } 
         else if (props.selectTab==="friends") {
 
-            body = "{"+"\"userId\""+":"+"\""+searchActivity+"\""+","+"\"name\""+":"+"\""+latitude+"\","+"\"phone\""+":"+"\""+longitude+"\","+"\"address\""+":"+"10000"+","
-            +"\"email\""+":"+"\"\","+"\"notes\""+":"+"\"\","+"\"jwToken\""+":"+ "\""+keywordsActivity+"\"}";
-            // const {userId, name, phone, address, email, notes, jwToken} = req.body;
+            // The user data is stored as text and needs to be turned into an object
+            var data = JSON.parse(localStorage.user_data);
 
 
             body = "{"+"\"userId\""+":"+data.id+","+"\"jwToken\""+":"+ "\""+storage.retrieveToken()+"\"}";

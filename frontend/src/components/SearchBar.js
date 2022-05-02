@@ -143,9 +143,8 @@ function SearchBar (props) {
         .then((response) => {
             console.log(response.data);
             setResponseData(response.data.name);
+            document.getElementById("searchBarActivity").value=responseData;
         }).catch((e) => {console.log(e)})
-
-        document.getElementById("searchBarActivity").value=responseData;
     }
 
     const [open, setOpen] = useState(false);
@@ -215,10 +214,15 @@ function SearchBar (props) {
     };
 
     return(props.selectTab==="food")?(
-        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative", "marginRight":"20px"}} onClick={()=>{var children = document.getElementById("listUI").children;
-        for (var i = 0; i < children.length; i++) {
-        children[i].style.backgroundColor="#001A5E";
-        }   props.setPlaceListFood("");}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative", "marginRight":"20px"}} onClick={()=>{
+            if(document.getElementById("listUI")){
+                var children = document.getElementById("listUI").children;
+                for (var i = 0; i < children.length; i++) {
+                children[i].style.backgroundColor="#001A5E";
+                }
+            }
+            props.setPlaceListFood("");
+        }}>
 
         <Input id="searchBarFood" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
@@ -237,10 +241,15 @@ function SearchBar (props) {
         </div>  
         </Bar>
     ):(props.selectTab==="activity")?(
-        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}} onClick={()=>{var children = document.getElementById("listUI").children;
-        for (var i = 0; i < children.length; i++) {
-        children[i].style.backgroundColor="#001A5E";
-        }   props.setPlaceListActivity("");}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}} onClick={()=>{
+            if(document.getElementById("listUI")){
+                var children = document.getElementById("listUI").children;
+                for (var i = 0; i < children.length; i++) {
+                children[i].style.backgroundColor="#001A5E";
+                }   
+            }
+            props.setPlaceListActivity("");
+        }}>
 
         <Input id="searchBarActivity" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
@@ -257,10 +266,7 @@ function SearchBar (props) {
         </div>  
         </Bar>
     ):(props.selectTab==="friends")?(
-        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}} onClick={()=>{var children = document.getElementById("listUI").children;
-            for (var i = 0; i < children.length; i++) {
-            children[i].style.backgroundColor="#001A5E";
-            }}}>
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}}>
 
         <Input id="searchBarFriend" placeholder="Enter your friend's name" style={{"zIndex":"0"}}/>
 
