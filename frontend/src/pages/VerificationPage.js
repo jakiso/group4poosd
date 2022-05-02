@@ -5,13 +5,21 @@ import {LongTab} from '../components/LongTab'
 import styled from 'styled-components'
 import { Title } from '../components/Title';
 
+const TitleHeader = styled(Title)`
+    margin-bottom:40px;
+`
+
+const TabTitle = styled(LongTab)`
+    line-height:40px;
+`
+
 function VerificationPage() {
     return (
         <body className="background">
 
-            <Title className="title"/>
+            <TitleHeader className="title"/>
 
-            <LongTab>Verification</LongTab>
+            <TabTitle>Verification</TabTitle>
             
             <VerifyCenterDiv/>
 

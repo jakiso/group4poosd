@@ -1798,4 +1798,33 @@ exports.setApp = function ( app, client )
     
     res.status(200).json(ret);
     });
+
+    // retrieves single folder with folderId.
+    app.post('/checkIfLoggedIn', async (req, res, next) =>
+    {
+        var token = require('./createJWT.js'); var msg = ''; var error = '';
+
+        const jwToken = req.body.jwToken;
+
+        // Checks if the JWT is expired
+        // Sets the error and returns
+        try
+        {
+            if( token.isExpired(jwToken))
+            {
+                var r = {error:'The JWT is no longer valid', jwToken:''};
+                res.status(200).json(r);
+                return;
+            }
+        }
+        catch(e)
+        {
+            console.log(e.message);
+            return;
+        }
+        
+        var ret = {error: error};
+        console.log(ret);
+        res.status(200).json(ret);
+    });
 }

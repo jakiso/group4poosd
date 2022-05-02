@@ -30,17 +30,56 @@ function MainPage() {
     var [editMode, setEditMode] = useState(false);
     var [loggedInState, setLoggedInState] = useState(false);
 
-    function checkLoggedIn(){
-        if(localStorage.getItem('user_data') !== null){
-            setLoggedInState(true);
-        } else {
-            setLoggedInState(false);
-        };
-      }
-      
-      useEffect(() => {
-        checkLoggedIn();
-      },[]);    
+    const [seconds, setSeconds] = useState(0);
+
+    // Function to retrieve the folders, gets run with useState after page loads
+    const CheckIfLoggedIn = async () => {
+
+        // Storage to access the locally stored JWT
+        var storage = require('../tokenStorage.js');
+                
+        // The user data is stored as text and needs to be turned into an object
+        var data = JSON.parse(localStorage.user_data);
+
+        // The object to be sent to the api, must contain userId and jwToken field
+        var obj = {jwToken:storage.retrieveToken()};
+        var js = JSON.stringify(obj);
+
+        // Path to send the api call
+        var bp = require('../components/Path.js');
+
+        try
+        {    
+                const response = await fetch(bp.buildPath('checkIfLoggedIn'), {method:'POST',body:js,headers:{'Content-Type':'application/json'}});
+
+                // Wait for response and parse json
+                var res = JSON.parse(await response.text());
+                
+                // Check the error field. empty error is good
+                if( res.error && res.error.length > 0 )
+                {
+                    setLoggedInState(false);
+                    setSelectTab("");
+                }
+                else
+                {
+                    setLoggedInState(true);
+                }
+        }
+        catch(e)
+        {
+        }
+    }
+
+
+    useEffect(() => {
+        CheckIfLoggedIn();
+        window.setInterval(()=>{
+            CheckIfLoggedIn();
+            console.log("seconds"+seconds);
+            setSeconds(seconds=>seconds+1);
+        }, 600000); //checks if your logged in every 10 minutes 60000 ms * 10
+    }, []);    
 
     return ( loggedInState ) ?( // This is the logged in version of main page
         <body className="background">
