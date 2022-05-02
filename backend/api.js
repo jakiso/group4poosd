@@ -375,9 +375,16 @@ exports.setApp = function ( app, client )
             console.log(e.message);
             return;
         }
-        const db = client.db();
+        try {
+            const db = await client.db();
 
-        const results = await db.collection('Friends').insertOne({userId:userId, name:name, phone:phone, address:address, email:email, notes:notes});
+            const insertFriend = await db.collection('Friends').insertOne({userId:userId, name:name, phone:phone, address:address, email:email, notes:notes});
+            var newFriend = await db.collection('Friends').findOne({userId: userId, name: name, email:email}, {friendId: 1})
+            
+        } catch(e)
+        {
+            console.log(e)
+        }
 
         var refreshedToken = null;
         try
@@ -388,8 +395,10 @@ exports.setApp = function ( app, client )
         {
             console.log(e.message);
         }
-
-        var ret = Object.assign({}, refreshedToken);
+        var friendId = newFriend.friendId;
+        var accessToken = refreshedToken.accessToken;
+        
+        var ret = Object.assign({}, {friendId, accessToken});
         
         res.status(200).json(ret);
 
