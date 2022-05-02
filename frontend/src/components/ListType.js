@@ -30,7 +30,13 @@ function ListType(props){
             ))
             }
         </div>
-    ):("");
+    ):(
+        <div>
+            <br></br><br></br>
+            THIS FEATURE IS<br></br><br></br>
+            NOT AVAILABLE <br></br><br></br>
+            FOR FRIENDS
+        </div>);
     } catch(e){return null;}
 }
 
