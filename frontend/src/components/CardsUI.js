@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { Buttonc } from './CardButton';
 import styled from 'styled-components';
 import '../App.css';
-import {Carda}  from './Card';
+import { Carda }  from './Card';
+import { Cardb } from './NewFriendCard';
 import SearchBar from './SearchBar';
 import food_pic from '../images/LG_food.png';
 import event_pic from '../images/LG_event.png';
@@ -11,8 +12,13 @@ import globe from '../images/LG_globe.png';
 
 import { useUpdateList } from './ListContext';
 import { useList } from "./ListContext";
+import { Cardc } from './CardFriend';
 
 const InfoCard = styled(Carda)`
+
+`
+
+const FriendCard = styled(Cardc)`
 
 `
 
@@ -25,7 +31,7 @@ width: 100%;
 height: 100%;
 `
 
-var res_food, res_activity;
+var res_food, res_activity, res_friends;
 
 function CardsUI(props)
 {
@@ -38,6 +44,7 @@ function CardsUI(props)
     // useState for setting the list of folders after its been loaded
     var [placeListFood, setPlaceListFood] = useState([]);
     var [placeListActivity, setPlaceListActivity] = useState([]);
+    var [friendList, setFriendList] = useState([]);
 
     var [searchFood, setSearchFood] = useState("");
     var [searchActivity, setSearchActivity] = useState("");
@@ -52,6 +59,8 @@ function CardsUI(props)
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
     const [city, setCity] = useState("");
+
+    const [newFriendMode, setNewFriendMode] = useState(false);
 
     var body;
 
@@ -103,6 +112,11 @@ function CardsUI(props)
         var searchObj = {address:"UCF", latitude:"", longitude:"", radius: 10000, jwToken: "", pageToken:"", keyword:""};
         searchObj = JSON.stringify(searchObj);
 
+        // Storage to access the locally stored JWT
+        var storage = require('../tokenStorage.js');
+        // The user data is stored as text and needs to be turned into an object
+        var data = JSON.parse(localStorage.user_data);
+
         if(props.selectTab==="food") {
 
             body = "{"+"\"address\""+":"+"\""+searchFood+"\""+","+"\"latitude\""+":"+"\""+latitude+"\","+"\"longitude\""+":"+"\""+longitude+"\","+"\"radius\""+":"+"10000"+","
@@ -118,7 +132,6 @@ function CardsUI(props)
             {
                 setMessage( "API Error:" + res_food.error);
             }
-            
             else
             {
                 // uses the useState to change the value of storedFolders
@@ -129,6 +142,9 @@ function CardsUI(props)
                 );
 
             }
+
+            setLatitude("");
+            setLongitude("");
 
         }
         else if (props.selectTab==="activity") {
@@ -157,14 +173,49 @@ function CardsUI(props)
                 );
             }
 
-        } else {
+            setLatitude("");
+            setLongitude("");
+
+        } 
+        else if (props.selectTab==="friends") {
+
+            body = "{"+"\"userId\""+":"+"\""+searchActivity+"\""+","+"\"name\""+":"+"\""+latitude+"\","+"\"phone\""+":"+"\""+longitude+"\","+"\"address\""+":"+"10000"+","
+            +"\"email\""+":"+"\"\","+"\"notes\""+":"+"\"\","+"\"jwToken\""+":"+ "\""+keywordsActivity+"\"}";
+            // const {userId, name, phone, address, email, notes, jwToken} = req.body;
+
+
+            body = "{"+"\"userId\""+":"+data.id+","+"\"jwToken\""+":"+ "\""+storage.retrieveToken()+"\"}";
+
+
+            const response_friends = await fetch(bp.buildPath('retrieveFriends'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
+
+            // Wait for response and parse json
+            res_friends = JSON.parse(await response_friends.text());
+
+            // Check the error field. empty error is good
+            if( res_friends.error && res_friends.error.length > 0 )
+            {
+                setMessage( "API Error:" + res_friends.error);
+            }
+            else
+            {
+
+                // uses the useState to change the value of storedFolders
+                setFriendList(res_friends.friends.slice(0, Object.keys(res_friends.friends).length).map(({ name, address, email, phone, notes }) => (
+                            <FriendCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} Rating="5.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+                            ))
+                );
+            }
+
+        } 
+        else {
             
         }
     }
 
     useEffect(() => {
         RetrievePlaces();
-    }, [searchFood, searchActivity, searchFriend, keywordsFood, keywordsActivity]);
+    }, [searchFood, searchActivity, searchFriend, keywordsFood, keywordsActivity, props.selectTab, newFriendMode]);
 
     const List = useList();
 
@@ -173,23 +224,29 @@ function CardsUI(props)
 
         console.log(props.selectTab);
         console.log(List);
+
         if (props.selectTab === "food" && List !== undefined && List.length !== 0)
         {
             setPlaceListFood(List.map(({folderId, placeName, placeAddress, placeRating, placeDescription, index, placePhone, placeWebsite, placeImg }) => (
                 <InfoCard key={index} buttonId={folderId} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} 
                     DescriptionText={placeDescription} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}
-                    update={update} setUpdate={setUpdate}/>
+                    />
                 ))
             );
+        } else if ((List == undefined ||List.length == 1) && (placeListFood!=[])){
+            setPlaceListFood(<p>LIST IS EMPTY!</p>);
         }
+
         if (props.selectTab === "activity" && List !== undefined && List.length !== 0)
         {
             setPlaceListActivity(List.map(({folderId, placeName, placeAddress, placeRating, placeDescription, index, placePhone, placeWebsite, placeImg }) => (
                 <InfoCard key={index} buttonId={folderId} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} 
                     DescriptionText={placeDescription} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}
-                    update={update} setUpdate={setUpdate}/>
+                    />
                 ))
             );
+        } else if ((List == undefined ||List.length == 1) && (placeListFood!=[])){
+            setPlaceListActivity(<p>LIST IS EMPTY!</p>);
         }
         console.log("end");
 
@@ -212,10 +269,11 @@ function CardsUI(props)
     </div>
     ):(props.selectTab==="friends")?(
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
-        <SearchBar setSearchFriend={setSearchFriend} selectTab={props.selectTab}/>
-        <InfoCard Name="Anna Himenez" Address="3020 Pike Street" PhoneNumber="856-506-3605" MoreInfo="..." DescriptionText="Like 4 Like" Rating="3.1" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
-        <InfoCard Name="Jeff Downey" Address="1015 Briarwood Drive" PhoneNumber="321-837-7259" MoreInfo="..." DescriptionText="Foodie" Rating="4.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
-        <InfoCard Name="Cory Bartson" Address="888 Rosemont Avenue" PhoneNumber="321-885-2673" MoreInfo="..." DescriptionText="Travel" Rating="4.9" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
+        <SearchBar setSearchFriend={setSearchFriend} selectTab={props.selectTab}  newFriendMode={newFriendMode} setNewFriendMode={setNewFriendMode}/>
+
+        {/* add new friend */}
+        <Cardb className="tempFriend" src={friend_pic} setSaveToListMode={props.setSaveToListMode} newFriendMode={newFriendMode} setNewFriendMode={setNewFriendMode}/>
+        {friendList}
     </div>
     ): (
         <div style={{"height":"auto","width":"100%"}}>

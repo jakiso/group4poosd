@@ -8,7 +8,7 @@ function ListType(props){
     try{
     // when editMode==true return a SaveButton, AddButton and ListButtons (with edit_icons)
     return (props.folderType==="food") ? ( 
-        <div>
+        <div id="listUI">
             {
             props.arr_food.map(({ folderId, folderName, folderType }) => (
                 <ListButton key={folderId} button_id={folderId} button_text={folderName} edit_icons={props.edit_icons} setThisFolderId={props.setThisFolderId}
@@ -18,7 +18,7 @@ function ListType(props){
             }
         </div>
     ) : (props.folderType==="activity") ? (     // when editMode is set to false with the SaveButton, only ListButtons (without edit_icons)
-        <div> 
+        <div id="listUI"> 
             {
             props.arr_activity.map(
             ({ folderId, folderName, folderType }) => (
