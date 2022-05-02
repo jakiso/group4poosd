@@ -102,21 +102,11 @@ exports.setApp = function ( app, client )
         {
             const db = await client.db();
             // array of folders matching the userId.
-            const result = await db.collection('Folders').aggregate([
-                {
-                  $match: {
-                    "userId": uid,
-                    "folderId": fid
-                  }
-                },
-                {
-                  $project: {
-                    placeList: 1
-                  }
-                }
-              ]).toArray();
-            console.log(result[0].placeList)
-            msg = result[0].placeList;
+            const result = await db.collection('Folders').findOne(
+                {userId: uid, folderId: fid}, {placeList: 1}
+              );
+            console.log(result)
+            msg = result.placeList;
         }
         catch(e)
         {
@@ -209,8 +199,10 @@ exports.setApp = function ( app, client )
         // in the future we could have an array of users stored for each place in the places collection. 
         // basically an array of userId's associated with each place.
 
-        // no need for folder schema since we are just inserting into an existing folder. 
+        // to grab first keyword given by google and replacing the underscore.
         const fid = req.body.folderId;
+        let firstKeyword = req.body.placeDescription[0].replace('_', ' ');
+        let secondKeyword = req.body.placeDescription[1].replace('_', ' ');
 
         // using place schema.
         const newPlace = new Place
@@ -220,7 +212,9 @@ exports.setApp = function ( app, client )
             placePhone: req.body.placePhone, 
             placeRating: req.body.placeRating,
             placeWebsite: req.body.placeWebsite,
-            placeImg: req.body.placeImg
+            placeImg: req.body.placeImg,
+            placeDescription: '• ' + firstKeyword + '\n' + '• ' + secondKeyword,
+            folderId: fid
         });
 
         var msg = '';
@@ -260,7 +254,9 @@ exports.setApp = function ( app, client )
                             placePhone: newPlace.placePhone, 
                             placeRating: newPlace.placeRating,
                             placeWebsite: newPlace.placeWebsite,
-                            placeImg: newPlace.placeImg
+                            placeImg: newPlace.placeImg,
+                            folderId: newPlace.folderId,
+                            placeDescription: newPlace.placeDescription
                         }
                     }
                 }
@@ -1035,7 +1031,15 @@ exports.setApp = function ( app, client )
             userId: req.body.userId,
             folderType: req.body.folderType.toLowerCase(),
             folderName: req.body.folderName,
-            placeList: [new Place]
+            placeList: [{
+                placeName: 'Sample Place',
+                placeAddress: '123 Real Address',
+                placeRating: 5.0,
+                placePhone: '(999) 999-9999',
+                placeWebsite: '',
+                placeDescription: 'Keywords',
+                folderId: 0
+            }]
         });
 
         try
