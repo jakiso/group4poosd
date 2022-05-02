@@ -68,7 +68,7 @@ function CenterDiv(){
         try
         {  
             // Send object to register
-            const response = await fetch(bp.buildPath('changeAccount'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+            const response = await fetch(bp.buildPath('changeUserSettings'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             // Response
             var res = JSON.parse(await response.text());
