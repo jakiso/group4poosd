@@ -254,13 +254,13 @@ function CardsUI(props)
         // To define Info per card
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
         <SearchBar setSearchFood={setSearchFood} setKeywordsFood={setKeywordsFood} selectTab={props.selectTab} setLatitude={setLatitude} 
-        setLongitude={setLongitude} latitude={latitude} longitude={longitude} setCity={setCity} city={city}/>
+        setLongitude={setLongitude} latitude={latitude} longitude={longitude} setCity={setCity} city={city}  setPlaceListFood={setPlaceListFood}/>
         {placeListFood}
         </div>
     ): (props.selectTab==="activity")?(
         <div style={{"display":"grid", "rowGap": "3rem", "top":"0px", "margin":"5%", "marginTop":"0%","position":"relative","zIndex":"0"}}>
         <SearchBar setSearchActivity={setSearchActivity}  setKeywordsActivity={setKeywordsActivity} selectTab={props.selectTab} setLatitude={setLatitude} 
-        setLongitude={setLongitude} latitude={latitude} longitude={longitude} setCity={setCity} city={city}/>
+        setLongitude={setLongitude} latitude={latitude} longitude={longitude} setCity={setCity} city={city}  setPlaceListActivity={setPlaceListActivity}/>
         {placeListActivity}
     </div>
     ):(props.selectTab==="friends")?(
