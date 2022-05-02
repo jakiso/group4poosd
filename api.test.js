@@ -8,7 +8,8 @@
     - Search place
 */
 
-const app = require('../api/');
+// WARNING: Unit testing needed to be created with different app structure from current so it will not run with this branch 
+const app = require('app');
 const request = require('supertest');
 
 // Testing the login api
@@ -114,7 +115,7 @@ describe("Unit testing Delete Folder...", () => {
 	     })
 	})
     test("Unit test deletion of folder with invalid folder ID", async () => {
-		await request(app).post("localhost:5000/api/createfolder")
+		await request(app).post("localhost:5000/api/deletefolder")
 		.send({
 			folderId: "",
 		})
@@ -127,7 +128,7 @@ describe("Unit testing Delete Folder...", () => {
 
 // Testing Edit user
 describe("Unit testing change user settings...", () => {
-	test("Unit test deletion of dolder", async () => {
+	test("Unit testing change user settings...", async () => {
 		await request(app).post("localhost:5000/api/changeUserSettings")
 		.send({
             userId : "4", 
@@ -143,14 +144,14 @@ describe("Unit testing change user settings...", () => {
 
 })
 // Testing Search place
-describe("Unit testing change user settings...", () => {
-	test("Unit test deletion of dolder", async () => {
-		await request(app).post("localhost:5000/api/deletefolder")
+describe("Unit testing search for place near ucf...", () => {
+	test("Unit test search place from google api", async () => {
+		await request(app).post("localhost:5000/api/nearbyFoodSearch")
 		.send({
             address, 
             latitude :"28.6024° N", 
             longitude:"81.2001° W", 
-            keyword:"food",
+            keyword:"pizza",
              radius:"5 miles", 
              type: "food", 
              pageToken
