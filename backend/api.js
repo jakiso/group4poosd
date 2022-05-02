@@ -576,16 +576,25 @@ exports.setApp = function ( app, client )
         }
         const db = await client.db();
     
-        try
+        if (search === '')
         {
-           
-            const result = await db.collection('Friends').find({$and: [{userId:userId},{$text : {$search : search}}]}).toArray();
+            const result = await db.collection('Friends').find({}).toArray();
             msg = result;
         }
-        catch(e)
+        else
         {
-            msg = e;
+            try
+            {
+               
+                const result = await db.collection('Friends').find({$and: [{userId:userId},{$text : {$search : search}}]}).toArray();
+                msg = result;
+            }
+            catch(e)
+            {
+                msg = e;
+            }
         }
+
 
         // Now refresh the token to update the amount of time it is active
         var refreshedToken = null;
