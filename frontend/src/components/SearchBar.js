@@ -218,7 +218,7 @@ function SearchBar (props) {
         <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative", "marginRight":"20px"}} onClick={()=>{var children = document.getElementById("listUI").children;
         for (var i = 0; i < children.length; i++) {
         children[i].style.backgroundColor="#001A5E";
-        }}}>
+        }   props.setPlaceListFood("");}}>
 
         <Input id="searchBarFood" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
@@ -240,7 +240,7 @@ function SearchBar (props) {
         <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}} onClick={()=>{var children = document.getElementById("listUI").children;
         for (var i = 0; i < children.length; i++) {
         children[i].style.backgroundColor="#001A5E";
-        }}}>
+        }   props.setPlaceListActivity("");}}>
 
         <Input id="searchBarActivity" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
