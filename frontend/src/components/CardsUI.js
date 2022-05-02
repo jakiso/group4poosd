@@ -50,6 +50,9 @@ function CardsUI(props)
     var [searchActivity, setSearchActivity] = useState("");
     var [searchFriend, setSearchFriend] = useState("");
 
+    // for update on delete.
+    var [update, setUpdate] = useState(false);
+
     var [keywordsFood, setKeywordsFood] = useState([]);
     var [keywordsActivity, setKeywordsActivity] = useState([]);
 
@@ -68,7 +71,7 @@ function CardsUI(props)
             let data = {}
             let url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=80&photoreference="
             let photoRef = photos[0].photo_reference
-            let imageUrl = url + photoRef + '&key=' + process.env.REACT_APP_GOOGLE;
+            let imageUrl = url + photoRef + '&key=' + 'AIzaSyCrrdE-dys1s1dgqJYWvCuLfbQEHN3sYag';
 
             return imageUrl;
 
@@ -133,7 +136,8 @@ function CardsUI(props)
             {
                 // uses the useState to change the value of storedFolders
                 setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}) => (
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
+                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} 
+                                src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
                         ))
                 );
 
@@ -163,7 +167,8 @@ function CardsUI(props)
 
                 // uses the useState to change the value of storedFolders
                 setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}) => (
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
+                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} 
+                                src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
             }
@@ -219,22 +224,26 @@ function CardsUI(props)
 
         console.log(props.selectTab);
         console.log(List);
-        if (props.selectTab === "food" && List != undefined && List.length !== 0 && List.length !== 1)
+
+        if (props.selectTab === "food" && List !== undefined && List.length !== 0)
         {
-            // slices to skip first place holder Place
-            setPlaceListFood(List.slice(1, Object.keys(List).length).map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite, placeImg }) => (
-                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} DescriptionText={types} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
+            setPlaceListFood(List.map(({folderId, placeName, placeAddress, placeRating, placeDescription, index, placePhone, placeWebsite, placeImg }) => (
+                <InfoCard key={index} buttonId={folderId} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} 
+                    DescriptionText={placeDescription} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}
+                    />
                 ))
             );
         } else if ((List == undefined ||List.length == 1) && (placeListFood!=[])){
             setPlaceListFood(<p>LIST IS EMPTY!</p>);
         }
-        if (props.selectTab === "activity" && List != undefined && List.length !== 0 && List.length !== 1)
+
+        if (props.selectTab === "activity" && List !== undefined && List.length !== 0)
         {
-            // slices to skip first place holder Place
-            setPlaceListActivity(List.slice(1, Object.keys(List).length).map(({ placeName, placeAddress, placeRating, types, index, placePhone, placeWebsite, placeImg }) => (
-                <InfoCard key={index} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} DescriptionText={types} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
-                ))  
+            setPlaceListActivity(List.map(({folderId, placeName, placeAddress, placeRating, placeDescription, index, placePhone, placeWebsite, placeImg }) => (
+                <InfoCard key={index} buttonId={folderId} Name={placeName} Address={placeAddress} PhoneNumber={placePhone} placeWebsite={placeWebsite} 
+                    DescriptionText={placeDescription} Rating={placeRating} src={savedPicture(placeImg, props.selectTab)} setSaveToListMode={props.setSaveToListMode}
+                    />
+                ))
             );
         } else if ((List == undefined ||List.length == 1) && (placeListFood!=[])){
             setPlaceListActivity(<p>LIST IS EMPTY!</p>);

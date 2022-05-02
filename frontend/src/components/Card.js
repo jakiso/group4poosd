@@ -3,9 +3,8 @@ import styled from 'styled-components'
 import { Buttonc } from './CardButton';
 import cross from '../images/cross_add.png';
 import {Website} from './Website';
-import { LinkStyled } from './LinkStyled';
-import {Router, Route, Redirect, Switch, Link } from 'react-router-dom';
-import defaultPic from '../images/LG_globe.png'
+import defaultPic from '../images/LG_globe.png';
+import redX from '../images/red_x.png';
 
 const Card = styled.div`
 // margin-top: 50px;
@@ -40,7 +39,7 @@ overflow:hidden;
 `
 
 export const Carda = (props) =>{
-    console.log(props)
+    // console.log(props);
 
     // Save the place to be put in a folder
     const SavePlace = async (e) => {
@@ -60,12 +59,14 @@ export const Carda = (props) =>{
                             placePhone: props.PhoneNumber, 
                             placeRating: props.Rating,
                             placeWebsite: props.placeWebsite,
-                            placeImg: props.src
+                            placeImg: props.src,
+                            placeDescription: props.DescriptionText
                         };
         localStorage.setItem('place_data', JSON.stringify(placeToSave));
 
         console.log(placeToSave);
     }
+
 
     function decidePic(){
         if (props.src === undefined)
@@ -74,14 +75,56 @@ export const Carda = (props) =>{
             return props.src;
     }
 
+    async function deletePlace(){
+        let ret;
+
+        var bp = require('./Path.js');
+
+        // Storage to access the locally stored JWT
+        var storage = require('../tokenStorage.js');
+                
+        // The user data is stored as text and needs to be turned into an object
+        var data = JSON.parse(localStorage.user_data);
+
+        // The object to be sent to the api, must contain userId and jwToken field
+        var theSentPlace = {folderId:props.buttonId, placeName:props.Name, placeAddress:props.Address, jwToken:storage.retrieveToken()};
+        var theFormatPlace = JSON.stringify(theSentPlace);
+
+        try {
+            const response = await fetch(bp.buildPath('deletePlace'), {method:'POST', body:theFormatPlace, headers:{'Content-Type':'application/json'}});
+            ret = JSON.parse(await response.text());
+
+
+        }catch(e) {
+            console.log(ret)
+        }
+        
+        // need to update the list context around here after deleting the place.
+    }
+
+    function showX() {
+        if (props.buttonId === undefined || props.buttonId === 0)
+            return {"width":"2.2rem", "height":"2.2rem", "cursor":"pointer", "display":"none"}
+        else
+            return {"width":"2.2rem", "height":"2.2rem", "cursor":"pointer"}
+    }
+
+    function showPlus(){
+        if (props.buttonId === 0)
+            return {"display":"none"};
+        else
+            return {"cursor":"pointer"};
+    }
+
 
     return(                                                     // margin: top right bottom left
         <Card style={{"display":"flex", "gap": "0vh", "overflow":"hidden"}}>            
-        <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>    
+        <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>
+        <img src={redX} style={showX()} onClick={() => {deletePlace()}}/>
         <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
             <img width={"100rem"} height={"100rem"} src={decidePic()} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
-            <img width={"20rem"} height={"auto"} src={cross} alt="Event" style={{"cursor":"pointer"}} onClick={(e) => SavePlace(e)}/>
+            <img width={"20rem"} height={"auto"} src={cross} alt="Event" style={showPlus()} onClick={(e) => SavePlace(e)}/>
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
             <ListButton button_text={props.Name}/>

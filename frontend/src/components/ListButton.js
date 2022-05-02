@@ -104,6 +104,7 @@ function ListButton(props){
 
             // Wait for response and parse json
             const folderList = JSON.parse(await responseList.text());
+            console.log(folderList.message)
 
             // Check the error field. empty error is good
             if( folderList.error && folderList.error.length > 0 )
@@ -158,6 +159,7 @@ function ListButton(props){
                                 placePhone: placeData.placePhone, 
                                 placeRating: placeData.placeRating,
                                 placeWebsite: placeData.placeWebsite,
+                                placeDescription: placeData.placeDescription,
                                 placeImg: imgUrl
                             };
         var sendReq = JSON.stringify(savePlaceReq);

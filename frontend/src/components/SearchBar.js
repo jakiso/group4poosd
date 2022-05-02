@@ -222,14 +222,16 @@ function SearchBar (props) {
 
         <Input id="searchBarFood" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
 
+
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
-            <img src={searchGlass} alt="search" style={{"margin":"auto", "height":"39px", "width":"42px"}} onClick={getInputValueFood}></img>
+            <img src={searchGlass} alt="search" style={{"margin":"auto", "height":"39px", "width":"42px", "cursor":"pointer"}} onClick={getInputValueFood}></img>
         </div>  
         <div class="search_bar_button" style={{ "display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
-            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"30px"}}  onClick={setCityNameFood}></img>
+            <img src={location} alt="location" style={{"margin":"auto","height":"40px", "width":"30px", "cursor":"pointer"}}  onClick={setCityNameFood}></img>
         </div>  
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto", "marginRight":"20px"}}>
-            <img src={filter} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px"}}  onClick={()=>setOpen(!open)}></img>
+            <img src={filter} alt="search" style={{"margin":"auto", "height":"35px", "width":"35px", "cursor":"pointer"}}  onClick={()=>setOpen(!open)}></img>
+
             {/* this conitional toggles dropdown menu */}
             {open && <DropdownFood checkedFood={checkedFood} setCheckedFood={setCheckedFood}></DropdownFood>}
         </div>  
