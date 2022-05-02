@@ -28,28 +28,24 @@ function TopMarginMain(props) {
 
       e.preventDefault();
 
-      // // Used to set the mode to save a place.
-      // props.setSaveToListMode(true);
-
-      // console.log("Saving Place");
-
-
-      // // Store the place info locally
-      // var placeToSave = { 
-      //                     placeName: props.Name, 
-      //                     placeAddress: props.Address, 
-      //                     placePhone: props.PhoneNumber, 
-      //                     placeRating: props.Rating
-      //                 };
-      // localStorage.setItem('place_data', JSON.stringify(placeToSave));
-
       console.log("Surprise!");
       console.log(List);
 
       if (List.length != 0 && List.length != undefined) 
       {
-        console.log(List.length);
-        // Window.alert(List(Math.random(List.length)));
+        const num = Math.floor(Math.random() * List.length);
+
+        console.log(List[num]);
+       
+        let text = (List[num].props == undefined) 
+        ? "You should checkout:\n" + List[num].placeName + "\n" + List[num].placeAddress  + "\n" + List[num].placePhone
+        : "You should checkout:\n" + List[num].props.Name + "\n" + List[num].props.Address  + "\n" + List[num].props.PhoneNumber;
+        // console.log(text); 
+
+        if (window.confirm(text) == true)
+        {
+          window.location.href = (List[num].props == undefined) ? List[num].placeWebsite : List[num].props.placeWebsite;
+        }
       }
     }
 
