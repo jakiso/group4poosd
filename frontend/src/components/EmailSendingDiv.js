@@ -60,7 +60,8 @@ function CenterDiv(){
             storage.storeToken(res.jwToken);
 
             // Account has been created go to verification page
-            setMessage('An email has been successfully sent to your email address!');
+            // setMessage('An email has been successfully sent to your email address!');
+            setMessage(res.response);
         }
         catch(e)
         {
@@ -76,11 +77,11 @@ function CenterDiv(){
                 <div className="fields" style={{"display": "flex", "display":"grid"}}>
                     <input type="text" id="email" placeholder="Email Address" 
                         ref={(c) => email = c} /> <br /> 
-                    <span id="sendResult" style={{"marginTop": "10px"}}>{message}</span>
                 </div>
-                <div className="buttons" style={{"display": "flex"}}>
+                <div className="buttons" style={{"display": "flex", "display":"grid"}}>
                     <input type="submit" id="sendButton" className="buttons" value = "Send"
                         onClick={doSend} />
+                    <span id="sendResult" style={{"marginTop": "10px"}}>{message}</span>
                 </div>
             </form>
         </div>

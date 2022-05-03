@@ -19,7 +19,7 @@ function PasswordResetPage() {
 
             <TitleHeader className="title"/>
 
-            <TabTitle>Reset</TabTitle>
+            <TabTitle>Account Recovery</TabTitle>
             
             <EmailSendingDiv/>
 

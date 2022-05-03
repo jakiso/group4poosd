@@ -11,10 +11,10 @@ function CenterDiv(){
 
     // Function to run one and let the user know to verify their email
     useEffect(() => {
-        setMessage('Please verify your email');
+        setMessage('Your account must be verified before you can login in.');
         setUserData(localStorage.getItem('user_data'));
         setTokenData(localStorage.getItem('token_data'));
-        setButtonMessage('Click to confirm you have verified, or to send another email.');
+        setButtonMessage('Click Resend if you have not yet received a verification email.');
       }, []);
 
     // Used to store token
@@ -127,12 +127,12 @@ function CenterDiv(){
     return(
         <div className="main_pane"> <br/><br/><br/><br/>
             <span id="loginResult" style={{"marginTop": "0px"}}>{message}</span><br/><br/><br/>
+            <input type="submit" id="verifyButton" className="buttons" value = "Resend"
+                    onClick={() => CheckConfirm()}/>
             {/* <span id="userData" >{userData}</span><br/>
             <span id="tokenData">{tokenData}</span> */}
-            <div className="buttons" style={{"marginTop": "100px"}}>
+            <div className="buttons">
                 <span id="loginResult">{buttonMessage}</span><br/>
-                <input type="submit" id="verifyButton" className="buttons" value = "Verify"
-                    onClick={() => CheckConfirm()}/>
             </div>
         </div>
     );
