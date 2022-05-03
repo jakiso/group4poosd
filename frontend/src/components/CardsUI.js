@@ -50,7 +50,7 @@ function CardsUI(props)
     var [searchActivity, setSearchActivity] = useState("");
     var [searchFriend, setSearchFriend] = useState("");
 
-    // for update on delete.
+    // for update Friends on delete.
     var [update, setUpdate] = useState(false);
 
     var [keywordsFood, setKeywordsFood] = useState([]);
@@ -187,31 +187,61 @@ function CardsUI(props)
         } 
         else if (props.selectTab==="friends") {
 
-            // The user data is stored as text and needs to be turned into an object
-            var data = JSON.parse(localStorage.user_data);
+            if(searchFriend==""){
+                // The user data is stored as text and needs to be turned into an object
+                var data = JSON.parse(localStorage.user_data);
 
 
-            body = "{"+"\"userId\""+":"+data.id+","+"\"jwToken\""+":"+ "\""+storage.retrieveToken()+"\"}";
+                body = "{"+"\"userId\""+":"+data.id+","+"\"jwToken\""+":"+ "\""+storage.retrieveToken()+"\"}";
 
 
-            const response_friends = await fetch(bp.buildPath('retrieveFriends'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
+                const response_friends = await fetch(bp.buildPath('retrieveFriends'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
 
-            // Wait for response and parse json
-            res_friends = JSON.parse(await response_friends.text());
+                // Wait for response and parse json
+                res_friends = JSON.parse(await response_friends.text());
 
-            // Check the error field. empty error is good
-            if( res_friends.error && res_friends.error.length > 0 )
-            {
-                setMessage( "API Error:" + res_friends.error);
-            }
-            else
-            {
+                // Check the error field. empty error is good
+                if( res_friends.error && res_friends.error.length > 0 )
+                {
+                    setMessage( "API Error:" + res_friends.error);
+                }
+                else
+                {
 
-                // uses the useState to change the value of storedFolders
-                setFriendList(res_friends.friends.slice(0, Object.keys(res_friends.friends).length).map(({ name, address, email, phone, notes }) => (
-                            <FriendCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} Rating="5.0" src={friend_pic} setSaveToListMode={props.setSaveToListMode}/>
-                            ))
-                );
+                    // uses the useState to change the value of storedFolders
+                    setFriendList(res_friends.friends.slice(0, Object.keys(res_friends.friends).length).map(({ name, address, email, phone, notes, friendId }) => (
+                                <FriendCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} friendId={friendId} Rating="5.0" src={friend_pic} setUpdate={setUpdate} setSaveToListMode={props.setSaveToListMode}/>
+                                ))
+                    );
+                }
+            } else {
+                // The user data is stored as text and needs to be turned into an object
+                var data = JSON.parse(localStorage.user_data);
+
+
+                body = "{"+"\"userId\""+":"+data.id+","+"\"search\""+":"+ "\""+searchFriend+"\""+","+"\"jwToken\""+":"+ "\""+storage.retrieveToken()+"\"}";
+
+
+                const response_friends = await fetch(bp.buildPath('searchFriends'), {method:'POST',body:body,headers:{'Content-Type':'application/json'}});
+
+                // Wait for response and parse json
+                res_friends = JSON.parse(await response_friends.text());
+
+                // Check the error field. empty error is good
+                if( res_friends.error && res_friends.error.length > 0 )
+                {
+                    setMessage( "API Error:" + res_friends.error);
+                }
+                else
+                {
+
+                    // uses the useState to change the value of storedFolders
+                    setFriendList(res_friends.message.slice(0, Object.keys(res_friends.message).length).map(({ name, address, email, phone, notes, friendId }) => (
+                                <FriendCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} friendId={friendId} Rating="5.0" src={friend_pic} setUpdate={setUpdate} setSaveToListMode={props.setSaveToListMode}/>
+                                ))
+                    );
+                }
+
             }
 
         } 
@@ -222,7 +252,7 @@ function CardsUI(props)
 
     useEffect(() => {
         RetrievePlaces();
-    }, [searchFood, searchActivity, searchFriend, keywordsFood, keywordsActivity, props.selectTab, newFriendMode]);
+    }, [searchFood, searchActivity, searchFriend, keywordsFood, keywordsActivity, props.selectTab, newFriendMode, update]);
 
     let List = useList();
     const updateList = useUpdateList();

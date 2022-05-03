@@ -508,16 +508,16 @@ exports.setApp = function ( app, client )
         const friendExist = await db.collection('Friends').find({friendId:thisFriend}).toArray();
       
 
-        if (friendExist.length === 0)
-        {
-            // Send an error that the friend doesn't exist
-            error = "friend doesn't exist";
-            ret = { error: error };
-            res.status(500).json(ret);
+        // if (friendExist.length === 0)
+        // {
+        //     // Send an error that the friend doesn't exist
+        //     error = "friend doesn't exist";
+        //     ret = { error: error };
+        //     res.status(500).json(ret);
 
-            // Exit the api call
-            return;
-        }
+        //     // Exit the api call
+        //     return;
+        // }
         // Actual friend deletion
         try
         {
