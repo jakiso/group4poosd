@@ -41,6 +41,7 @@ overflow:hidden;
 
 export const Cardc = (props) =>{
     console.log(props)
+    var res;
 
 //     // Save the place to be put in a folder
 //     const SavePlace = async (e) => {
@@ -70,27 +71,58 @@ export const Cardc = (props) =>{
 
     // Save the place to be put in a folder
     const DeleteFriend = async (e) => {
+        // Storage to access the locally stored JWT
+        var storage = require('../tokenStorage.js');
 
-        // e.preventDefault();
+        // The object to be sent to the api, must contain folderId and jwToken field
+        var obj = {friendId:props.friendId, jwToken:storage.retrieveToken()};
+        var js = JSON.stringify(obj);
 
-        // // Used to set the mode to save a place.
-        // props.setSaveToListMode(true);
+        // Path to send the api call
+        var bp = require('./Path.js');
 
-        // console.log("Saving Place");
+        // grabbing folder name to display in window prompt.
+        try {
+            
+            const folder = await fetch(bp.buildPath('deleteFriend'), {method:'POST', body:js, headers:{'Content-Type':'application/json'}});
+            res = JSON.parse(await folder.text());
 
+            // if cancel button is clicked on deleting a folder, return out of function and dont delete.
+            if (!window.confirm('Confirm deletion of Friend.'))
+                return;
+        } 
+        catch(e) {
+            console.log(e.toString());
+        }
 
-        // // Store the place info locally
-        // var placeToSave = { 
-        //                     placeName: props.Name, 
-        //                     placeAddress: props.Address, 
-        //                     placePhone: props.PhoneNumber, 
-        //                     placeRating: props.Rating,
-        //                     placeWebsite: props.placeWebsite,
-        //                     placeImg: props.src
-        //                 };
-        // localStorage.setItem('place_data', JSON.stringify(placeToSave));
+        try
+        {
+            // Request folders and JWT
+            const response = await fetch(bp.buildPath('deleteFriend'), {method:'POST',body:js,headers:{'Content-Type':'application/json'}});
 
-        // console.log(placeToSave);
+            // Wait for response and parse json
+            res = JSON.parse(await response.text());
+
+            // Check the error field. empty error is good
+            if( res.error && res.error.length > 0 )
+            {
+                console.log(res.error);
+            }
+            else
+            {
+                // Store the received refreshed JWT
+                storage.storeToken( res.jwToken ); 
+
+                props.setUpdate(true);      
+                props.setUpdate(false);                 
+                props.setUpdate(true); 
+                props.setUpdate(false);                
+            }
+        }
+        catch(e)
+        {
+            console.log(e.toString());
+        }
     }
 
     function decidePic(){
