@@ -201,8 +201,9 @@ exports.setApp = function ( app, client )
 
         // to grab first keyword given by google and replacing the underscore.
         const fid = req.body.folderId;
-        let firstKeyword = req.body.placeDescription[0].replace('_', ' ');
-        let secondKeyword = req.body.placeDescription[1].replace('_', ' ');
+        let splitter = req.body.placeDescription.split(', ');
+        let firstKeyword = splitter[0];
+        let secondKeyword = splitter[1];
 
         // using place schema.
         const newPlace = new Place
