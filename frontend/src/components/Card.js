@@ -4,7 +4,7 @@ import { Buttonc } from './CardButton';
 import cross from '../images/cross_add.png';
 import {Website} from './Website';
 import defaultPic from '../images/LG_globe.png';
-import redX from '../images/red_x.png';
+import minus from '../images/minus.png';
 import { useUpdateList } from './ListContext';
 import { useList } from "./ListContext";
 
@@ -42,6 +42,7 @@ overflow:hidden;
 
 export const Carda = (props) =>{
     // console.log(props);
+    let add = true;
 
     // Save the place to be put in a folder
     const SavePlace = async (e) => {
@@ -69,7 +70,7 @@ export const Carda = (props) =>{
         console.log(placeToSave);
     }
 
-
+    // the place picture.
     function decidePic(){
         if (props.src === undefined)
             return defaultPic;
@@ -119,11 +120,20 @@ export const Carda = (props) =>{
     let updateList = useUpdateList();
     let tempList = useList();
 
+    // for the minus button.
     function showX() {
-        if (props.buttonId === undefined || props.buttonId === 0)
-            return {"width":"2.2rem", "height":"2.2rem", "cursor":"pointer", "display":"none"}
+        if (props.buttonId === undefined)
+        {
+            add = true;
+            return cross;
+        }
+            
         else
-            return {"width":"2.2rem", "height":"2.2rem", "cursor":"pointer"}
+        {
+            add = false;
+            return minus;
+        }
+            
     }
 
     function showPlus(){
@@ -137,11 +147,13 @@ export const Carda = (props) =>{
     return(                                                     // margin: top right bottom left
         <Card style={{"display":"flex", "gap": "0vh", "overflow":"hidden"}}>            
         <div style={{"display":"flex", "gap": "2vh", "margin":"2%", "width":"100%"}}>
-        <img src={redX} style={showX()} onClick={() => {deletePlace()}}/>
+        {/* <img src={redX} style={showX()} onClick={() => {deletePlace()}}/> */}
         <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
             <img width={"100rem"} height={"100rem"} src={decidePic()} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
-            <img width={"20rem"} height={"auto"} src={cross} alt="Event" style={showPlus()} onClick={(e) => SavePlace(e)}/>
+            <img width={"20rem"} height={"auto"} src={showX()} alt="Event" style={showPlus()} onClick={(e) => {
+                if (add === true) SavePlace(e)
+                else deletePlace()}}/>
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
             <ListButton button_text={props.Name}/>
