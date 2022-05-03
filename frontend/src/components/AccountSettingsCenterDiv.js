@@ -1,34 +1,43 @@
 import React, { useState, useCallback } from 'react';
+
 import '../App.css';
 import { isExpired, decodeToken } from "react-jwt";
 import { useHistory } from 'react-router-dom';
 
-function CenterDiv(){
-    var NewfirstName;
-    var NewlastName;
-    var Newusername;
-    var Newpassword;
-    var NewconfirmPassword;
+function getUserId() {
+    var user;
+    var userId;
+    try {
+        user = localStorage.getItem('user_data')
+        userId = user.id
+    }
+    catch (e) {
+        console.log(e.message);
+    }
 
+    return user;
+}
+
+function CenterDiv(){
+    var newFirstName;
+    var newLastName;
+    var newUsername;
+    var newPassword;
+    var Newconfirmpassword;
+    var userId = getUserId();
+    var jsonId = JSON.parse(userId);
+    userId = jsonId.id;
     const navigate = useHistory();
-    const redirectToVerify = useCallback(() => navigate.push('/Verify'), [navigate]);
+    const redirectToMain = useCallback(() => navigate.push('/'), [navigate]);
 
     const [message,setMessage] = useState('');
-
-    // RegEx for checking email
-    // Valid email must have: (1char)@(2char).(2char)
-    const validEmail = new RegExp(
-        '(.+)@((.+){2,})\.((.+){2,})'
-    );
-
     const doChangeAccount = async event => 
     {
         event.preventDefault();
-
+        // retrive userID
+        var storage = require('../tokenStorage.js');
         // Creates object for all form fields
-        var obj = {firstName:NewfirstName.value, lastName:NewlastName.value, username:Newusername.value, 
-                     password:Newpassword.value, confirmPassword:NewconfirmPassword.value};
-
+        var obj = {userId:userId, newPassword:newPassword.value, newFirstName:newFirstName.value, newLastName:newLastName.value, newUsername:newUsername.value, jwToken:storage.retrieveToken(), Newconfirmpassword:Newconfirmpassword.value};
         // Loop through the object and check to make sure the value are not empty
        // for(const [key, value] of Object.entries(obj)) 
        // {
@@ -62,8 +71,8 @@ function CenterDiv(){
 
         try
         {  
-            // Send object to register
-            const response = await fetch(bp.buildPath('changeAccount'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+            // Send object to changeaccount
+            const response = await fetch(bp.buildPath('changeUserSettings'), {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             // Response
             var res = JSON.parse(await response.text());
@@ -84,10 +93,9 @@ function CenterDiv(){
             localStorage.setItem('user_data', JSON.stringify(user));
 
             // Account has been created go to verification page
-            setMessage('Your account has been changed!');
+            setMessage('');
+            redirectToMain();
 
-            redirectToVerify();
-            // window.location.href = '/Verify'; does not work for deployed
         }
         catch(e)
         {
@@ -101,21 +109,20 @@ function CenterDiv(){
         <div className="main_pane">
             <form onSubmit={doChangeAccount}>
                 <div className="fields" style={{"display": "flex", "display":"grid"}}>
-                    <input type="text" id="firstName" placeholder="New First Name?" 
-                        ref={(c) => NewfirstName = c} /> <br /> 
-                    <input type="text" id="lastName" placeholder="New Last Name?" 
-                        ref={(c) => NewlastName = c} /> <br /> 
-                    <input type="text" id="username" placeholder="New Username?" 
-                        ref={(c) => Newusername = c} /> <br /> 
-                    <input type="password" id="password" placeholder="New Password?" 
-                        ref={(c) => Newpassword = c} /> <br /> 
-                    <input type="password" id="confirmPassword" placeholder="Confirm New Password" 
-                        ref={(c) => NewconfirmPassword = c} /> <br /> 
-                    <span id="loginResult" style={{"marginTop": "10px"}}>{message}</span>
+                    <input type="text" id="newFirstName" placeholder="New First Name?" 
+                        ref={(c) => newFirstName = c} /> <br /> 
+                    <input type="text" id="newLastName" placeholder="New Last Name?" 
+                        ref={(c) => newLastName = c} /> <br /> 
+                    <input type="text" id="newUsername" placeholder="New Username?" 
+                        ref={(c) => newUsername = c} /> <br /> 
+                    <input type="password" id="newPassword" placeholder="New Password?" 
+                        ref={(c) => newPassword = c} /> <br /> 
+                    <input type="password" id="Newconfirmpassword" placeholder="Confirm New Password" 
+                        ref={(c) => Newconfirmpassword = c} /> <br /> 
                 </div>
                 <div className="buttons" style={{"display": "flex"}}>
-                    <input type="submit" id="submit" className="buttons" value = "Submit"
-                        onClick={doChangeAccount} />
+                    <input type="submit" id="changeaccount" className="buttons" value = "Submit"
+                        onClick={()=>{doChangeAccount();}} />
                 </div>
             </form>
         </div>
