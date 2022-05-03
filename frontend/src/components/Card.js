@@ -151,7 +151,7 @@ export const Carda = (props) =>{
         <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
             <img width={"100rem"} height={"100rem"} src={decidePic()} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
-            <img width={"20rem"} height={"auto"} src={showX()} alt="Event" style={showPlus()} onClick={(e) => {
+            <img width={"40rem"} height={"auto"} src={showX()} alt="Event" style={showPlus()} onClick={(e) => {
                 if (add === true) SavePlace(e)
                 else deletePlace()}}/>
         </div> 

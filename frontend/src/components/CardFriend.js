@@ -139,7 +139,7 @@ export const Cardc = (props) =>{
         <div style={{"height":"200rem","width":"20%", "overflow":"hidden", "margin":"0% 0% 20% 0%"}}>
             <img width={"100rem"} height={"100rem"} src={decidePic()} alt="Event"/><br/><br/>
             <p>Rating {props.Rating}</p><br/>
-            <img width={"20rem"} height={"auto"} src={minus} alt="Event" style={{"cursor":"pointer"}} onClick={(e) => DeleteFriend(e)}/>
+            <img width={"40rem"} height={"auto"} src={minus} alt="Event" style={{"cursor":"pointer"}} onClick={(e) => DeleteFriend(e)}/>
         </div> 
         <div style={{"display":"grid", "width":"40%", "height":"100%", "overflow":"auto",}}>
             <ListButton button_text={props.Name}/>
