@@ -95,8 +95,8 @@ function CenterDiv()
                 </div>
             </form>
             <div style={{"display":"grid", "rowGap": "2rem"}}>
-                    <input type="submit" id="loginGButton" value = "Login with Google" 
-                    style={{"width":"30%"}}/>
+                    {/* <input type="submit" id="loginGButton" value = "Login with Google" 
+                    style={{"width":"30%"}}/> */}
                     {/* This routes back to login page just to avoid getting an unnecessary error. */}
                     <LinkStyled className="link" link_text="Forgot Password" route="/Reset"/>
                     <LinkStyled className="link" route="/Register" link_text="Create Account"/>
