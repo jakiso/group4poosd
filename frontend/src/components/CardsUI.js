@@ -133,8 +133,8 @@ function CardsUI(props)
             else
             {
                 // uses the useState to change the value of storedFolders
-                setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}) => (
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} 
+                setPlaceListFood(res_food.results.slice(0, Object.keys(res_food.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}, index) => (
+                            <InfoCard key={index} Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types.toString().replaceAll("_"," ").replaceAll(",",", ").replaceAll(", point of interest","").replaceAll(", establishment","")} Rating={rating} 
                                 src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
                         ))
                 );
@@ -169,8 +169,8 @@ function CardsUI(props)
             else
             {
                 // uses the useState to change the value of storedFolders
-                setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}) => (
-                            <InfoCard Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types} Rating={rating} 
+                setPlaceListActivity(res_activity.results.slice(0, Object.keys(res_activity.results).length).map(({ name, vicinity, rating, types, formatted_phone_number, website, photos}, index) => (
+                            <InfoCard key={index} Name={name} Address={vicinity} PhoneNumber={formatted_phone_number} placeWebsite={website} DescriptionText={types.toString().replaceAll("_"," ").replaceAll(",",", ").replaceAll(", point of interest","").replaceAll(", establishment","")} Rating={rating} 
                                 src={pictureGrab(photos, props.selectTab)} setSaveToListMode={props.setSaveToListMode}/>
                             ))
                 );
@@ -210,7 +210,7 @@ function CardsUI(props)
 
                     // uses the useState to change the value of storedFolders
                     setFriendList(res_friends.friends.slice(0, Object.keys(res_friends.friends).length).map(({ name, address, email, phone, notes, friendId }) => (
-                                <FriendCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} friendId={friendId} Rating="5.0" src={friend_pic} setUpdate={setUpdate} setSaveToListMode={props.setSaveToListMode}/>
+                                <FriendCard key={friendId} Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} friendId={friendId} Rating="5.0" src={friend_pic} setUpdate={setUpdate} setSaveToListMode={props.setSaveToListMode}/>
                                 ))
                     );
                 }
@@ -237,7 +237,7 @@ function CardsUI(props)
 
                     // uses the useState to change the value of storedFolders
                     setFriendList(res_friends.message.slice(0, Object.keys(res_friends.message).length).map(({ name, address, email, phone, notes, friendId }) => (
-                                <FriendCard Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} friendId={friendId} Rating="5.0" src={friend_pic} setUpdate={setUpdate} setSaveToListMode={props.setSaveToListMode}/>
+                                <FriendCard key={friendId} Name={name} Address={address} PhoneNumber={phone} MoreInfo={email} DescriptionText={notes} friendId={friendId} Rating="5.0" src={friend_pic} setUpdate={setUpdate} setSaveToListMode={props.setSaveToListMode}/>
                                 ))
                     );
                 }

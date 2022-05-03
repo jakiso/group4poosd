@@ -163,7 +163,7 @@ export const Carda = (props) =>{
             
         </div> 
         <div style={{"width":"40%", "overflow":"hidden", "margin":"auto"}}>
-            <Description button_text={props.DescriptionText.toString().replaceAll("_"," ").replaceAll(",",", ").replaceAll(", point of interest","").replaceAll(", establishment","")}/>
+            <Description button_text={props.DescriptionText}/>
         </div>  
         </div></Card>
     )
