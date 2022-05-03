@@ -137,7 +137,18 @@ function ListsUI(props)
     return(
          <div style={{"display":"grid", "rowGap": "1rem", "top":"0px", "margin":"0% 10% 10% 10%", "alignContent":"center"}}>
              {/* this EditButton triggers editMode==true */}
-            <EditButton button_text="Edit" onClick={()=>{props.setEditMode(true);}}/>
+            <EditButton button_text="Edit" onClick={()=>{
+                if(props.selectTab!=="friends"){
+                    // this prevents distortion in folder selection colors
+                    if(document.getElementById("listUI")){
+                        var children = document.getElementById("listUI").children;
+                        for (var i = 0; i < children.length; i++) {
+                        children[i].style.backgroundColor="#001A5E";
+                        }
+                    }
+                    props.setEditMode(true);
+                }
+                }}/>
              {/* only if EditButton was clicked does EditMode display*/}
             {/* arr_food={res_food} arr_activity={res_activity}*/}
             <EditMode editMode={props.editMode} setEditMode={props.setEditMode} folderType={folderType} arr_food={foodFolders} isDisabled={isDisabled} setIsDisabled={setIsDisabled}  
