@@ -191,10 +191,6 @@ function SearchBar (props) {
         // }
 
         props.setKeywordsFood(keywordsFood);
-
-        useEffect(() => {
-            props.setKeywordsFood(keywordsFood);
-        },[keywordsFood]);
     };
 
     const GetKeywordsActivity= (event)=>{
@@ -206,15 +202,13 @@ function SearchBar (props) {
                 keywordsActivity.push(keyword.replaceAll('_', ' '));}
             })
         // }
-        
-
-        useEffect(() => {
-            props.setKeywordsActivity(keywordsActivity);
-        },[keywordsActivity]);
+        props.setKeywordsActivity(keywordsActivity);
     };
 
     return(props.selectTab==="food")?(
-        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative", "marginRight":"20px"}} onClick={()=>{
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative", "marginRight":"20px"}}>
+
+        <Input id="searchBarFood" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}} onClick={()=>{
             if(document.getElementById("listUI")){
                 var children = document.getElementById("listUI").children;
                 for (var i = 0; i < children.length; i++) {
@@ -222,9 +216,7 @@ function SearchBar (props) {
                 }
             }
             props.setPlaceListFood("");
-        }}>
-
-        <Input id="searchBarFood" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
+        }}/>
 
 
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
@@ -241,7 +233,9 @@ function SearchBar (props) {
         </div>  
         </Bar>
     ):(props.selectTab==="activity")?(
-        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}} onClick={()=>{
+        <Bar style={{"display":"flex", "columnGap":"10px", "zIndex":"5", "position":"relative"}}>
+
+        <Input id="searchBarActivity" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}} onClick={()=>{
             if(document.getElementById("listUI")){
                 var children = document.getElementById("listUI").children;
                 for (var i = 0; i < children.length; i++) {
@@ -249,9 +243,7 @@ function SearchBar (props) {
                 }   
             }
             props.setPlaceListActivity("");
-        }}>
-
-        <Input id="searchBarActivity" placeholder="Enter location you wish to search by" style={{"zIndex":"0"}}/>
+        }}/>
 
         <div class="search_bar_button" style={{"display":"flex", "justifyContent":"center", "width":"100px", "height":"auto"}}>
             <img src={searchGlass} alt="search" style={{"margin":"auto", "height":"39px", "width":"42px", "cursor":"pointer"}} onClick={getInputValueActivity}></img>
